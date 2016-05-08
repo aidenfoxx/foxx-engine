@@ -51,25 +51,25 @@ void *arrayPop(Array *array)
 
 void *arrayGet(Array *array, unsigned int index)
 {
-    if (index >= array->length)
-    {
-        return NULL;
-    }
+	if (index >= array->length)
+	{
+		return NULL;
+	}
 	return array->data[index];
 }
 
 void arrayRemove(Array *array, unsigned int index)
 {
-    if (index >= array->length)
-    {
-        return;
-    }
+	if (index >= array->length)
+	{
+		return;
+	}
 
-    array->data[index] = NULL;
+	array->data[index] = NULL;
 
-    /**
-     * Remove any trailing null values.
-     */
+	/**
+	 * Remove any trailing null values.
+	 */
 	for (int i = array->length; i >  0; i--)
 	{
 		if (array->data[i - 1] != NULL)

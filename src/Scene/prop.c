@@ -19,8 +19,8 @@ void propInit(Prop *prop, Asset *asset)
 	/**
 	 * Bind and fill the buffers.
 	 */
-    glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * asset->vertexLength, asset->vertexData, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * asset->vertexLength, asset->vertexData, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[1]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * asset->uvLength, asset->uvData, GL_STATIC_DRAW);

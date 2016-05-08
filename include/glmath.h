@@ -25,7 +25,7 @@ typedef struct {
 typedef struct {
 	float xx; float yx; float zx; float wx;
 	float xy; float yy; float zy; float wy;
-	float xz; float yz; float zz; float wz; 
+	float xz; float yz; float zz; float wz;
 	float xw; float yw; float zw; float ww;
 } Matrix;
 

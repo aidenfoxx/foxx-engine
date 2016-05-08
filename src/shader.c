@@ -15,11 +15,11 @@ int shaderInit(Shader *shader, int shaderType, const char *shaderPath)
 	shader->shader = glCreateShader(shaderType);
 	
 	glShaderSource(shader->shader, 1, (const char**) &shaderData, NULL);
- 	glCompileShader(shader->shader);
- 	free(shaderData);
+	glCompileShader(shader->shader);
+	free(shaderData);
 
- 	GLint errorStatus;
- 	glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &errorStatus);
+	GLint errorStatus;
+	glGetShaderiv(shader->shader, GL_COMPILE_STATUS, &errorStatus);
 
 	if (errorStatus == GL_FALSE)
 	{
