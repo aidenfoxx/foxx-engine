@@ -19,9 +19,9 @@ typedef struct {
 
 void cameraInit(Camera*);
 void cameraDestroy(Camera*);
-void cameraSetPerspective(Camera*, float, float, float, float);
+void cameraScale(Camera*, float, float, float);
 void cameraRotate(Camera*, float, float, float);
 void cameraTranslate(Camera*, float, float, float);
-void cameraScale(Camera*, float, float, float);
+void cameraSetPerspective(Camera*, float, float, float, float);
 
 #endif

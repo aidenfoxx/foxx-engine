@@ -150,10 +150,8 @@
 #define JOYSTICK_15 GLFW_JOYSTICK_15
 #define JOYSTICK_16 GLFW_JOYSTICK_16
 
-#include "context.h"
+typedef void (*ButtonCallback)(int, int);
 
-typedef GLFWkeyfun KeyCallback;
-
-void inputSetKeyCallback(Window*, KeyCallback);
+void inputButtonCallback(ButtonCallback);
 
 #endif

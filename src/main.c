@@ -1,24 +1,17 @@
 #include <stdio.h>
 
-#include "context.h"
-#include "input.h"
-#include "shader.h"
-#include "scene.h"
-#include "Scene/camera.h"
-#include "Scene/prop.h"
-#include "Scene/actor.h"
-#include "Tools/log.h"
+#include "foxx.h"
+
+ShaderProgram shaderProgram;
+Shader defaultVertex;
+Shader defaultFragment;
 
 Asset asset;
 Prop prop;
 Camera camera;
 Scene scene;
 
-ShaderProgram shaderProgram;
-Shader defaultVertex;
-Shader defaultFragment;
-
-void init()
+void renderInit()
 {
     /**
      * Initialize shaders.
@@ -49,22 +42,21 @@ void init()
     }
 
     /**
-     * Load model and bind it to our
-     * actors and props.
+     * Load models and bind them to a prop.
      */
     assetInit(&asset);
     assetLoadObj(&asset, "./assets/demo.obj");
     propInit(&prop, &asset);
     
     /**
-     * Initialize and fill scene.
+     * Initialize scene and add props and shader.
      */
     cameraInit(&camera);
     sceneInit(&scene, &camera, &shaderProgram);
     sceneAddProp(&scene, &prop);
 }
 
-void destroy()
+void renderDestroy()
 {
     sceneDestroy(&scene);
     propDestroy(&prop);
@@ -74,72 +66,69 @@ void destroy()
     shaderProgramDestroy(&shaderProgram);
 }
 
-void keyCallback(Window keyWindow, int key, int scancode, int action, int mods)
+void buttonCallback(int button, int action)
 {
-    if (key == KEY_W && action == INPUT_PRESS)
+    if (button == KEY_W && action == INPUT_PRESS)
     {
         cameraTranslate(&camera, 0.0f, 0.0f, 0.1f);
     }
 
-    if (key == KEY_A && action == INPUT_PRESS)
+    if (button == KEY_A && action == INPUT_PRESS)
     {
         cameraTranslate(&camera, 0.1f, 0.0f, 0.0f);
     }
 
-    if (key == KEY_S && action == INPUT_PRESS)
+    if (button == KEY_S && action == INPUT_PRESS)
     {
         cameraTranslate(&camera, 0.0f, 0.0f, -0.1f);
     }
 
-    if (key == KEY_D && action == INPUT_PRESS)
+    if (button == KEY_D && action == INPUT_PRESS)
     {
         cameraTranslate(&camera, -0.1f, 0.0f, 0.0f);
     }
 
-    if (key == KEY_Q && action == INPUT_PRESS)
+    if (button == KEY_Q && action == INPUT_PRESS)
     {
         cameraRotate(&camera, 0.1f, 0.0f, 0.0f);
     }
 
-    if (key == KEY_E && action == INPUT_PRESS)
+    if (button == KEY_E && action == INPUT_PRESS)
     {
         cameraRotate(&camera, -0.1f, 0.0f, 0.0f);
     }
 }
 
-int main(int argc, const char *argv[])
+void renderFunction()
 {
-    Window window;
-    
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    sceneRender(&scene);
+}
+
+int main(int argc, const char *argv[])
+{    
     if (contextInit(3, 3))
     {
         logMessage(LOG_CRITICAL, "Failed to initialize context.");
         exit(EXIT_FAILURE);
     }
 
-    if (contextWindowOpen(&window, "Foxx", 800, 600, 0, 0))
+    if (contextWindowOpen("Foxx", 800, 600, 0, 0))
     {
         logMessage(LOG_ERROR, "Failed to open window.");
         exit(EXIT_FAILURE);
     }
 
-    glClearColor(0.74f, 0.89f, 0.88f, 0.0f);
-
-    init();
-    inputSetKeyCallback(&window, keyCallback);
+    renderInit();
 
     logMessage(LOG_NOTICE, "Program initialized.");
 
-    while (!contextWindowShouldClose(&window))
-    {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        sceneRender(&scene);
-        contextWindowTick(&window);
-    }
+    inputButtonCallback(buttonCallback);
 
-    destroy();
+    contextLoopCallback(renderFunction);
+    contextLoop();
 
-    contextWindowDestroy(&window);
+    renderDestroy();
     contextDestroy();
 
     exit(EXIT_SUCCESS);

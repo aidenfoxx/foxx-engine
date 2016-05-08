@@ -7,7 +7,7 @@ INC_DIR=include
 
 # Standard Build Flags
 CC=gcc
-CFLAGS=-O3 -std=c99 -pedantic -c -Wall -I $(INC_DIR)
+CFLAGS=-o -std=c99 -pedantic -c -Wall -I $(INC_DIR) -g
 
 ifeq ($(OS), Windows_NT)
     LDFLAGS=-L $(LIB_DIR) -lglfw3dll -lopengl32

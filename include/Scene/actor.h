@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+#include "context.h"
 #include "prop.h"
 
 typedef struct {

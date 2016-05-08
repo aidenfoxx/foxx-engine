@@ -18,7 +18,17 @@ void cameraSetPerspective(Camera *camera, float fov, float aspectRatio, float ne
 	camera->aspectRatio = aspectRatio;
 	camera->nearClip = nearClip;
 	camera->farClip = farClip;
+
 	camera->perspective = matrixPerspective(fov, aspectRatio, nearClip, farClip);
+}
+
+void cameraScale(Camera *camera, float x, float y, float z)
+{
+	camera->scale.x *= x;
+	camera->scale.y *= y;
+	camera->scale.z *= z;
+
+	cameraUpdateView(camera);
 }
 
 void cameraRotate(Camera *camera, float x, float y, float z)
@@ -35,15 +45,6 @@ void cameraTranslate(Camera *camera, float x, float y, float z)
 	camera->translation.x += x;
 	camera->translation.y += y;
 	camera->translation.z += z;
-
-	cameraUpdateView(camera);
-}
-
-void cameraScale(Camera *camera, float x, float y, float z)
-{
-	camera->scale.x *= x;
-	camera->scale.y *= y;
-	camera->scale.z *= z;
 
 	cameraUpdateView(camera);
 }

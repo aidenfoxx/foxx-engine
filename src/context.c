@@ -1,5 +1,7 @@
 #include "context.h"
 
+static ContextCallback contextCallback;
+
 static int glMajor;
 static int glMinor;
 
@@ -15,27 +17,29 @@ int contextInit(int major, int minor)
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);    
 
     return 0;
 }
 
 void contextDestroy()
 {
+    contextWindowDestroy();
     glfwTerminate();
 }
 
-int contextWindowOpen(Window *window, char* title, int width, int height, int fullscreen, int vsync)
+int contextWindowOpen(char* title, int width, int height, int fullscreen, int vsync)
 {
-	*window = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+	contextWindow = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 
-    if (!*window)
+    if (!contextWindow)
     {
         glfwTerminate();
         return -1;
     }
 
-    glfwMakeContextCurrent(*window);
+    glfwMakeContextCurrent(contextWindow);
     glfwSwapInterval(vsync);
 
     if (gl3wInit())
@@ -48,21 +52,39 @@ int contextWindowOpen(Window *window, char* title, int width, int height, int fu
         return -3;
     }
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+
     return 0;
 }
 
-int contextWindowShouldClose(Window *window)
+void contextWindowDestroy()
 {
-	return glfwWindowShouldClose(*window);
+    glfwDestroyWindow(contextWindow);
+    contextWindow = NULL;
 }
 
-void contextWindowDestroy(Window *window)
+void contextLoopCallback(ContextCallback callback)
 {
-	glfwDestroyWindow(*window);
+    contextCallback = callback;
 }
 
-void contextWindowTick(Window *window)
+void contextLoop()
 {
-	glfwSwapBuffers(*window);
-	glfwPollEvents();
+    if (contextCallback)
+    {
+        glfwSetWindowShouldClose(contextWindow, 0);
+
+        while(contextWindow && !glfwWindowShouldClose(contextWindow))
+        {
+            contextCallback();
+            glfwSwapBuffers(contextWindow);
+            glfwPollEvents();
+        }       
+    }
+}
+
+void contextLoopStop()
+{
+    glfwSetWindowShouldClose(contextWindow, 1);
 }
