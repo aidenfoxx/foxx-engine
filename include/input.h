@@ -3,7 +3,7 @@
 
 #define INPUT_RELEASE GLFW_RELEASE
 #define INPUT_PRESS GLFW_PRESS
-#define INPUT_REPEAT GLFW_REPEAT
+#define INPUT_HOLD GLFW_REPEAT
 
 #define MOUSE_1 GLFW_MOUSE_BUTTON_1
 #define MOUSE_2 GLFW_MOUSE_BUTTON_2
@@ -150,8 +150,9 @@
 #define JOYSTICK_15 GLFW_JOYSTICK_15
 #define JOYSTICK_16 GLFW_JOYSTICK_16
 
-typedef void (*ButtonCallback)(int, int);
-
-void inputButtonCallback(ButtonCallback);
+void inputInit();
+int inputStatusMouse(int);
+int inputStatusKey(int);
+int inputStatusJoystick(int);
 
 #endif

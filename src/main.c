@@ -66,42 +66,42 @@ void renderDestroy()
 	shaderProgramDestroy(&shaderProgram);
 }
 
-void buttonCallback(int button, int action)
+void inputHandle()
 {
-	if (button == KEY_W && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_W) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraTranslate(&camera, 0.0f, 0.0f, 0.1f);
+		cameraTranslate(&camera, 0.0f, 0.0f, 0.05f);
 	}
 
-	if (button == KEY_A && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_A) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraTranslate(&camera, 0.1f, 0.0f, 0.0f);
+		cameraTranslate(&camera, 0.05f, 0.0f, 0.0f);
 	}
 
-	if (button == KEY_S && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_S) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraTranslate(&camera, 0.0f, 0.0f, -0.1f);
+		cameraTranslate(&camera, 0.0f, 0.0f, -0.05f);
 	}
 
-	if (button == KEY_D && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_D) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraTranslate(&camera, -0.1f, 0.0f, 0.0f);
+		cameraTranslate(&camera, -0.05f, 0.0f, 0.0f);
 	}
 
-	if (button == KEY_Q && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_Q) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraRotate(&camera, 0.1f, 0.0f, 0.0f);
+		cameraRotate(&camera, 0.05f, 0.0f, 0.0f);
 	}
 
-	if (button == KEY_E && action == INPUT_PRESS)
+	if (inputStatusKey(KEY_E) & (INPUT_PRESS | INPUT_HOLD))
 	{
-		cameraRotate(&camera, -0.1f, 0.0f, 0.0f);
+		cameraRotate(&camera, -0.05f, 0.0f, 0.0f);
 	}
 }
 
 void renderFunction()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	inputHandle();
 	sceneRender(&scene);
 }
 
@@ -113,17 +113,16 @@ int main(int argc, const char *argv[])
 		exit(EXIT_FAILURE);
 	}
 
-	if (contextWindowOpen("Foxx", 800, 600, 0, 0))
+	if (contextWindowOpen("Foxx", 1024, 800, 0, 1))
 	{
 		logMessage(LOG_ERROR, "Failed to open window.");
 		exit(EXIT_FAILURE);
 	}
 
+	inputInit();
 	renderInit();
 
 	logMessage(LOG_NOTICE, "Program initialized.");
-
-	inputButtonCallback(buttonCallback);
 
 	contextLoopCallback(renderFunction);
 	contextLoop();

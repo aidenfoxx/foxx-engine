@@ -18,7 +18,7 @@ int contextInit(int major, int minor)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);    
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	return 0;
 }
@@ -71,13 +71,23 @@ void contextLoopCallback(ContextCallback callback)
 
 void contextLoop()
 {
-	if (contextCallback)
+	if (contextWindow && contextCallback)
 	{
 		glfwSetWindowShouldClose(contextWindow, 0);
 
+		/**
+		 * TODO: Figure out why SwapBuffer is disabling
+		 * depth test.
+		 */
 		while(contextWindow && !glfwWindowShouldClose(contextWindow))
 		{
+			glEnable(GL_DEPTH_TEST);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			printf("%i\n", glIsEnabled(GL_DEPTH_TEST));
+
 			contextCallback();
+
 			glfwSwapBuffers(contextWindow);
 			glfwPollEvents();
 		}       
