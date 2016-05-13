@@ -53,7 +53,11 @@ int contextWindowOpen(char* title, int width, int height, int fullscreen, int vs
 	}
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
 	glDepthFunc(GL_LEQUAL);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
 
 	return 0;
 }
@@ -82,9 +86,9 @@ void contextLoop()
 		while(contextWindow && !glfwWindowShouldClose(contextWindow))
 		{
 			glEnable(GL_DEPTH_TEST);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_CULL_FACE);
 
-			printf("%i\n", glIsEnabled(GL_DEPTH_TEST));
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			contextCallback();
 

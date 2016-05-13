@@ -35,21 +35,19 @@ void sceneAddProp(Scene *scene, Prop *prop)
 	 * Load the buffers and bind to the VAO.
 	 */
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
-
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[2]);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, prop->vbo[3]);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glEnableVertexAttribArray(3);
-
+	glBindBuffer(GL_ARRAY_BUFFER, prop->ibo);
+	
 	/**
 	 * Unbind buffers.
 	 */
@@ -73,29 +71,38 @@ void sceneRender(Scene *scene)
 {
 	int propLength = arrayLength(scene->props);
 	int actorLength = arrayLength(scene->actors);
-	int vertexTotal = 0;
 
 	shaderProgramEnable(scene->shader);
+
 	shaderProgramSetMatrix(scene->shader, "viewMatrix", scene->camera->view);
 	shaderProgramSetMatrix(scene->shader, "perspectiveMatrix", scene->camera->perspective);
+
+	shaderProgramSetVec3(scene->shader, "lightPosition", vec3New(4.0f, 4.0f, 4.0f));
+	shaderProgramSetVec3(scene->shader, "cameraPosition", scene->camera->translation);
 	
 	glBindVertexArray(scene->vao);
 
 	for (int i = 0; i < propLength; i++)
 	{
 		Prop *prop = arrayGet(scene->props, i);
+
 		shaderProgramSetMatrix(scene->shader, "modelMatrix", prop->matrix);
-		glDrawArrays(GL_TRIANGLES, vertexTotal, (int) prop->asset->vertexLength / 3);
-		vertexTotal += prop->asset->vertexLength;
+		
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, prop->ibo);
+		glDrawElements(GL_TRIANGLES, prop->asset->indexLength * 3, GL_UNSIGNED_INT, 0);
 	}
 
 	for (int i = 0; i < actorLength; i++)
 	{
 		Actor *actor = arrayGet(scene->actors, i);
-		glBindVertexArray(actor->vao);
+
 		shaderProgramSetMatrix(scene->shader, "modelMatrix", actor->prop->matrix);
-		glDrawArrays(GL_TRIANGLES, 0, (int) actor->prop->asset->vertexLength / 3);
+
+		glBindVertexArray(actor->vao);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, actor->prop->ibo);
+		glDrawElements(GL_TRIANGLES, actor->prop->asset->indexLength * 3, GL_UNSIGNED_INT, 0);
 	}
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }

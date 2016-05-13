@@ -1,114 +1,229 @@
 #include "Scene/asset.h"
 
+static int assetObjLength(Asset*, char*, int);
+static int assetObjData(Asset*, char*, int);
+static int assetObjLineData(Asset*, char*, int*, int*, int*, int*);
+static int assetLoadFile(const char*, char**);
+
 void assetInit(Asset *asset)
 {
-	asset->vertexLength = 0;
-	asset->uvLength = 0;
-	asset->normalLength = 0;
-	asset->indexLength = 0;
 	asset->vertexData = NULL;
-	asset->uvData = NULL;
+	asset->textureData = NULL;
 	asset->normalData = NULL;
 	asset->indexData = NULL;
-}
-
-void assetLoadObj(Asset *asset, const char *path)
-{
-	float vertexData[108] = {
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, 1.0f, 1.0f,
-		-1.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, 1.0f, -1.0f,
-		1.0f, -1.0f, -1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, -1.0f,
-		-1.0f, 1.0f, -1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, -1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, 1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f,
-		1.0f, -1.0f, 1.0f
-	};
-
-	float uvData[108] = {
-		0.583f, 0.771f, 0.014f,
-		0.609f, 0.115f, 0.436f,
-		0.327f, 0.483f, 0.844f,
-		0.822f, 0.569f, 0.201f,
-		0.435f, 0.602f, 0.223f,
-		0.310f, 0.747f, 0.185f,
-		0.597f, 0.770f, 0.761f,
-		0.559f, 0.436f, 0.730f,
-		0.359f, 0.583f, 0.152f,
-		0.483f, 0.596f, 0.789f,
-		0.559f, 0.861f, 0.639f,
-		0.195f, 0.548f, 0.859f,
-		0.014f, 0.184f, 0.576f,
-		0.771f, 0.328f, 0.970f,
-		0.406f, 0.615f, 0.116f,
-		0.676f, 0.977f, 0.133f,
-		0.971f, 0.572f, 0.833f,
-		0.140f, 0.616f, 0.489f,
-		0.997f, 0.513f, 0.064f,
-		0.945f, 0.719f, 0.592f,
-		0.543f, 0.021f, 0.978f,
-		0.279f, 0.317f, 0.505f,
-		0.167f, 0.620f, 0.077f,
-		0.347f, 0.857f, 0.137f,
-		0.055f, 0.953f, 0.042f,
-		0.714f, 0.505f, 0.345f,
-		0.783f, 0.290f, 0.734f,
-		0.722f, 0.645f, 0.174f,
-		0.302f, 0.455f, 0.848f,
-		0.225f, 0.587f, 0.040f,
-		0.517f, 0.713f, 0.338f,
-		0.053f, 0.959f, 0.120f,
-		0.393f, 0.621f, 0.362f,
-		0.673f, 0.211f, 0.457f,
-		0.820f, 0.883f, 0.371f,
-		0.982f, 0.099f, 0.879f
-	};
-
-	float *vertexDataBuffer = (float*) malloc(sizeof(float) * 108);
-	memcpy(vertexDataBuffer, vertexData, sizeof(float) * 108);
-
-	asset->vertexLength = 108;
-	asset->vertexData = vertexDataBuffer;
-
-	float *uvDataBuffer = (float*) malloc(sizeof(float) * 108);
-	memcpy(uvDataBuffer, uvData, sizeof(float) * 108);
-
-	asset->uvLength = 108;
-	asset->uvData = uvDataBuffer;
+	asset->vertexLength = 0;
+	asset->textureLength = 0;
+	asset->normalLength = 0;
+	asset->indexLength = 0;
 }
 
 void assetDestroy(Asset *asset)
 {
 	free(asset->vertexData);
-	free(asset->uvData);
+	free(asset->textureData);
 	free(asset->normalData);
 	free(asset->indexData);
+}
+
+int assetLoadObj(Asset *asset, const char *path)
+{
+	char *assetData = NULL;
+	long assetDataLength = assetLoadFile(path, &assetData);
+
+	if (assetDataLength < 0)
+	{
+		return -1;
+	}
+
+	if (assetObjLength(asset, assetData, assetDataLength) || assetObjData(asset, assetData, assetDataLength))
+	{
+		return -2;
+	}
+
+	return 0;
+}
+
+int assetObjLength(Asset *asset, char *assetData, int assetDataLength)
+{
+	int returnError = 0;
+
+	char *assetLine = malloc(129 * sizeof(char));
+	int assetLineLength = 0;
+
+	for (int i = 0; i < assetDataLength; i++)
+	{
+		if (assetData[i] == '\n')
+		{
+			if (assetLineLength >= 128)
+			{
+				returnError = -1;
+				break;
+			}
+
+			memcpy(assetLine, &assetData[i - assetLineLength], assetLineLength * sizeof(char));
+			assetLine[assetLineLength + 1] = '\0';
+			assetLineLength = 0;
+
+			if (assetLine[0] == 'v')
+			{
+				if (assetLine[1] == ' ')
+				{
+					asset->vertexLength++;
+				}
+				else if (assetLine[1] == 't' && assetLine[2] == ' ')
+				{
+					asset->textureLength++;
+				}
+				else if (assetLine[1] == 'n' && assetLine[2] == ' ')
+				{
+					asset->normalLength++;
+				}
+			}
+			else if (assetLine[0] == 'f' && assetLine[1] == ' ')
+			{
+				asset->indexLength++;
+			}
+			continue;
+		}
+		assetLineLength++;
+	}
+
+	free(assetLine);
+
+	return returnError;
+}
+
+int assetObjData(Asset *asset, char *assetData, int assetDataLength)
+{
+	int returnError = 0;
+
+	int vertexIndex = 0;
+	int textureIndex = 0;
+	int normalIndex = 0;
+	int indexIndex = 0;
+
+    asset->vertexData = realloc(asset->vertexData, asset->vertexLength * sizeof(Vertex));
+    asset->textureData = realloc(asset->textureData, asset->textureLength * sizeof(Texture));
+    asset->normalData = realloc(asset->normalData, asset->normalLength * sizeof(Normal));
+    asset->indexData = realloc(asset->indexData, asset->indexLength * sizeof(Index));
+
+	char *assetLine = malloc(129 * sizeof(char));
+	int assetLineLength = 0;
+	
+	for (int i = 0; i < assetDataLength; i++)
+	{
+		if (assetData[i] == '\n')
+		{
+			if (assetLineLength >= 128)
+			{
+				returnError = -1;
+				break;
+			}
+
+			memcpy(assetLine, &assetData[i - assetLineLength], assetLineLength * sizeof(char));
+			assetLine[assetLineLength + 1] = '\0';
+			assetLineLength = 0;
+
+			if (assetObjLineData(asset, assetLine, &vertexIndex, &textureIndex, &normalIndex, &indexIndex))
+			{
+				returnError = -2;
+			}
+			continue;
+		}
+		assetLineLength++;
+	}
+
+	free(assetLine);
+
+	return returnError;
+}
+
+int assetObjLineData(Asset *asset, char *assetLine, int *vIndex, int *tIndex, int *nIndex, int *iIndex)
+{
+	if (assetLine[0] == 'v')
+	{
+		if (assetLine[1] == ' ')
+		{
+			float x, y, z;
+
+			if (sscanf(assetLine, "%*s%f %f %f", &x, &y, &z) == 3)
+			{
+				asset->vertexData[*vIndex].x = x;
+				asset->vertexData[*vIndex].y = y;
+				asset->vertexData[*vIndex].z = z;
+				(*vIndex)++;
+				return 0;
+			}
+			return -1;
+		}
+		else if (assetLine[1] == 't' && assetLine[2] == ' ')
+		{
+			float x, y;
+
+			if (sscanf(assetLine, "%*s%f %f", &x, &y) == 2)
+			{
+				asset->textureData[*tIndex].x = x;
+				asset->textureData[*tIndex].y = y;
+				(*tIndex)++;
+				return 0;
+			}
+			return -1;
+		}
+		else if (assetLine[1] == 'n' && assetLine[2] == ' ')
+		{
+			float x, y, z;
+
+			if (sscanf(assetLine, "%*s%f %f %f", &x, &y, &z) == 3)
+			{
+				asset->normalData[*nIndex].x = x;
+				asset->normalData[*nIndex].y = y;
+				asset->normalData[*nIndex].z = z;
+				(*nIndex)++;
+				return 0;
+			}
+			return -1;
+		}
+	}
+	else if (assetLine[0] == 'f' && assetLine[1] == ' ')
+	{
+		unsigned int x, y, z;
+
+		if (sscanf(assetLine, "%*s%u/%*u/%*u %u/%*u/%*u %u/%*u/%*u", &x, &y, &z) == 3)
+		{
+			asset->indexData[*iIndex].x = x - 1;
+			asset->indexData[*iIndex].y = y - 1;
+			asset->indexData[*iIndex].z = z - 1;
+			(*iIndex)++;
+			return 0;
+		}
+		return -1;
+	}
+
+	return 0;
+}
+
+int assetLoadFile(const char *assetPath, char **assetData)
+{
+	FILE *asset = fopen(assetPath, "rb");
+
+	if (!asset)
+	{
+		return -1;
+	}
+
+	fseek(asset, 0, SEEK_END);
+	int length = ftell(asset);
+	fseek(asset, 0, SEEK_SET);
+
+	*assetData = calloc(length + 1, 1);
+
+	if (length != fread(*assetData, 1, length, asset)) 
+	{ 
+		free(*assetData);
+		return -2;
+	}
+
+	fclose(asset);
+
+	return length;
 }

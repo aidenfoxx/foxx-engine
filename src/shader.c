@@ -4,7 +4,7 @@ static int shaderRead(const char*, char**);
 
 int shaderInit(Shader *shader, int shaderType, const char *shaderPath)
 {
-	char *shaderData;
+	char *shaderData = NULL;
 
 	if (shaderRead(shaderPath, &shaderData))
 	{
@@ -26,7 +26,7 @@ int shaderInit(Shader *shader, int shaderType, const char *shaderPath)
 		GLint errorLength;
 		glGetShaderiv(shader->shader, GL_INFO_LOG_LENGTH, &errorLength);
 
-		shader->error = realloc(shader->error, sizeof(char) * errorLength + 1);
+		shader->error = realloc(shader->error, (errorLength * sizeof(char)) + 1);
 		glGetShaderInfoLog(shader->shader, errorLength, NULL, shader->error);
 
 		return -2;
@@ -75,7 +75,7 @@ int shaderProgramLink(ShaderProgram *program)
 		GLint errorLength;
 		glGetProgramiv(program->program, GL_INFO_LOG_LENGTH, &errorLength);
 
-		program->error = realloc(program->error, sizeof(char) * errorLength + 1);
+		program->error = realloc(program->error, (errorLength * sizeof(char)) + 1);
 		glGetProgramInfoLog(program->program, errorLength, NULL, program->error);
 
 		return -1;
@@ -154,9 +154,9 @@ int shaderRead(const char *shaderPath, char **shaderData)
 	long length = ftell(shader);
 	fseek(shader, 0, SEEK_SET);
 
-	*shaderData = calloc(length + 1, sizeof(char));
+	*shaderData = calloc(length + 1, 1);
 
-	if (length != fread(*shaderData, sizeof(char), length, shader)) 
+	if (length != fread(*shaderData, 1, length, shader)) 
 	{ 
 		free(*shaderData);
 		return -2;

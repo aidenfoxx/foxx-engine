@@ -16,14 +16,14 @@ void renderInit()
 	/**
 	 * Initialize shaders.
 	 */
-	if (shaderInit(&defaultVertex, SHADER_VERTEX, "shaders/vertex/default.glsl"))
+	if (shaderInit(&defaultVertex, SHADER_VERTEX, "./assets/shaders/vertex/default.glsl"))
 	{
 		char *error = shaderError(&defaultVertex);
 		logMessage(LOG_ERROR, "Shader failed to compile with the following error:");
 		logMessage(LOG_NONE, error);
 	}
 
-	if (shaderInit(&defaultFragment, SHADER_FRAGMENT, "shaders/fragment/default.glsl"))
+	if (shaderInit(&defaultFragment, SHADER_FRAGMENT, "./assets/shaders/fragment/default.glsl"))
 	{
 		char *error = shaderError(&defaultVertex);
 		logMessage(LOG_ERROR, "Shader failed to compile with the following error:");
@@ -45,7 +45,12 @@ void renderInit()
 	 * Load models and bind them to a prop.
 	 */
 	assetInit(&asset);
-	assetLoadObj(&asset, "./assets/demo.obj");
+
+	if (assetLoadObj(&asset, "./assets/models/teapot.obj"))
+	{
+		logMessage(LOG_ERROR, "There was a problem loading the model.");
+	}
+
 	propInit(&prop, &asset);
 
 	/**

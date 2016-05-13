@@ -4,7 +4,7 @@ void arrayInit(Array *array)
 {
 	array->length = 0;
 	array->capacity = ARRAY_INITIAL_CAPACITY;
-	array->data = malloc(sizeof(void*) * array->capacity);
+	array->data = malloc(array->capacity * sizeof(void*));
 }
 
 int arrayLength(Array *array)
@@ -21,7 +21,7 @@ void arrayPush(Array *array, void *data)
 	if (array->length == array->capacity)
 	{
 		array->capacity *= 2; 
-		array->data = realloc(array->data, sizeof(void*) * array->capacity); 
+		array->data = realloc(array->data, array->capacity * sizeof(void*)); 
 	}
 
 	array->data[array->length] = data; 
@@ -82,7 +82,7 @@ void arrayRemove(Array *array, unsigned int index)
 		if (array->length == array->capacity / 4 && array->capacity > ARRAY_INITIAL_CAPACITY)
 		{
 			array->capacity /= 2;
-			array->data = realloc(array->data, sizeof(void*) * array->capacity); 
+			array->data = realloc(array->data, array->capacity * sizeof(void*)); 
 		}
 	}
 }

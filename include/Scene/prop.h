@@ -9,6 +9,7 @@
 
 typedef struct {
 	GLuint vbo[4];
+	GLuint ibo;
 	Asset *asset;
 	Vec3 scale;
 	Vec3 rotation;

@@ -16,6 +16,7 @@ typedef struct {
 	ShaderProgram *shader;
 	Array *props;
 	Array *actors;
+	Array *lights;
 } Scene;
 
 void sceneInit(Scene*, Camera*, ShaderProgram*);

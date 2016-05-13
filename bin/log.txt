@@ -115,3 +115,303 @@ NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#143) Undeclared identifier: vertexColor
+ERROR: 0:18: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: error(#273) 2 compilation
+ERROR:  Failed to link shader program with the following error:
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:16: error(#198) Redefinition error: lightPosition
+ERROR: 0:17: error(#198) Redefinition error: cameraPosition
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: err?
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:16: error(#198) Redefinition error: lightPosition
+ERROR: 0:17: error(#198) Redefinition error: cameraPosition
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: errF
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:16: error(#198) Redefinition error: lightPosition
+ERROR: 0:17: error(#198) Redefinition error: cameraPosition
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: err?
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:16: error(#198) Redefinition error: lightPosition
+ERROR: 0:17: error(#198) Redefinition error: cameraPosition
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: errF
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec»
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec»
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec»
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: lightPosision
+ERROR: 0:24: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: 0:25: error(#143) Undec
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:25: error(#143) Undeclared identifier: cameraPosision
+ERROR: 0:25: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: error(#273) 2 compilat!
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:25: error(#143) Undeclared identifier: cameraPosision
+ERROR: 0:25: error(#160) Cannot convert from: "float" to: "default out highp 3-component vector of vec3"
+ERROR: error(#273) 2 compilat
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
