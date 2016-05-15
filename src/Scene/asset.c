@@ -1,9 +1,8 @@
 #include "Scene/asset.h"
 
-static int assetObjLength(Asset*, char*, int);
-static int assetObjData(Asset*, char*, int);
-static int assetObjLineData(Asset*, char*, int*, int*, int*, int*);
-static int assetLoadFile(const char*, char**);
+static int assetParseObj(Asset*, char*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
+static int assetProcessObj(Asset*, Vec3*, Vec2*, Vec3*, Index*, unsigned int, unsigned int);
+static int assetIndexExist(Index*, Index*, unsigned int);
 
 void assetInit(Asset *asset)
 {
@@ -27,203 +26,256 @@ void assetDestroy(Asset *asset)
 
 int assetLoadObj(Asset *asset, const char *path)
 {
-	char *assetData = NULL;
-	long assetDataLength = assetLoadFile(path, &assetData);
+	char lineData[128];
 
-	if (assetDataLength < 0)
+	FILE *file = fopen(path, "rb");
+	
+	if (!file)
 	{
 		return -1;
 	}
 
-	if (assetObjLength(asset, assetData, assetDataLength) || assetObjData(asset, assetData, assetDataLength))
+	fseek(file, 0, SEEK_END);
+	int length = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	unsigned int vertexLength = 0;
+	unsigned int textureLength = 0;
+	unsigned int normalLength = 0;
+	unsigned int indexLength = 0;
+
+	char *buffer = malloc((length + 1) * sizeof(char));
+	int bufferLength = 0;
+
+	/**
+	 * Read file line by line into associated
+	 * buffers and count data sizes.
+	 */
+	while (fgets(lineData, sizeof(lineData), file) != NULL) 
+	{
+		if (lineData[0] == 'v' || lineData[0] == 'f')
+		{
+			memcpy(&buffer[bufferLength], lineData, strlen(lineData) * sizeof(char));
+			bufferLength += strlen(lineData);
+			buffer[bufferLength] = '\0';
+		}
+
+		if (lineData[0] == 'v')
+		{
+			if (lineData[1] == ' ')
+			{
+				vertexLength++;
+			}
+			else if (lineData[1] == 't' && lineData[2] == ' ')
+			{
+				textureLength++;
+			}
+			else if (lineData[1] == 'n' && lineData[2] == ' ')
+			{
+				normalLength++;
+			}
+		}
+		else if (lineData[0] == 'f' && lineData[1] == ' ')
+		{
+			indexLength++;
+		}
+	}
+
+	fclose(file);
+
+	buffer = realloc(buffer, (bufferLength + 1) * sizeof(char));
+
+	int parseError = assetParseObj(asset, buffer, length, vertexLength, textureLength, normalLength, indexLength);
+
+	if (parseError == -1)
 	{
 		return -2;
+	}
+	else if (parseError == -2)
+	{
+		return -3;
 	}
 
 	return 0;
 }
 
-int assetObjLength(Asset *asset, char *assetData, int assetDataLength)
+int assetParseObj(Asset *asset, char *buffer, unsigned int bufferLength, unsigned int vertexLength, unsigned int textureLength, unsigned int normalLength, unsigned int indexLength)
 {
 	int returnError = 0;
+	char lineData[128];
+	unsigned int lineLength = 0;
 
-	char *assetLine = malloc(129 * sizeof(char));
-	int assetLineLength = 0;
+	unsigned int vertexIndex = 0;
+	unsigned int textureIndex = 0;
+	unsigned int normalIndex = 0;
+	unsigned int indexIndex = 0;
 
-	for (int i = 0; i < assetDataLength; i++)
+	unsigned int indexCount = indexLength * 3;
+
+	Vertex *vertexData = malloc(vertexLength * sizeof(Vec3));
+	Texture *textureData = malloc(textureLength * sizeof(Vec2));
+	Normal *normalData = malloc(normalLength * sizeof(Vec3));
+	Index *indexData = malloc((indexLength * 3) * sizeof(Index));
+
+	Vec3 tempVec3;
+	Vec2 tempVec2;
+	Index tempIndex[3];
+
+	/**
+	 * Load the vertex data into formatted variables.
+	 *
+	 * TODO:
+	 * http://stackoverflow.com/questions/17983005/c-how-to-read-a-string-line-by-line
+	 */
+	for (int i = 0; i < bufferLength; i++)
 	{
-		if (assetData[i] == '\n')
+		if (buffer[i] == '\n' || i == bufferLength - 1)
 		{
-			if (assetLineLength >= 128)
+			if (lineLength > 127)
 			{
 				returnError = -1;
+				lineLength = 0;
 				break;
 			}
 
-			memcpy(assetLine, &assetData[i - assetLineLength], assetLineLength * sizeof(char));
-			assetLine[assetLineLength + 1] = '\0';
-			assetLineLength = 0;
+			memcpy(lineData, &buffer[i - lineLength], lineLength * sizeof(char));
+			lineData[lineLength] = '\0';
+			lineLength = 0;
 
-			if (assetLine[0] == 'v')
+			if (lineData[0] == 'v')
 			{
-				if (assetLine[1] == ' ')
+				if (lineData[1] == ' ')
 				{
-					asset->vertexLength++;
+					if (sscanf(lineData, "%*s%f %f %f", &tempVec3.x, &tempVec3.y, &tempVec3.z) == 3)
+					{
+						vertexData[vertexIndex] = tempVec3;
+						vertexIndex++;
+						continue;
+					}
 				}
-				else if (assetLine[1] == 't' && assetLine[2] == ' ')
+				else if (lineData[1] == 't' && lineData[2] == ' ')
 				{
-					asset->textureLength++;
+					if (sscanf(lineData, "%*s%f %f", &tempVec2.x, &tempVec2.y) == 2)
+					{
+						textureData[textureIndex] = tempVec2;
+						textureIndex++;
+						continue;
+					}
 				}
-				else if (assetLine[1] == 'n' && assetLine[2] == ' ')
+				else if (lineData[1] == 'n' && lineData[2] == ' ')
 				{
-					asset->normalLength++;
+					if (sscanf(lineData, "%*s%f %f %f", &tempVec3.x, &tempVec3.y, &tempVec3.z) == 3)
+					{
+						normalData[normalIndex] = tempVec3;
+						normalIndex++;
+						continue;
+					}
 				}
+				returnError = -2;
 			}
-			else if (assetLine[0] == 'f' && assetLine[1] == ' ')
+			else if (lineData[0] == 'f')
 			{
-				asset->indexLength++;
-			}
-			continue;
-		}
-		assetLineLength++;
-	}
+				int count = sscanf(lineData, "%*s%u/%u/%u %u/%u/%u %u/%u/%u", 
+					&tempIndex[0].x, &tempIndex[0].y, &tempIndex[0].z,
+					&tempIndex[1].x, &tempIndex[1].y, &tempIndex[1].z,
+					&tempIndex[2].x, &tempIndex[2].y, &tempIndex[2].z
+				);
 
-	free(assetLine);
+				/**
+				 * Could we get all the data?
+				 */
+				if (count == 9)
+				{
+					if (assetIndexExist(indexData, &tempIndex[0], indexIndex) > -1)
+					{
+						indexCount--;
+					}
 
-	return returnError;
-}
+					indexData[indexIndex] = tempIndex[0];
 
-int assetObjData(Asset *asset, char *assetData, int assetDataLength)
-{
-	int returnError = 0;
+					if (assetIndexExist(indexData, &tempIndex[1], indexIndex + 1) > -1)
+					{
+						indexCount--;
+					}
 
-	int vertexIndex = 0;
-	int textureIndex = 0;
-	int normalIndex = 0;
-	int indexIndex = 0;
+					indexData[indexIndex + 1] = tempIndex[1];
 
-    asset->vertexData = realloc(asset->vertexData, asset->vertexLength * sizeof(Vertex));
-    asset->textureData = realloc(asset->textureData, asset->textureLength * sizeof(Texture));
-    asset->normalData = realloc(asset->normalData, asset->normalLength * sizeof(Normal));
-    asset->indexData = realloc(asset->indexData, asset->indexLength * sizeof(Index));
+					if (assetIndexExist(indexData, &tempIndex[2], indexIndex + 2) > -1)
+					{
+						indexCount--;
+					}
 
-	char *assetLine = malloc(129 * sizeof(char));
-	int assetLineLength = 0;
-	
-	for (int i = 0; i < assetDataLength; i++)
-	{
-		if (assetData[i] == '\n')
-		{
-			if (assetLineLength >= 128)
-			{
-				returnError = -1;
-				break;
-			}
+					indexData[indexIndex + 2] = tempIndex[2];
 
-			memcpy(assetLine, &assetData[i - assetLineLength], assetLineLength * sizeof(char));
-			assetLine[assetLineLength + 1] = '\0';
-			assetLineLength = 0;
+					indexIndex += 3;
 
-			if (assetObjLineData(asset, assetLine, &vertexIndex, &textureIndex, &normalIndex, &indexIndex))
-			{
+					continue;
+				}
 				returnError = -2;
 			}
 			continue;
 		}
-		assetLineLength++;
+		lineLength++;
 	}
 
-	free(assetLine);
+	free(buffer);
+
+	assetProcessObj(asset, vertexData, textureData, normalData, indexData, indexCount, indexLength);
 
 	return returnError;
 }
 
-int assetObjLineData(Asset *asset, char *assetLine, int *vIndex, int *tIndex, int *nIndex, int *iIndex)
+int assetProcessObj(Asset *asset, Vertex *vertexData, Texture *textureData, Normal *normalData, Index *indexData, unsigned int indexCount, unsigned int indexLength)
 {
-	if (assetLine[0] == 'v')
+	asset->vertexLength = indexCount;
+	asset->textureLength = indexCount;
+	asset->normalLength = indexCount;
+	asset->indexLength = indexLength;
+
+	asset->vertexData = malloc(asset->vertexLength * sizeof(Vertex));
+	asset->textureData = malloc(asset->textureLength * sizeof(Texture));
+	asset->normalData = malloc(asset->normalLength * sizeof(Normal));
+	asset->indexData = malloc(asset->indexLength * sizeof(Index));
+
+	int *indexArray = (int*) asset->indexData;
+	int indexCurrent = 0;
+
+	for (int i = 0; i < indexLength * 3; i++)
 	{
-		if (assetLine[1] == ' ')
-		{
-			float x, y, z;
+		int duplicateID;
 
-			if (sscanf(assetLine, "%*s%f %f %f", &x, &y, &z) == 3)
-			{
-				asset->vertexData[*vIndex].x = x;
-				asset->vertexData[*vIndex].y = y;
-				asset->vertexData[*vIndex].z = z;
-				(*vIndex)++;
-				return 0;
-			}
-			return -1;
+		if ((duplicateID = assetIndexExist(indexData, &indexData[i], i)) < 0)
+		{
+			asset->vertexData[indexCurrent] = vertexData[indexData[i].x - 1];
+			asset->textureData[indexCurrent] = textureData[indexData[i].y - 1];
+			asset->normalData[indexCurrent] = normalData[indexData[i].z - 1];
+
+			indexArray[i] = indexCurrent;
+
+			indexCurrent++;
 		}
-		else if (assetLine[1] == 't' && assetLine[2] == ' ')
+		else
 		{
-			float x, y;
-
-			if (sscanf(assetLine, "%*s%f %f", &x, &y) == 2)
-			{
-				asset->textureData[*tIndex].x = x;
-				asset->textureData[*tIndex].y = y;
-				(*tIndex)++;
-				return 0;
-			}
-			return -1;
-		}
-		else if (assetLine[1] == 'n' && assetLine[2] == ' ')
-		{
-			float x, y, z;
-
-			if (sscanf(assetLine, "%*s%f %f %f", &x, &y, &z) == 3)
-			{
-				asset->normalData[*nIndex].x = x;
-				asset->normalData[*nIndex].y = y;
-				asset->normalData[*nIndex].z = z;
-				(*nIndex)++;
-				return 0;
-			}
-			return -1;
+			indexArray[i] = indexArray[duplicateID];
 		}
 	}
-	else if (assetLine[0] == 'f' && assetLine[1] == ' ')
-	{
-		unsigned int x, y, z;
 
-		if (sscanf(assetLine, "%*s%u/%*u/%*u %u/%*u/%*u %u/%*u/%*u", &x, &y, &z) == 3)
-		{
-			asset->indexData[*iIndex].x = x - 1;
-			asset->indexData[*iIndex].y = y - 1;
-			asset->indexData[*iIndex].z = z - 1;
-			(*iIndex)++;
-			return 0;
-		}
-		return -1;
-	}
+	free(vertexData);
+	free(textureData);
+	free(normalData);
+	free(indexData);
 
 	return 0;
 }
 
-int assetLoadFile(const char *assetPath, char **assetData)
+int assetIndexExist(Index *indices, Index *comparison, unsigned int indexLength)
 {
-	FILE *asset = fopen(assetPath, "rb");
-
-	if (!asset)
+	for (int i = 0; i < indexLength; i++)
 	{
-		return -1;
+		if (indices[i].x == comparison->x && indices[i].y == comparison->y && indices[i].z == comparison->z)
+		{
+			return i;
+		}
 	}
-
-	fseek(asset, 0, SEEK_END);
-	int length = ftell(asset);
-	fseek(asset, 0, SEEK_SET);
-
-	*assetData = calloc(length + 1, 1);
-
-	if (length != fread(*assetData, 1, length, asset)) 
-	{ 
-		free(*assetData);
-		return -2;
-	}
-
-	fclose(asset);
-
-	return length;
+	return -1;
 }
