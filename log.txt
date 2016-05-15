@@ -1,0 +1,16 @@
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Error: No shaders attached to current program 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Error: No shaders attached to current program 
+
+NOTICE: Program initialized.

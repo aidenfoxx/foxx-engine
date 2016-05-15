@@ -46,39 +46,16 @@ void renderInit()
 	 */
 	assetInit(&asset);
 
-	if (assetLoadObj(&asset, "./assets/models/teapot.obj"))
+	float initialTime = glfwGetTime();
+
+	if (assetLoadObj(&asset, "./assets/models/cube.obj"))
 	{
 		logMessage(LOG_ERROR, "There was a problem loading the model.");
 	}
 
-	/*printf("Vertex data: \n");
+	float finalTime = glfwGetTime();
 
-	for (int i = 0; i < asset.vertexLength; i++)
-	{
-		printf("%f %f %f\n", asset.vertexData[i].x, asset.vertexData[i].y, asset.vertexData[i].z);
-	}
-
-	printf("Texture data: \n");
-
-	for (int i = 0; i < asset.textureLength; i++)
-	{
-		printf("%f %f\n", asset.textureData[i].x, asset.textureData[i].y);
-	}
-
-	printf("Normal data: \n");
-
-	for (int i = 0; i < asset.normalLength; i++)
-	{
-		printf("%f %f %f\n", asset.normalData[i].x, asset.normalData[i].y, asset.normalData[i].z);
-	}
-
-	printf("Index data: \n");
-
-	for (int i = 0; i < asset.indexLength; i++)
-	{
-		printf("%i %i %i\n", asset.indexData[i].x, asset.indexData[i].y, asset.indexData[i].z);
-	}*/
-
+	printf("Loading took: %f\n", finalTime - initialTime);
 
 	propInit(&prop, &asset);
 
