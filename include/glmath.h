@@ -5,48 +5,70 @@
 #include <math.h>
 
 typedef struct {
+	int x;
+	int y;
+} Vector2i;
+
+typedef struct {
+	int x;
+	int y;
+	int z;
+} Vector3i;
+
+typedef struct {
+	int x;
+	int y;
+	int z;
+	int w;
+} Vector4i;
+
+typedef struct {
 	float x;
 	float y;
-} Vec2;
+} Vector2f;
 
 typedef struct {
 	float x;
 	float y;
 	float z;
-} Vec3;
+} Vector3f;
 
 typedef struct {
 	float x;
 	float y;
 	float z;
 	float w;
-} Vec4;
+} Vector4f;
 
 typedef struct {
 	float xx; float yx; float zx; float wx;
 	float xy; float yy; float zy; float wy;
 	float xz; float yz; float zz; float wz;
 	float xw; float yw; float zw; float ww;
-} Matrix;
+} Matrix4;
 
-Vec2 vec2New(float, float);
-Vec3 vec3New(float, float, float);
-Vec4 vec4New(float, float, float, float);
+Vector2i vector2i(int, int);
+Vector3i vector3i(int, int, int);
+Vector4i vector4i(int, int, int, int);
 
-Vec3 quatConvertEuler(Vec4);
-Vec4 eulerConvertQuat(Vec3);
+Vector2f vector2f(float, float);
+Vector3f vector3f(float, float, float);
+Vector4f vector4f(float, float, float, float);
 
-Matrix matrixEmpty();
-Matrix matrixIdentity();
-Matrix matrixTranslate(Vec3);
-Matrix matrixScale(Vec3);
-Matrix matrixRotateEuler(Vec3);
-Matrix matrixRotateQuat(Vec4);
-Matrix matrixPerspective(float, float, float, float);
+Vector3f quatConvertEuler(Vector4f);
+Vector4f eulerConvertQuat(Vector3f);
 
-Vec2 vec2MultiplyMatrix(Vec2, Matrix);
-Vec3 vec3MultiplyMatrix(Vec3, Matrix);
-Vec4 vec4MultiplyMatrix(Vec4, Matrix);
-Matrix matrixMultiplyMatrix(Matrix, Matrix);
+Matrix4 matrix4Empty();
+Matrix4 matrix4Identity();
+Matrix4 matrix4Translate(Vector3f);
+Matrix4 matrix4Scale(Vector3f);
+Matrix4 matrix4Euler(Vector3f);
+Matrix4 matrix4Quat(Vector4f);
+Matrix4 matrix4Perspective(float, float, float, float);
+
+Vector2f vector2fMultiplyMatrix4(Vector2f, Matrix4);
+Vector3f vector3fMultiplyMatrix4(Vector3f, Matrix4);
+Vector4f vector4fMultiplyMatrix4(Vector4f, Matrix4);
+Matrix4 matrix4MultiplyMatrix4(Matrix4, Matrix4);
 
 #endif

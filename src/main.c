@@ -1,70 +1,98 @@
 #include <stdio.h>
 
-#include "foxx.h"
+#include "context.h"
+#include "input.h"
+#include "shader.h"
+#include "scene.h"
 
-ShaderProgram shaderProgram;
-Shader defaultVertex;
-Shader defaultFragment;
+#include "Assets/obj.h"
+#include "Tools/log.h"
+
+ShaderProgram phongShader;
+Shader phongVertex;
+Shader phongFragment;
 
 Asset asset;
 Prop prop;
 Camera camera;
 Scene scene;
 
-void renderInit()
+int renderInit()
 {
-	/**
-	 * Initialize shaders.
-	 */
-	if (shaderInit(&defaultVertex, SHADER_VERTEX, "./assets/shaders/vertex/default.glsl"))
-	{
-		char *error = shaderError(&defaultVertex);
-		logMessage(LOG_ERROR, "Shader failed to compile with the following error:");
-		logMessage(LOG_NONE, error);
-	}
-
-	if (shaderInit(&defaultFragment, SHADER_FRAGMENT, "./assets/shaders/fragment/default.glsl"))
-	{
-		char *error = shaderError(&defaultVertex);
-		logMessage(LOG_ERROR, "Shader failed to compile with the following error:");
-		logMessage(LOG_NONE, error);
-	}
-
-	shaderProgramInit(&shaderProgram);
-	shaderAttach(&shaderProgram, &defaultVertex);
-	shaderAttach(&shaderProgram, &defaultFragment);
-
-	if (shaderProgramLink(&shaderProgram))
-	{
-		char *error = shaderProgramError(&shaderProgram);
-		logMessage(LOG_ERROR, "Failed to link shader program with the following error:");
-		logMessage(LOG_NONE, error);
-	}
-
-	/**
-	 * Load models and bind them to a prop.
-	 */
-	assetInit(&asset);
-
-	float initialTime = glfwGetTime();
-
-	if (assetLoadObj(&asset, "./assets/models/cube.obj"))
-	{
-		logMessage(LOG_ERROR, "There was a problem loading the model.");
-	}
-
-	float finalTime = glfwGetTime();
-
-	printf("Loading took: %f\n", finalTime - initialTime);
-
-	propInit(&prop, &asset);
-
 	/**
 	 * Initialize scene and add props and shader.
 	 */
 	cameraInit(&camera);
-	sceneInit(&scene, &camera, &shaderProgram);
-	sceneAddProp(&scene, &prop);
+
+	if (sceneInit(&scene, &camera))
+	{
+		logMessage(LOG_ERROR, "There was a problem initializing the scene.");
+		sceneDestroy(&scene);
+		return -1;
+	}
+
+	/**
+	 * Initialize shaders.
+	 */
+	shaderProgramInit(&phongShader);
+
+	if (shaderInit(&phongVertex, SHADER_VERTEX, "./assets/shaders/phong.vs"))
+	{
+		char *error = shaderError(&phongVertex); 
+		logMessage(LOG_ERROR, "Failed to compile vertex shader with the following error(s):"); 
+		logMessage(LOG_NONE, error);
+	}
+
+	if (shaderInit(&phongFragment, SHADER_FRAGMENT, "./assets/shaders/phong.fs"))
+	{
+		char *error = shaderError(&phongFragment); 
+		logMessage(LOG_ERROR, "Failed to compile fragment shader with the following error(s):"); 
+		logMessage(LOG_NONE, error);
+	}
+
+	shaderAttach(&phongShader, &phongVertex);
+	shaderAttach(&phongShader, &phongFragment);
+
+	if (shaderProgramLink(&phongShader))
+	{
+		char *error = shaderProgramError(&phongShader); 
+		logMessage(LOG_ERROR, "Failed to link shader with the following error(s):"); 
+		logMessage(LOG_NONE, error);
+	}
+
+	sceneAddShader(&scene, &phongShader);
+
+	shaderDestroy(&phongVertex);
+	shaderDestroy(&phongFragment);
+
+	/**
+	 * Load models and bind them to a prop.
+	 */
+	Obj model;
+
+	if (objInit(&model, "./assets/models/buddha.obj"))
+	{
+		logMessage(LOG_ERROR, "There was a problem loading the model.");
+	}
+	else
+	{
+		assetInit(&asset);
+
+		if (assetBindObj(&asset, &model))
+		{
+			logMessage(LOG_ERROR, "There was a problem binding the model mesh.");
+			assetDestroy(&asset);
+		}
+		else
+		{
+			propInit(&prop, &asset);
+			sceneAddProp(&scene, &prop);
+		}
+	}
+
+	objDestroy(&model);
+
+	return 0;
 }
 
 void renderDestroy()
@@ -72,9 +100,6 @@ void renderDestroy()
 	sceneDestroy(&scene);
 	propDestroy(&prop);
 	assetDestroy(&asset);
-	shaderDestroy(&defaultVertex);
-	shaderDestroy(&defaultFragment);
-	shaderProgramDestroy(&shaderProgram);
 }
 
 void inputHandle()
@@ -131,12 +156,14 @@ int main(int argc, const char *argv[])
 	}
 
 	inputInit();
-	renderInit();
+	
+	if (!renderInit())
+	{
+		logMessage(LOG_NOTICE, "Program initialized.");
 
-	logMessage(LOG_NOTICE, "Program initialized.");
-
-	contextLoopCallback(renderFunction);
-	contextLoop();
+		contextLoopCallback(renderFunction);
+		contextLoop();
+	}
 
 	renderDestroy();
 	contextDestroy();

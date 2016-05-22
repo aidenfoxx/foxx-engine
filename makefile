@@ -10,7 +10,7 @@ CC=gcc
 CFLAGS=-o -std=c99 -pedantic -c -Wall -I $(INC_DIR) -g
 
 ifeq ($(OS), Windows_NT)
-	LDFLAGS=-L $(LIB_DIR) -lglfw3dll -lopengl32
+	LDFLAGS=-L $(LIB_DIR) -lglfw3dll -lopengl32 -glu32
 else
 	LDFLAGS=-lglfw3 -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
 endif

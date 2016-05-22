@@ -1,26 +1,44 @@
 #include "glmath.h"
 
-Vec2 vec2New(float x, float y)
+Vector2i vector2i(int x, int y)
 {
-	Vec2 vec = { x, y };
-	return vec;
+	Vector2i vector = { x, y };
+	return vector;
 }
 
-Vec3 vec3New(float x, float y, float z)
+Vector3i vector3i(int x, int y, int z)
 {
-	Vec3 vec = { x, y, z };
-	return vec;
+	Vector3i vector = { x, y, z };
+	return vector;
 }
 
-Vec4 vec4New(float x, float y, float z, float w)
+Vector4i vector4i(int x, int y, int z, int w)
 {
-	Vec4 vec = { x, y, z, w };
-	return vec;
+	Vector4i vector = { x, y, z, w };
+	return vector;
 }
 
-Vec3 quatConvertEuler(Vec4 q)
+Vector2f vector2f(float x, float y)
 {
-	Vec3 euler;
+	Vector2f vector = { x, y };
+	return vector;
+}
+
+Vector3f vector3f(float x, float y, float z)
+{
+	Vector3f vector = { x, y, z };
+	return vector;
+}
+
+Vector4f vector4f(float x, float y, float z, float w)
+{
+	Vector4f vector = { x, y, z, w };
+	return vector;
+}
+
+Vector3f quatConvertEuler(Vector4f q)
+{
+	Vector3f euler;
 
 	float sqrX = q.x * q.x; 
 	float sqrY = q.y * q.y; 
@@ -34,9 +52,9 @@ Vec3 quatConvertEuler(Vec4 q)
 	return euler;
 }
 
-Vec4 eulerConvertQuat(Vec3 e)
+Vector4f eulerConvertQuat(Vector3f e)
 {
-	Vec4 quat;
+	Vector4f quat;
 
 	float cosX = cosf(e.x / 2.0f); 
 	float cosY = cosf(e.y / 2.0f); 
@@ -54,55 +72,55 @@ Vec4 eulerConvertQuat(Vec3 e)
 	return quat;
 }
 
-Matrix matrixEmpty()
+Matrix4 matrix4Empty()
 {
-	Matrix mat = {
+	Matrix4 matrix = {
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f
 	};
 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixIdentity()
+Matrix4 matrix4Identity()
 {
-	Matrix mat = {
+	Matrix4 matrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	};
 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixTranslate(Vec3 t)
+Matrix4 matrix4Translate(Vector3f t)
 {
-	Matrix mat = matrixIdentity();
+	Matrix4 matrix = matrix4Identity();
 
-	mat.xw = t.x;
-	mat.yw = t.y;
-	mat.zw = t.z;
+	matrix.xw = t.x;
+	matrix.yw = t.y;
+	matrix.zw = t.z;
 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixScale(Vec3 s)
+Matrix4 matrix4Scale(Vector3f s)
 {
-	Matrix mat = matrixIdentity();
+	Matrix4 matrix = matrix4Identity();
 
-	mat.xx = s.x;
-	mat.yy = s.y;
-	mat.zz = s.z;
+	matrix.xx = s.x;
+	matrix.yy = s.y;
+	matrix.zz = s.z;
 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixRotateEuler(Vec3 e)
+Matrix4 matrix4Euler(Vector3f e)
 {
-	Matrix mat = matrixIdentity();
+	Matrix4 matrix = matrix4Identity();
 
 	float cosX = cos(e.x);
 	float cosY = cos(e.y);
@@ -112,24 +130,24 @@ Matrix matrixRotateEuler(Vec3 e)
 	float sinY = sin(e.y); 
 	float sinZ = sin(e.z); 
 
-	mat.xx = cosY * cosZ;
-	mat.xy = cosY * sinZ;
-	mat.xz = -sinY; 
+	matrix.xx = cosY * cosZ;
+	matrix.xy = cosY * sinZ;
+	matrix.xz = -sinY; 
 
-	mat.yx = -cosX * sinZ + sinX * sinY * cosZ;
-	mat.yy = cosX * cosZ + sinX * sinY * sinZ;
-	mat.yz = sinX * cosY; 
+	matrix.yx = -cosX * sinZ + sinX * sinY * cosZ;
+	matrix.yy = cosX * cosZ + sinX * sinY * sinZ;
+	matrix.yz = sinX * cosY; 
 
-	mat.zx = sinX * sinZ + cosX * sinY * cosZ; 
-	mat.zy = -sinX * cosZ + cosX * sinY * sinZ; 
-	mat.zz = cosX * cosY; 
+	matrix.zx = sinX * sinZ + cosX * sinY * cosZ; 
+	matrix.zy = -sinX * cosZ + cosX * sinY * sinZ; 
+	matrix.zz = cosX * cosY; 
 	 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixRotateQuat(Vec4 q)
+Matrix4 matrix4Quat(Vector4f q)
 {
-	Matrix mat = matrixIdentity();
+	Matrix4 matrix = matrix4Identity();
 
     float xx = q.x * q.x;
     float xy = q.x * q.y;
@@ -143,92 +161,92 @@ Matrix matrixRotateQuat(Vec4 q)
     float zz = q.z * q.z;
     float zw = q.z * q.w;
 
-	mat.xx = 1.0f - 2.0f * (yy + zz);
-	mat.xy = 2.0f * (xy - zw);
-	mat.xz = 2.0f * (xz + yw);
+	matrix.xx = 1.0f - 2.0f * (yy + zz);
+	matrix.xy = 2.0f * (xy - zw);
+	matrix.xz = 2.0f * (xz + yw);
 
-	mat.yx = 2.0f * (xy + zw);
-	mat.yy = 1.0f - 2.0f * (xx + zz);
-	mat.yz = 2.0f * (yz - xw);
+	matrix.yx = 2.0f * (xy + zw);
+	matrix.yy = 1.0f - 2.0f * (xx + zz);
+	matrix.yz = 2.0f * (yz - xw);
 
-	mat.zx = 2.0f * (xz - yw);
-	mat.zy = 2.0f * (yz + xw);
-	mat.zz = 1.0f - 2.0f * (xx + yy);
+	matrix.zx = 2.0f * (xz - yw);
+	matrix.zy = 2.0f * (yz + xw);
+	matrix.zz = 1.0f - 2.0f * (xx + yy);
 
-	return mat;
+	return matrix;
 }
 
-Matrix matrixPerspective(float fov, float aspectRatio, float nearClip, float farClip)
+Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float farClip)
 {
-	Matrix mat = matrixEmpty();
+	Matrix4 matrix = matrix4Empty();
 
 	float cotan = 1.0f / tanf(fov / 2.0f); 
 
-	mat.xx = cotan / aspectRatio;
-	mat.yy = cotan;
-	mat.zz = (farClip + nearClip) / (nearClip - farClip);
-	mat.zw = (2.0f * farClip * nearClip) / (nearClip - farClip);
-	mat.wz = -1.0f;
+	matrix.xx = cotan / aspectRatio;
+	matrix.yy = cotan;
+	matrix.zz = (farClip + nearClip) / (nearClip - farClip);
+	matrix.zw = (2.0f * farClip * nearClip) / (nearClip - farClip);
+	matrix.wz = -1.0f;
 
-	return mat;
+	return matrix;
 }
 
-Vec2 vec2MultiplyMatrix(Vec2 v, Matrix m)
+Vector2f vector2fMultiplyMatrix4(Vector2f v, Matrix4 m)
 {
-	Vec2 vec = {
+	Vector2f vector = {
 		(v.x * m.xx) + (v.y * m.xy),
 		(v.x * m.yx) + (v.y * m.yy)
 	};
 
-	return vec;
+	return vector;
 }
 
-Vec3 vec3MultiplyMatrix(Vec3 v, Matrix m)
+Vector3f vector3fMultiplyMatrix4(Vector3f v, Matrix4 m)
 {
-	Vec3 vec = {
+	Vector3f vector = {
 		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz),
 		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz),
 		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz)
 	};
 
-	return vec;
+	return vector;
 }
 
-Vec4 vec4MultiplyMatrix(Vec4 v, Matrix m)
+Vector4f vector4fMultiplyMatrix4(Vector4f v, Matrix4 m)
 {
-	Vec4 vec = {
+	Vector4f vector = {
 		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz) + (v.z * m.xw),
 		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz) + (v.z * m.yw),
 		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz) + (v.z * m.zw),
 		(v.x * m.wx) + (v.y * m.wy) + (v.z * m.wz) + (v.z * m.ww)
 	};
 
-	return vec;
+	return vector;
 }
 
-Matrix matrixMultiplyMatrix(Matrix m1, Matrix m2)
+Matrix4 matrix4MultiplyMatrix4(Matrix4 m1, Matrix4 m2)
 {
-	Matrix mat = matrixEmpty();
+	Matrix4 matrix = matrix4Empty();
 
-	mat.xx = (m1.xx * m2.xx) + (m1.xy * m2.yx) + (m1.xz * m2.zx) + (m1.xw * m2.wx);
-	mat.yx = (m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx) + (m1.yw * m2.wx);
-	mat.zx = (m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx) + (m1.zw * m2.wx);
-	mat.wx = (m1.wx * m2.xx) + (m1.wy * m2.yx) + (m1.wz * m2.zx) + (m1.ww * m2.wx); 
+	matrix.xx = (m1.xx * m2.xx) + (m1.xy * m2.yx) + (m1.xz * m2.zx) + (m1.xw * m2.wx);
+	matrix.yx = (m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx) + (m1.yw * m2.wx);
+	matrix.zx = (m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx) + (m1.zw * m2.wx);
+	matrix.wx = (m1.wx * m2.xx) + (m1.wy * m2.yx) + (m1.wz * m2.zx) + (m1.ww * m2.wx); 
 
-	mat.xy = (m1.xx * m2.xy) + (m1.xy * m2.yy) + (m1.xz * m2.zy) + (m1.xw * m2.wy);
-	mat.yy = (m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy) + (m1.yw * m2.wy);
-	mat.zy = (m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy) + (m1.zw * m2.wy);
-	mat.wy = (m1.wx * m2.xy) + (m1.wy * m2.yy) + (m1.wz * m2.zy) + (m1.ww * m2.wy);
+	matrix.xy = (m1.xx * m2.xy) + (m1.xy * m2.yy) + (m1.xz * m2.zy) + (m1.xw * m2.wy);
+	matrix.yy = (m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy) + (m1.yw * m2.wy);
+	matrix.zy = (m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy) + (m1.zw * m2.wy);
+	matrix.wy = (m1.wx * m2.xy) + (m1.wy * m2.yy) + (m1.wz * m2.zy) + (m1.ww * m2.wy);
 
-	mat.xz = (m1.xx * m2.xz) + (m1.xy * m2.yz) + (m1.xz * m2.zz) + (m1.xw * m2.wz);
-	mat.yz = (m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz) + (m1.yw * m2.wz);
-	mat.zz = (m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz) + (m1.zw * m2.wz);
-	mat.wz = (m1.wx * m2.xz) + (m1.wy * m2.yz) + (m1.wz * m2.zz) + (m1.ww * m2.wz); 
+	matrix.xz = (m1.xx * m2.xz) + (m1.xy * m2.yz) + (m1.xz * m2.zz) + (m1.xw * m2.wz);
+	matrix.yz = (m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz) + (m1.yw * m2.wz);
+	matrix.zz = (m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz) + (m1.zw * m2.wz);
+	matrix.wz = (m1.wx * m2.xz) + (m1.wy * m2.yz) + (m1.wz * m2.zz) + (m1.ww * m2.wz); 
 
-	mat.xw = (m1.xx * m2.xw) + (m1.xy * m2.yw) + (m1.xz * m2.zw) + (m1.xw * m2.ww); 
-	mat.yw = (m1.yx * m2.xw) + (m1.yy * m2.yw) + (m1.yz * m2.zw) + (m1.yw * m2.ww); 
-	mat.zw = (m1.zx * m2.xw) + (m1.zy * m2.yw) + (m1.zz * m2.zw) + (m1.zw * m2.ww); 
-	mat.ww = (m1.wx * m2.xw) + (m1.wy * m2.yw) + (m1.wz * m2.zw) + (m1.ww * m2.ww);
+	matrix.xw = (m1.xx * m2.xw) + (m1.xy * m2.yw) + (m1.xz * m2.zw) + (m1.xw * m2.ww); 
+	matrix.yw = (m1.yx * m2.xw) + (m1.yy * m2.yw) + (m1.yz * m2.zw) + (m1.yw * m2.ww); 
+	matrix.zw = (m1.zx * m2.xw) + (m1.zy * m2.yw) + (m1.zz * m2.zw) + (m1.zw * m2.ww); 
+	matrix.ww = (m1.wx * m2.xw) + (m1.wy * m2.yw) + (m1.wz * m2.zw) + (m1.ww * m2.ww);
 
-	return mat;
+	return matrix;
 }

@@ -1,7 +1,12 @@
 #include "scene.h"
 
-void sceneInit(Scene *scene, Camera *camera, ShaderProgram *shader)
+static int defaultShaderID;
+
+int sceneInit(Scene *scene, Camera *camera)
 {
+	Array *shaders = malloc(sizeof(Array));
+	arrayInit(shaders);
+
 	Array *actors = malloc(sizeof(Array));
 	arrayInit(actors);
 
@@ -10,30 +15,81 @@ void sceneInit(Scene *scene, Camera *camera, ShaderProgram *shader)
 
 	glGenVertexArrays(1, &scene->vao);
 
+	scene->shaders = shaders;
 	scene->camera = camera;
-	scene->shader = shader;
 	scene->actors = actors;
 	scene->props = props;
+
+	/**
+	 * Initialize a default scene shader.
+	 */
+	ShaderProgram *defaultShader = malloc(sizeof(ShaderProgram));
+	shaderProgramInit(defaultShader);
+
+	Shader defaultVertex;
+	Shader defaultFragment;
+
+	if (shaderInit(&defaultVertex, SHADER_VERTEX, "./assets/shaders/default.vs"))
+	{
+		return -1;
+	}
+
+	if (shaderInit(&defaultFragment, SHADER_FRAGMENT, "./assets/shaders/default.fs"))
+	{
+		return -2;
+	}
+
+	shaderAttach(defaultShader, &defaultVertex);
+	shaderAttach(defaultShader, &defaultFragment);
+
+	if (shaderProgramLink(defaultShader))
+	{
+		return -3;
+	}
+
+	defaultShaderID = sceneAddShader(scene, defaultShader);
+
+	shaderDestroy(&defaultVertex);
+	shaderDestroy(&defaultFragment);
+
+	return 0;
 }
 
 void sceneDestroy(Scene *scene)
 {
 	glDeleteVertexArrays(1, &scene->vao);
+
+	if (defaultShaderID)
+	{
+		ShaderProgram *shader = arrayGet(scene->shaders, defaultShaderID - 1);
+		shaderProgramDestroy(shader);
+	}
+	
+	free(scene->shaders);
 	free(scene->actors);
+	free(scene->props);
+}
+
+int sceneAddShader(Scene *scene, ShaderProgram *program)
+{
+	arrayPush(scene->shaders, program);
+	return arrayLength(scene->shaders);
+}
+
+void sceneRemoveShader(Scene *scene, int shaderID)
+{
+	if (shaderID != defaultShaderID)
+	{
+		arrayRemove(scene->shaders, shaderID - 1);
+	}
 }
 
 void sceneAddProp(Scene *scene, Prop *prop)
 {
 	arrayPush(scene->props, prop);
 
-	/**
-	 * Bind the VAO.
-	 */
 	glBindVertexArray(scene->vao);
 
-	/**
-	 * Load the buffers and bind to the VAO.
-	 */
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[0]);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -45,12 +101,7 @@ void sceneAddProp(Scene *scene, Prop *prop)
 	glBindBuffer(GL_ARRAY_BUFFER, prop->vbo[2]);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, prop->ibo);
 	
-	/**
-	 * Unbind buffers.
-	 */
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -69,40 +120,49 @@ void sceneRemoveActor(Scene *scene, int actorID)
 
 void sceneRender(Scene *scene)
 {
-	int propLength = arrayLength(scene->props);
-	int actorLength = arrayLength(scene->actors);
+	int shaderLength = arrayLength(scene->shaders);
 
-	shaderProgramEnable(scene->shader);
-
-	shaderProgramSetMatrix(scene->shader, "viewMatrix", scene->camera->view);
-	shaderProgramSetMatrix(scene->shader, "perspectiveMatrix", scene->camera->perspective);
-
-	shaderProgramSetVec3(scene->shader, "lightPosition", vec3New(4.0f, 4.0f, 4.0f));
-	shaderProgramSetVec3(scene->shader, "cameraPosition", scene->camera->translation);
-	
-	glBindVertexArray(scene->vao);
-
-	for (int i = 0; i < propLength; i++)
+	for (int i = 0; i < shaderLength; i++)
 	{
-		Prop *prop = arrayGet(scene->props, i);
+		ShaderProgram *shader = arrayGet(scene->shaders, i);
 
-		shaderProgramSetMatrix(scene->shader, "modelMatrix", prop->matrix);
+		if (!shader)
+		{
+			continue;
+		}
+
+		shaderProgramEnable(shader);
+
+		int propLength = arrayLength(scene->props);
+		int actorLength = arrayLength(scene->actors);
+
+		shaderProgramSetMatrix4(shader, "viewMatrix", scene->camera->view);
+		shaderProgramSetMatrix4(shader, "perspectiveMatrix", scene->camera->perspective);
 		
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, prop->ibo);
-		glDrawElements(GL_TRIANGLES, prop->asset->indexLength * 3, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(scene->vao);
+
+		for (int i = 0; i < propLength; i++)
+		{
+			Prop *prop = arrayGet(scene->props, i);
+
+			shaderProgramSetMatrix4(shader, "modelMatrix", prop->matrix);
+			
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, prop->vbo[3]);
+			glDrawElements(GL_TRIANGLES, prop->asset->indicesLength * 3, GL_UNSIGNED_INT, 0);
+		}
+
+		for (int i = 0; i < actorLength; i++)
+		{
+			Actor *actor = arrayGet(scene->actors, i);
+
+			shaderProgramSetMatrix4(shader, "modelMatrix", actor->prop->matrix);
+
+			glBindVertexArray(actor->vao);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, actor->prop->vbo[3]);
+			glDrawElements(GL_TRIANGLES, actor->prop->asset->indicesLength * 3, GL_UNSIGNED_INT, 0);
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
 	}
-
-	for (int i = 0; i < actorLength; i++)
-	{
-		Actor *actor = arrayGet(scene->actors, i);
-
-		shaderProgramSetMatrix(scene->shader, "modelMatrix", actor->prop->matrix);
-
-		glBindVertexArray(actor->vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, actor->prop->ibo);
-		glDrawElements(GL_TRIANGLES, actor->prop->asset->indexLength * 3, GL_UNSIGNED_INT, 0);
-	}
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
 }

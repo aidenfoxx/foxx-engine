@@ -12,35 +12,32 @@
 
 typedef struct {
 	char *error;
-	GLuint shader;
+	GLuint shaderID;
 } Shader;
 
 typedef struct {
 	char *error;
-	GLuint program;
+	GLuint programID;
 } ShaderProgram;
+
+void shaderProgramInit(ShaderProgram*);
+void shaderProgramDestroy(ShaderProgram*);
+int shaderProgramLink(ShaderProgram*);
+void shaderProgramEnable(ShaderProgram*);
+void shaderProgramDisable();
+void shaderProgramSetInt(ShaderProgram*, const char*, int);
+void shaderProgramSetFloat(ShaderProgram*, const char*, float);
+void shaderProgramSetVector2f(ShaderProgram*, const char*, Vector2f);
+void shaderProgramSetVector3f(ShaderProgram*, const char*, Vector3f);
+void shaderProgramSetVector4f(ShaderProgram*, const char*, Vector4f);
+void shaderProgramSetMatrix4(ShaderProgram*, const char*, Matrix4);
 
 int shaderInit(Shader*, int, const char*);
 void shaderDestroy(Shader*);
 void shaderAttach(ShaderProgram*, Shader*);
 void shaderDetach(ShaderProgram*, Shader*);
 
-void shaderProgramInit(ShaderProgram*);
-void shaderProgramDestroy(ShaderProgram*);
-int shaderProgramLink(ShaderProgram*);
-
-void shaderProgramEnable(ShaderProgram*);
-void shaderProgramDisable();
-
-void shaderProgramSetInt(ShaderProgram*, const char*, int);
-void shaderProgramSetFloat(ShaderProgram*, const char*, float);
-void shaderProgramSetVec2(ShaderProgram*, const char*, Vec2);
-void shaderProgramSetVec3(ShaderProgram*, const char*, Vec3);
-void shaderProgramSetVec4(ShaderProgram*, const char*, Vec4);
-void shaderProgramSetMatrix(ShaderProgram*, const char*, Matrix);
-
 char *shaderError(Shader*);
 char *shaderProgramError(ShaderProgram*);
-
 
 #endif

@@ -79,15 +79,8 @@ void contextLoop()
 	{
 		glfwSetWindowShouldClose(contextWindow, 0);
 
-		/**
-		 * TODO: Figure out why SwapBuffer is disabling
-		 * depth test.
-		 */
 		while(contextWindow && !glfwWindowShouldClose(contextWindow))
 		{
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_CULL_FACE);
-
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			contextCallback();

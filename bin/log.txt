@@ -715,3 +715,976 @@ NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+ERROR:  There was a problem loading the model.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:28: error(#143) Undeclared identifier: staticLight
+ERROR: 0:28: error(#174) Not enough data provided for construction constructor
+ERROR: error(#273) 2 compilation errors.  No code generate
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:28: error(#143) Undeclared identifier: staticLight
+ERROR: 0:28: error(#174) Not enough data provided for construction constructor
+ERROR: error(#273) 2 compilation errors.  No code generate¹
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: M
+ERROR: 0:24: error(#143) Undeclared identifier: vertexPosition_modelspace
+ERROR: 0:24: error(#174) Not enough data provided for construction constrÅ
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: M
+ERROR: 0:24: error(#143) Undeclared identifier: vertexPosition_modelspace
+ERROR: 0:24: error(#174) Not enough data provided for construction constrP
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: vertexPosition_modelspace
+ERROR: 0:24: error(#174) Not enough data provided for construction constructor
+ERROR: 0:28: error(#174) Not enough data proa
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:24: error(#143) Undeclared identifier: vertexPosition_modelspace
+ERROR: 0:24: error(#174) Not enough data provided for construction constructor
+ERROR: 0:28: error(#174) Not enough data proP
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (i
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (²
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (i
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (¯
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:17: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (i
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (
+ERROR:  Shader failed to compile with the following error:
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#162) Wrong operand types: no operation "*" exists that takes a left-hand operand of type "4X4 matrix of mat4" and a right operand of type "in highp 3-component vector of vec3" (i
+ERROR:  Failed to link shader program with the following error:
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+ERROR:  There was a problem loading the model.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+ERROR:  Shader failed to compile with the following error:
+
+ERROR:  Failed to link shader program with the following error:
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+ERROR:  Shader failed to compile with the following error:
+
+ERROR:  Failed to link shader program with the following error:
+
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+(null)
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR8
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR´
+ERROR:  Failed to link shader program with the following error:
+
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR8
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR´
+ERROR:  Failed to link shader program with the following error:
+
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR8
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR´
+ERROR:  Failed to link shader program with the following error:
+
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR8
+ERROR:  Shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:18: error(#160) Cannot convert from: "4-component vector of vec4" to: "default out highp 3-component vector of vec3"
+ERROR: 0:19: error(#216) Vector field selection out of range "w"
+ERROR´
+ERROR:  Failed to link shader program with the following error:
+
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Vertex shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:11: error(#143) Undeclared identifier: perspectiveMatrix
+ERROR: 0:11: error(#143) Undeclared identifier: viewMatrix
+ERROR: 0:11: error(#143) Undeclared identifier: modelMatrix
+ERROR: erro2
+ERROR:  Fragment shader failed to compile with the following error:
+
+Vertex shader failed to compile with the following errors:
+ERROR: 0:11: error(#143) Undeclared identifier: perspectiveMatrix
+ERROR: 0:11: error(#143) Undeclared identifier: viewMatrix
+ERROR: 0:11: error(#143) Undeclared identifier: modelMatrix
+ERROR: erroÿ
+ERROR:  Failed to link shader program with the following error:
+
+Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Error: No shaders attached to current program 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Vertex shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Fragment shader failed to compile with the following error:
+
+OpenGL failed to return error info.
+
+ERROR:  Failed to link shader program with the following error:
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader program with the following error:
+
+Vertex shader(s) failed to link, fragment shader(s) failed to link.
+Vertex link error: INVALID_OPERATION.
+ERROR: 0:14: error(#248) Function already has a body: main
+ERROR: error(#273) 1 compilation errors.  No code generated
+
+fragment link error: INVALID_ ýc
+NOTICE: Program initialized.
+ERROR:  Failed to link shader program with the following error:
+
+Vertex shader(s) failed to link, fragment shader(s) failed to link.
+Vertex link error: INVALID_OPERATION.
+ERROR: 0:14: error(#248) Function already has a body: main
+ERROR: error(#273) 1 compilation errors.  No code generated
+
+fragment link error: INVALID_ ýc
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to compile fragment shader with the following error(s):
+
+Fragment shader failed to compile with the following errors:
+WARNING: 0:10: warning(#375) Redeclaration of  built-in name: gl_FragColor
+ERROR: 0:22: error(#132) Syntax error: "gl_FragColor" parse error
+ERROR: error(#273) 1 compilation errors.  No code gen
+ERROR:  Failed to link shader with the following error(s):
+
+Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
