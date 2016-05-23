@@ -64,6 +64,10 @@ Matrix4 matrix4Translate(Vector3f);
 Matrix4 matrix4Scale(Vector3f);
 Matrix4 matrix4Euler(Vector3f);
 Matrix4 matrix4Quat(Vector4f);
+float matrix4Determinant(Matrix4);
+Matrix4 matrix4Invert(Matrix4);
+Matrix4 matrix4Transpose(Matrix4);
+Matrix4 matrix4Orthographic(float, float, float, float);
 Matrix4 matrix4Perspective(float, float, float, float);
 
 Vector2f vector2fMultiplyMatrix4(Vector2f, Matrix4);

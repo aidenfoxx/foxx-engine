@@ -176,6 +176,78 @@ Matrix4 matrix4Quat(Vector4f q)
 	return matrix;
 }
 
+float matrix4Determinant(Matrix4 m)
+{
+	return m.xw * m.yz * m.zy * m.wx - m.xz * m.yw * m.zy * m.wx -
+		   m.xw * m.yy * m.zz * m.wx + m.xy * m.yw * m.zz * m.wx +
+		   m.xz * m.yy * m.zw * m.wx - m.xy * m.yz * m.zw * m.wx -
+		   m.xw * m.yz * m.zx * m.wy + m.xz * m.yw * m.zx * m.wy +
+		   m.xw * m.yx * m.zz * m.wy - m.xx * m.yw * m.zz * m.wy -
+		   m.xz * m.yx * m.zw * m.wy + m.xx * m.yz * m.zw * m.wy +
+		   m.xw * m.yy * m.zx * m.wz - m.xy * m.yw * m.zx * m.wz -
+		   m.xw * m.yx * m.zy * m.wz + m.xx * m.yw * m.zy * m.wz +
+		   m.xy * m.yx * m.zw * m.wz - m.xx * m.yy * m.zw * m.wz -
+		   m.xz * m.yy * m.zx * m.ww + m.xy * m.yz * m.zx * m.ww +
+		   m.xz * m.yx * m.zy * m.ww - m.xx * m.yz * m.zy * m.ww -
+		   m.xy * m.yx * m.zz * m.ww + m.xx * m.yy * m.zz * m.ww;
+}
+
+Matrix4 matrix4Invert(Matrix4 m)
+{
+	Matrix4 matrix = matrix4Empty();
+
+	float determinant = 1.0f / matrix4Determinant(m);
+
+	matrix.xx = (m.yz * m.zw * m.wy - m.yw * m.zz * m.wy + m.yw * m.zy * m.wz - m.yy * m.zw * m.wz - m.yz * m.zy * m.ww + m.yy * m.zz * m.ww) * determinant;
+	matrix.xy = (m.xw * m.zz * m.wy - m.xz * m.zw * m.wy - m.xw * m.zy * m.wz + m.xy * m.zw * m.wz + m.xz * m.zy * m.ww - m.xy * m.zz * m.ww) * determinant;
+	matrix.xz = (m.xz * m.yw * m.wy - m.xw * m.yz * m.wy + m.xw * m.yy * m.wz - m.xy * m.yw * m.wz - m.xz * m.yy * m.ww + m.xy * m.yz * m.ww) * determinant;
+	matrix.xw = (m.xw * m.yz * m.zy - m.xz * m.yw * m.zy - m.xw * m.yy * m.zz + m.xy * m.yw * m.zz + m.xz * m.yy * m.zw - m.xy * m.yz * m.zw) * determinant;
+
+	matrix.yx = (m.yw * m.zz * m.wx - m.yz * m.zw * m.wx - m.yw * m.zx * m.wz + m.yx * m.zw * m.wz + m.yz * m.zx * m.ww - m.yx * m.zz * m.ww) * determinant;
+	matrix.yy = (m.xz * m.zw * m.wx - m.xw * m.zz * m.wx + m.xw * m.zx * m.wz - m.xx * m.zw * m.wz - m.xz * m.zx * m.ww + m.xx * m.zz * m.ww) * determinant;
+	matrix.yz = (m.xw * m.yz * m.wx - m.xz * m.yw * m.wx - m.xw * m.yx * m.wz + m.xx * m.yw * m.wz + m.xz * m.yx * m.ww - m.xx * m.yz * m.ww) * determinant;
+	matrix.yw = (m.xz * m.yw * m.zx - m.xw * m.yz * m.zx + m.xw * m.yx * m.zz - m.xx * m.yw * m.zz - m.xz * m.yx * m.zw + m.xx * m.yz * m.zw) * determinant;
+	
+	matrix.zx = (m.yy * m.zw * m.wx - m.yw * m.zy * m.wx + m.yw * m.zx * m.wy - m.yx * m.zw * m.wy - m.yy * m.zx * m.ww + m.yx * m.zy * m.ww) * determinant;
+	matrix.zy = (m.xw * m.zy * m.wx - m.xy * m.zw * m.wx - m.xw * m.zx * m.wy + m.xx * m.zw * m.wy + m.xy * m.zx * m.ww - m.xx * m.zy * m.ww) * determinant;
+	matrix.zz = (m.xy * m.yw * m.wx - m.xw * m.yy * m.wx + m.xw * m.yx * m.wy - m.xx * m.yw * m.wy - m.xy * m.yx * m.ww + m.xx * m.yy * m.ww) * determinant;
+	matrix.zw = (m.xw * m.yy * m.zx - m.xy * m.yw * m.zx - m.xw * m.yx * m.zy + m.xx * m.yw * m.zy + m.xy * m.yx * m.zw - m.xx * m.yy * m.zw) * determinant;
+	
+	matrix.wx = (m.yz * m.zy * m.wx - m.yy * m.zz * m.wx - m.yz * m.zx * m.wy + m.yx * m.zz * m.wy + m.yy * m.zx * m.wz - m.yx * m.zy * m.wz) * determinant;
+	matrix.wy = (m.xy * m.zz * m.wx - m.xz * m.zy * m.wx + m.xz * m.zx * m.wy - m.xx * m.zz * m.wy - m.xy * m.zx * m.wz + m.xx * m.zy * m.wz) * determinant;
+	matrix.wz = (m.xz * m.yy * m.wx - m.xy * m.yz * m.wx - m.xz * m.yx * m.wy + m.xx * m.yz * m.wy + m.xy * m.yx * m.wz - m.xx * m.yy * m.wz) * determinant;
+	matrix.ww = (m.xy * m.yz * m.zx - m.xz * m.yy * m.zx + m.xz * m.yx * m.zy - m.xx * m.yz * m.zy - m.xy * m.yx * m.zz + m.xx * m.yy * m.zz) * determinant;
+
+	return matrix;
+}
+
+Matrix4 matrix4Transpose(Matrix4 m)
+{
+	Matrix4 matrix = matrix4Empty();
+
+	matrix.xx = m.xx;
+	matrix.xy = m.yx;
+	matrix.xz = m.zx;
+	matrix.xw = m.wx;
+
+	matrix.yx = m.xy;
+	matrix.yy = m.yy;
+	matrix.yz = m.zy;
+	matrix.yw = m.wy;
+
+	matrix.zx = m.xz;
+	matrix.zy = m.yz;
+	matrix.zz = m.zz;
+	matrix.zw = m.wz;
+
+	matrix.wx = m.xw;
+	matrix.wy = m.yw;
+	matrix.wz = m.zw;
+	matrix.ww = m.ww;
+
+	return matrix;
+}
+
 Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float farClip)
 {
 	Matrix4 matrix = matrix4Empty();

@@ -1,5 +1,7 @@
 #include "scene.h"
 
+static void sceneBindShaderVariables(ShaderProgram*, Matrix4, Matrix4, Matrix4);
+
 static int defaultShaderID;
 
 int sceneInit(Scene *scene, Camera *camera)
@@ -131,22 +133,17 @@ void sceneRender(Scene *scene)
 			continue;
 		}
 
-		shaderProgramEnable(shader);
-
 		int propLength = arrayLength(scene->props);
 		int actorLength = arrayLength(scene->actors);
 
-		shaderProgramSetMatrix4(shader, "viewMatrix", scene->camera->view);
-		shaderProgramSetMatrix4(shader, "perspectiveMatrix", scene->camera->perspective);
-		
+		shaderProgramEnable(shader);
 		glBindVertexArray(scene->vao);
 
 		for (int i = 0; i < propLength; i++)
 		{
 			Prop *prop = arrayGet(scene->props, i);
 
-			shaderProgramSetMatrix4(shader, "modelMatrix", prop->matrix);
-			
+			sceneBindShaderVariables(shader, prop->matrix, scene->camera->view, scene->camera->perspective);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, prop->vbo[3]);
 			glDrawElements(GL_TRIANGLES, prop->asset->indicesLength * 3, GL_UNSIGNED_INT, 0);
 		}
@@ -155,8 +152,7 @@ void sceneRender(Scene *scene)
 		{
 			Actor *actor = arrayGet(scene->actors, i);
 
-			shaderProgramSetMatrix4(shader, "modelMatrix", actor->prop->matrix);
-
+			sceneBindShaderVariables(shader, actor->prop->matrix, scene->camera->view, scene->camera->perspective);
 			glBindVertexArray(actor->vao);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, actor->prop->vbo[3]);
 			glDrawElements(GL_TRIANGLES, actor->prop->asset->indicesLength * 3, GL_UNSIGNED_INT, 0);
@@ -165,4 +161,15 @@ void sceneRender(Scene *scene)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 	}
+}
+
+void sceneBindShaderVariables(ShaderProgram *shader, Matrix4 model, Matrix4 view, Matrix4 perspective)
+{
+	Matrix4 modelView = matrix4MultiplyMatrix4(view, model);
+	Matrix4 modelViewPerspective = matrix4MultiplyMatrix4(perspective, modelView);
+
+	shaderProgramSetMatrix4(shader, "model", model);
+	shaderProgramSetMatrix4(shader, "modelView", modelView);
+	shaderProgramSetMatrix4(shader, "modelViewPerspective", modelViewPerspective);
+	shaderProgramSetMatrix4(shader, "normalMatrix", matrix4Transpose(matrix4Invert(modelView)));
 }

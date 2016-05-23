@@ -87,6 +87,7 @@ int renderInit()
 		{
 			propInit(&prop, &asset);
 			sceneAddProp(&scene, &prop);
+			
 		}
 	}
 
@@ -142,7 +143,7 @@ void renderFunction()
 }
 
 int main(int argc, const char *argv[])
-{    
+{
 	if (contextInit(3, 3))
 	{
 		logMessage(LOG_CRITICAL, "Failed to initialize context.");
