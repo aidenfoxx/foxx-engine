@@ -32,3 +32,4 @@ Vertex shader(s) were not successfully compiled before glLinkProgram() was calle
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
+NOTICE: Program initialized.

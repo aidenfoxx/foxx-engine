@@ -248,6 +248,21 @@ Matrix4 matrix4Transpose(Matrix4 m)
 	return matrix;
 }
 
+Matrix4 matrix4Orthographic(float left, float right, float bottom, float top, float nearClip, float farClip)
+{
+	Matrix4 matrix = matrix4Empty();
+
+	matrix.xx = 2.0f / (right - left); 
+	matrix.yy = 2.0f / (top - bottom); 
+	matrix.zz = 1.0f / (nearClip - farClip); 
+	   
+	matrix.xw = -1.0f - 2.0f * left / (right - left); 
+	matrix.yw = 1.0f + 2.0f * top  / (bottom - top); 
+	matrix.zw = nearClip / (nearClip - farClip); 
+
+	return matrix;
+}
+
 Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float farClip)
 {
 	Matrix4 matrix = matrix4Empty();
@@ -257,6 +272,7 @@ Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float f
 	matrix.xx = cotan / aspectRatio;
 	matrix.yy = cotan;
 	matrix.zz = (farClip + nearClip) / (nearClip - farClip);
+
 	matrix.zw = (2.0f * farClip * nearClip) / (nearClip - farClip);
 	matrix.wz = -1.0f;
 
