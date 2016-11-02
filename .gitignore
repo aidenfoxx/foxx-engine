@@ -1,2 +1,5 @@
-build/*
-!build/.gitkeep
+engine/build/*
+!engine/build/.gitkeep
+
+tools/model-converter/build/*
+!tools/model-converter/build/.gitkeep

@@ -1,6 +1,7 @@
 #include "context.h"
 
-static ContextCallback contextCallback;
+static ContextError errorCallback;
+static ContextLoop loopCallback;
 
 static int glMajor;
 static int glMinor;
@@ -17,8 +18,7 @@ int contextInit(int major, int minor)
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, major);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 
 	return 0;
 }
@@ -42,14 +42,10 @@ int contextWindowOpen(char* title, int width, int height, int fullscreen, int vs
 	glfwMakeContextCurrent(contextWindow);
 	glfwSwapInterval(vsync);
 
-	if (gl3wInit())
+	if (gl3wInit() || !gl3wIsSupported(glMajor, glMinor))
 	{
+		glfwTerminate();
 		return -2;
-	}
-
-	if (!gl3wIsSupported(glMajor, glMinor))
-	{
-		return -3;
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -68,14 +64,20 @@ void contextWindowDestroy()
 	contextWindow = NULL;
 }
 
-void contextLoopCallback(ContextCallback callback)
+void contextErrorCallback(ContextError callback)
 {
-	contextCallback = callback;
+	errorCallback = callback;
+	glfwSetErrorCallback(errorCallback);
+}
+
+void contextLoopCallback(ContextLoop callback)
+{
+	loopCallback = callback;
 }
 
 void contextLoop()
 {
-	if (contextWindow && contextCallback)
+	if (contextWindow && loopCallback)
 	{
 		glfwSetWindowShouldClose(contextWindow, 0);
 
@@ -83,7 +85,7 @@ void contextLoop()
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			contextCallback();
+			loopCallback();
 
 			glfwSwapBuffers(contextWindow);
 			glfwPollEvents();

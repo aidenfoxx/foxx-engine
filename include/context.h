@@ -5,7 +5,8 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-typedef void (*ContextCallback)();
+typedef void (*ContextError)(int, const char*);
+typedef void (*ContextLoop)();
 
 GLFWwindow *contextWindow;
 
@@ -15,7 +16,9 @@ void contextDestroy();
 int contextWindowOpen(char*, int, int, int, int);
 void contextWindowDestroy();
 
-void contextLoopCallback(ContextCallback);
+void contextErrorCallback(ContextError);
+
+void contextLoopCallback(ContextLoop);
 void contextLoop();
 void contextLoopStop();
 

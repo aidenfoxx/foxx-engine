@@ -40,7 +40,7 @@ void logMessage(unsigned int code, const char *message)
 
 	printf("%s\n", logLine);
 
-	FILE *logFile = fopen("log.txt", "a");
+	FILE *logFile = fopen("logs/log.txt", "a");
 
 	if (logFile)
 	{

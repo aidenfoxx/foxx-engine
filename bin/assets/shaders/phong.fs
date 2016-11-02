@@ -20,7 +20,7 @@ void main()
     float lambertian = max(dot(lightDirection, normal), 0.0);
     float specular = 0.0;
 
-    if(lambertian > 0.0)
+    if (lambertian > 0.0)
     {
        float specularAngle = max(dot(reflectDirection, viewDirection), 0.0);
        specular = pow(specularAngle, 4.0);

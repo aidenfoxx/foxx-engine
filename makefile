@@ -7,7 +7,7 @@ INC_DIR=include
 
 # Standard Build Flags
 CC=gcc
-CFLAGS=-o -std=c99 -pedantic -c -Wall -I $(INC_DIR) -g
+CFLAGS=-o -std=c99 -pedantic -c -Wall -g -I $(INC_DIR)
 
 ifeq ($(OS), Windows_NT)
 	LDFLAGS=-L $(LIB_DIR) -lglfw3dll -lopengl32 -glu32
@@ -16,12 +16,12 @@ else
 endif
 
 # Files
-SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)
+SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c) $(wildcard $(SRC_DIR)/*/*/*.c)
 OBJ=$(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
 BIN=foxx
 
 # Build
-all: $(SRC) $(addprefix $(BIN_DIR)/, $(BIN))
+all: $(addprefix $(BIN_DIR)/, $(BIN))
 
 $(addprefix $(BIN_DIR)/, $(BIN)): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $@
@@ -30,6 +30,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/*/%.c
+	$(CC) $(CFLAGS) $< -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/*/*/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:

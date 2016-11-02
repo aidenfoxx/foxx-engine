@@ -2,32 +2,32 @@
 
 #include "context.h"
 #include "input.h"
-#include "shader.h"
-#include "scene.h"
-
-#include "Assets/obj.h"
+#include "renderer.h"
+#include "object.h"
+#include "Object/Mesh/obj.h"
+#include "Renderer/shader.h"
 #include "Tools/log.h"
 
 ShaderProgram phongShader;
 Shader phongVertex;
 Shader phongFragment;
 
-Asset asset;
-Prop prop;
 Camera camera;
-Scene scene;
+Obj mesh;
+Object model;
+Renderer renderer;
 
 int renderInit()
 {
 	/**
-	 * Initialize scene and add props and shader.
+	 * Initialize renderer.
 	 */
 	cameraInit(&camera);
 
-	if (sceneInit(&scene, &camera))
+	if (rendererInit(&renderer, &camera))
 	{
-		logMessage(LOG_ERROR, "There was a problem initializing the scene.");
-		sceneDestroy(&scene);
+		logMessage(LOG_ERROR, "There was a problem initializing the renderer.");
+		rendererDestroy(&renderer);
 		return -1;
 	}
 
@@ -41,6 +41,7 @@ int renderInit()
 		char *error = shaderError(&phongVertex); 
 		logMessage(LOG_ERROR, "Failed to compile vertex shader with the following error(s):"); 
 		logMessage(LOG_NONE, error);
+		return -2;
 	}
 
 	if (shaderInit(&phongFragment, SHADER_FRAGMENT, "./assets/shaders/phong.fs"))
@@ -48,6 +49,7 @@ int renderInit()
 		char *error = shaderError(&phongFragment); 
 		logMessage(LOG_ERROR, "Failed to compile fragment shader with the following error(s):"); 
 		logMessage(LOG_NONE, error);
+		return -2;
 	}
 
 	shaderAttach(&phongShader, &phongVertex);
@@ -58,49 +60,42 @@ int renderInit()
 		char *error = shaderProgramError(&phongShader); 
 		logMessage(LOG_ERROR, "Failed to link shader with the following error(s):"); 
 		logMessage(LOG_NONE, error);
+		return -3;
 	}
 
-	sceneAddShader(&scene, &phongShader);
+	rendererAddShader(&renderer, &phongShader);
 
 	shaderDestroy(&phongVertex);
 	shaderDestroy(&phongFragment);
 
-	/**
-	 * Load models and bind them to a prop.
-	 */
-	Obj model;
-
-	if (objInit(&model, "./assets/models/buddha.obj"))
+	if (objInit(&mesh, "./assets/models/suzanne.obj"))
 	{
 		logMessage(LOG_ERROR, "There was a problem loading the model.");
+		return -4;
 	}
-	else
+
+	/*printf("OBJ Verts: %i\n", mesh.verticesLength);
+	printf("UVs Verts: %i\n", mesh.uvsLength);
+	printf("Normals Verts: %i\n", mesh.normalsLength);
+	printf("Indices Verts: %i\n", mesh.indicesLength);
+
+	for (int i = 0; i < mesh.verticesLength; ++i)
 	{
-		assetInit(&asset);
+		printf("%f %f %f\n", mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
+	}*/
 
-		if (assetBindObj(&asset, &model))
-		{
-			logMessage(LOG_ERROR, "There was a problem binding the model mesh.");
-			assetDestroy(&asset);
-		}
-		else
-		{
-			propInit(&prop, &asset);
-			sceneAddProp(&scene, &prop);
-			
-		}
-	}
-
-	objDestroy(&model);
+	objectInit(&model, &mesh, NULL, NULL, NULL);
+	rendererAddObject(&renderer, &model, OBJECT_STATIC);
 
 	return 0;
 }
 
 void renderDestroy()
 {
-	sceneDestroy(&scene);
-	propDestroy(&prop);
-	assetDestroy(&asset);
+	rendererDestroy(&renderer);
+	shaderProgramDestroy(&phongShader);
+	objectDestroy(&model);
+	objDestroy(&mesh);
 }
 
 void inputHandle()
@@ -136,10 +131,19 @@ void inputHandle()
 	}
 }
 
+void errorFunction(int errorCode, const char *errorMessage)
+{
+	char errorCodeMessage[256];
+	snprintf(errorCodeMessage, 256, "Context returned error %i:", errorCode);
+
+	logMessage(LOG_ERROR, errorCodeMessage);
+	logMessage(LOG_NONE, errorMessage);
+}
+
 void renderFunction()
 {
 	inputHandle();
-	sceneRender(&scene);
+	rendererExecute(&renderer);
 }
 
 int main(int argc, const char *argv[])
@@ -161,7 +165,6 @@ int main(int argc, const char *argv[])
 	if (!renderInit())
 	{
 		logMessage(LOG_NOTICE, "Program initialized.");
-
 		contextLoopCallback(renderFunction);
 		contextLoop();
 	}
