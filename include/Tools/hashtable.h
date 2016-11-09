@@ -15,8 +15,8 @@ typedef struct {
 	int *data;
 } HashTable;
 
-void hashTableInit(HashTable*, int);
-void hashTableDestroy(HashTable*);
+HashTable *hashTableNew(int);
+void hashTableFree(HashTable*);
 int hashTableLength(HashTable*);
 int hashTableKey(int, int);
 int hashTableSet(HashTable*, int, int);

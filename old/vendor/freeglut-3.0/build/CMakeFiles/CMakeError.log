@@ -1,0 +1,68 @@
+Determining if files sys/ioctl.h exist failed with the following output:
+Change Dir: D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe" "cmTC_82439/fast"
+D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTC_82439.dir\build.make CMakeFiles/cmTC_82439.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_82439.dir/CheckIncludeFiles.c.obj
+D:\Development\Other\MinGW\mingw64\bin\gcc.exe   -Wall -pedantic    -o CMakeFiles\cmTC_82439.dir\CheckIncludeFiles.c.obj   -c D:\Development\Other\Projects\foxx-engine\afterburner\lib\freeglut-3.0.0\build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c
+D:\Development\Other\Projects\foxx-engine\afterburner\lib\freeglut-3.0.0\build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c:2:23: fatal error: sys/ioctl.h: No such file or directory
+compilation terminated.
+mingw32-make.exe[1]: *** [CMakeFiles/cmTC_82439.dir/CheckIncludeFiles.c.obj] Error 1
+CMakeFiles\cmTC_82439.dir\build.make:64: recipe for target 'CMakeFiles/cmTC_82439.dir/CheckIncludeFiles.c.obj' failed
+mingw32-make.exe[1]: Leaving directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+Makefile:125: recipe for target 'cmTC_82439/fast' failed
+mingw32-make.exe: *** [cmTC_82439/fast] Error 2
+
+Source:
+/* */
+#include <sys/ioctl.h>
+
+
+int main(void){return 0;}
+
+Determining if files usbhid.h exist failed with the following output:
+Change Dir: D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe" "cmTC_f08b8/fast"
+D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTC_f08b8.dir\build.make CMakeFiles/cmTC_f08b8.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f08b8.dir/CheckIncludeFiles.c.obj
+D:\Development\Other\MinGW\mingw64\bin\gcc.exe   -Wall -pedantic    -o CMakeFiles\cmTC_f08b8.dir\CheckIncludeFiles.c.obj   -c D:\Development\Other\Projects\foxx-engine\afterburner\lib\freeglut-3.0.0\build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c
+D:\Development\Other\Projects\foxx-engine\afterburner\lib\freeglut-3.0.0\build\CMakeFiles\CMakeTmp\CheckIncludeFiles.c:2:20: fatal error: usbhid.h: No such file or directory
+compilation terminated.
+CMakeFiles\cmTC_f08b8.dir\build.make:64: recipe for target 'CMakeFiles/cmTC_f08b8.dir/CheckIncludeFiles.c.obj' failed
+mingw32-make.exe[1]: *** [CMakeFiles/cmTC_f08b8.dir/CheckIncludeFiles.c.obj] Error 1
+mingw32-make.exe[1]: Leaving directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+mingw32-make.exe: *** [cmTC_f08b8/fast] Error 2
+Makefile:125: recipe for target 'cmTC_f08b8/fast' failed
+
+Source:
+/* */
+#include <usbhid.h>
+
+
+int main(void){return 0;}
+
+Determining if the function XParseGeometry exists failed with the following output:
+Change Dir: D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe" "cmTC_92ff0/fast"
+D:/Development/Other/MinGW/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTC_92ff0.dir\build.make CMakeFiles/cmTC_92ff0.dir/build
+mingw32-make.exe[1]: Entering directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_92ff0.dir/CheckFunctionExists.c.obj
+D:\Development\Other\MinGW\mingw64\bin\gcc.exe   -Wall -pedantic -DCHECK_FUNCTION_EXISTS=XParseGeometry   -o CMakeFiles\cmTC_92ff0.dir\CheckFunctionExists.c.obj   -c "C:\Program Files (x86)\CMake\share\cmake-3.3\Modules\CheckFunctionExists.c"
+Linking C executable cmTC_92ff0.exe
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E cmake_link_script CMakeFiles\cmTC_92ff0.dir\link.txt --verbose=1
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\cmTC_92ff0.dir/objects.a
+D:\Development\Other\MinGW\mingw64\bin\ar.exe cr CMakeFiles\cmTC_92ff0.dir/objects.a @CMakeFiles\cmTC_92ff0.dir\objects1.rsp
+D:\Development\Other\MinGW\mingw64\bin\gcc.exe   -Wall -pedantic -DCHECK_FUNCTION_EXISTS=XParseGeometry    -Wl,--whole-archive CMakeFiles\cmTC_92ff0.dir/objects.a -Wl,--no-whole-archive  -o cmTC_92ff0.exe -Wl,--out-implib,libcmTC_92ff0.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\cmTC_92ff0.dir\linklibs.rsp
+CMakeFiles\cmTC_92ff0.dir/objects.a(CheckFunctionExists.c.obj):CheckFunctionExists.c:(.text+0x15): undefined reference to `XParseGeometry'
+collect2.exe: error: ld returned 1 exit status
+CMakeFiles\cmTC_92ff0.dir\build.make:98: recipe for target 'cmTC_92ff0.exe' failed
+mingw32-make.exe[1]: *** [cmTC_92ff0.exe] Error 1
+mingw32-make.exe[1]: Leaving directory 'D:/Development/Other/Projects/foxx-engine/afterburner/lib/freeglut-3.0.0/build/CMakeFiles/CMakeTmp'
+Makefile:125: recipe for target 'cmTC_92ff0/fast' failed
+mingw32-make.exe: *** [cmTC_92ff0/fast] Error 2
+
+

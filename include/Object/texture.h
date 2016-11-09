@@ -2,9 +2,12 @@
 #define TEXTURE_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 typedef struct {
-	int test;
+	uint8_t *data;
 } Texture;
+
+int textureInit(Texture*, uint8_t*);
 
 #endif

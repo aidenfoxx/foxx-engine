@@ -4,21 +4,30 @@
 #include "input.h"
 #include "renderer.h"
 #include "object.h"
-#include "Object/Mesh/obj.h"
-#include "Renderer/shader.h"
 #include "Tools/log.h"
+#include "Renderer/shader.h"
+#include "Object/Mesh/fem.h"
+
+#include <GL/freeglut.h>
 
 ShaderProgram phongShader;
 Shader phongVertex;
 Shader phongFragment;
 
 Camera camera;
-Obj mesh;
+Mesh mesh;
 Object model;
 Renderer renderer;
 
 int renderInit()
 {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	glDepthFunc(GL_LEQUAL);
+	glCullFace(GL_FRONT);
+	glFrontFace(GL_CW);
+
 	/**
 	 * Initialize renderer.
 	 */
@@ -68,23 +77,11 @@ int renderInit()
 	shaderDestroy(&phongVertex);
 	shaderDestroy(&phongFragment);
 
-	if (objInit(&mesh, "./assets/models/suzanne.obj"))
-	{
-		logMessage(LOG_ERROR, "There was a problem loading the model.");
-		return -4;
-	}
-
-	/*printf("OBJ Verts: %i\n", mesh.verticesLength);
-	printf("UVs Verts: %i\n", mesh.uvsLength);
-	printf("Normals Verts: %i\n", mesh.normalsLength);
-	printf("Indices Verts: %i\n", mesh.indicesLength);
-
-	for (int i = 0; i < mesh.verticesLength; ++i)
-	{
-		printf("%f %f %f\n", mesh.vertices[i].x, mesh.vertices[i].y, mesh.vertices[i].z);
-	}*/
+	meshInit(&mesh);
+	femLoad(&mesh, NULL, NULL, NULL, "crate.fem");
 
 	objectInit(&model, &mesh, NULL, NULL, NULL);
+
 	rendererAddObject(&renderer, &model, OBJECT_STATIC);
 
 	return 0;
@@ -95,82 +92,175 @@ void renderDestroy()
 	rendererDestroy(&renderer);
 	shaderProgramDestroy(&phongShader);
 	objectDestroy(&model);
-	objDestroy(&mesh);
 }
 
-void inputHandle()
+void keyDownFunction(unsigned char key, int x, int y)
 {
-	if (inputStatusKey(KEY_W) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 'w')
 	{
-		cameraTranslate(&camera, 0.0f, 0.0f, 0.05f);
+		inputSetState(INPUT_KEY_W, INPUT_KEY_PRESS);
 	}
 
-	if (inputStatusKey(KEY_A) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 'a')
 	{
-		cameraTranslate(&camera, 0.05f, 0.0f, 0.0f);
+		inputSetState(INPUT_KEY_A, INPUT_KEY_PRESS);
 	}
 
-	if (inputStatusKey(KEY_S) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 's')
 	{
-		cameraTranslate(&camera, 0.0f, 0.0f, -0.05f);
+		inputSetState(INPUT_KEY_S, INPUT_KEY_PRESS);
 	}
 
-	if (inputStatusKey(KEY_D) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 'd')
 	{
-		cameraTranslate(&camera, -0.05f, 0.0f, 0.0f);
+		inputSetState(INPUT_KEY_D, INPUT_KEY_PRESS);
 	}
 
-	if (inputStatusKey(KEY_Q) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 'q')
 	{
-		cameraRotate(&camera, 0.05f, 0.0f, 0.0f);
+		inputSetState(INPUT_KEY_Q, INPUT_KEY_PRESS);
 	}
 
-	if (inputStatusKey(KEY_E) & (INPUT_PRESS | INPUT_HOLD))
+	if (key == 'e')
 	{
-		cameraRotate(&camera, -0.05f, 0.0f, 0.0f);
+		inputSetState(INPUT_KEY_E, INPUT_KEY_PRESS);
+	}
+
+	if (key == 'z')
+	{
+		inputSetState(INPUT_KEY_Z, INPUT_KEY_PRESS);
+	}
+
+	if (key == 'x')
+	{
+		inputSetState(INPUT_KEY_X, INPUT_KEY_PRESS);
 	}
 }
 
-void errorFunction(int errorCode, const char *errorMessage)
+void keyUpFunction(unsigned char key, int x, int y)
 {
-	char errorCodeMessage[256];
-	snprintf(errorCodeMessage, 256, "Context returned error %i:", errorCode);
+	if (key == 'w')
+	{
+		inputSetState(INPUT_KEY_W, INPUT_KEY_RELEASE);
+	}
 
-	logMessage(LOG_ERROR, errorCodeMessage);
-	logMessage(LOG_NONE, errorMessage);
+	if (key == 'a')
+	{
+		inputSetState(INPUT_KEY_A, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 's')
+	{
+		inputSetState(INPUT_KEY_S, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 'd')
+	{
+		inputSetState(INPUT_KEY_D, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 'q')
+	{
+		inputSetState(INPUT_KEY_Q, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 'e')
+	{
+		inputSetState(INPUT_KEY_E, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 'z')
+	{
+		inputSetState(INPUT_KEY_Z, INPUT_KEY_RELEASE);
+	}
+
+	if (key == 'x')
+	{
+		inputSetState(INPUT_KEY_X, INPUT_KEY_RELEASE);
+	}
 }
 
 void renderFunction()
 {
-	inputHandle();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	rendererExecute(&renderer);
+
+	if (inputGetState(INPUT_KEY_W) == INPUT_KEY_PRESS)
+	{
+		objectTranslate(&model, 0.0f, 0.0f, 0.001f);
+	}
+
+	if (inputGetState(INPUT_KEY_A) == INPUT_KEY_PRESS)
+	{
+		objectTranslate(&model, 0.001f, 0.0f, 0.0f);
+	}
+
+	if (inputGetState(INPUT_KEY_S) == INPUT_KEY_PRESS)
+	{
+		objectTranslate(&model, 0.0f, 0.0f, -0.001f);
+	}
+
+	if (inputGetState(INPUT_KEY_D) == INPUT_KEY_PRESS)
+	{
+		objectTranslate(&model, -0.001f, 0.0f, 0.0f);
+	}
+
+	if (inputGetState(INPUT_KEY_Q) == INPUT_KEY_PRESS)
+	{
+		objectRotate(&model, 0.001f, 0.0f, 0.0f);
+	}
+
+	if (inputGetState(INPUT_KEY_E) == INPUT_KEY_PRESS)
+	{
+		objectRotate(&model, -0.001f, 0.0f, 0.0f);
+	}
+
+	if (inputGetState(INPUT_KEY_Z) == INPUT_KEY_PRESS)
+	{
+		objectRotate(&model, 0.0f, 0.001f, 0.0f);
+	}
+
+	if (inputGetState(INPUT_KEY_X) == INPUT_KEY_PRESS)
+	{
+		objectRotate(&model, 0.0f, -0.001f, 0.0f);
+	}
+
+	glutSwapBuffers();
+	glutPostRedisplay();
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
-	if (contextInit(3, 3))
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+	glutInitWindowSize(1024, 768);
+	glutCreateWindow("Foxx Engine");
+	glutDisplayFunc(renderFunction);
+	glutKeyboardFunc(keyDownFunction);
+	glutKeyboardUpFunc(keyUpFunction); 
+
+	if (gl3wInit())
 	{
-		logMessage(LOG_CRITICAL, "Failed to initialize context.");
+		logMessage(LOG_CRITICAL, "Could not initialize OpenGL.");
 		exit(EXIT_FAILURE);
 	}
 
-	if (contextWindowOpen("Foxx", 1024, 800, 0, 1))
+	if (!gl3wIsSupported(3, 3))
 	{
-		logMessage(LOG_ERROR, "Failed to open window.");
+		logMessage(LOG_CRITICAL, "Your machine does not support OpenGL 3.3.");
 		exit(EXIT_FAILURE);
 	}
 
-	inputInit();
-	
-	if (!renderInit())
+	if (renderInit())
 	{
-		logMessage(LOG_NOTICE, "Program initialized.");
-		contextLoopCallback(renderFunction);
-		contextLoop();
+		exit(EXIT_FAILURE);
 	}
 
+	logMessage(LOG_NOTICE, "Program initialized.");
+	glutMainLoop();
+
+	logMessage(LOG_NOTICE, "Program terminated.");
 	renderDestroy();
-	contextDestroy();
 
 	exit(EXIT_SUCCESS);
 }

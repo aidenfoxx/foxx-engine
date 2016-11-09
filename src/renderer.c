@@ -227,7 +227,7 @@ void rendererExecute(Renderer *renderer)
 
 void rendererBindVariables(Renderer *renderer, ShaderProgram *shader, Object *object)
 {
-	Matrix4 model = object->matrix;
+	Matrix4 model = object->transformMatrix;
 	Matrix4 modelView = matrix4MultiplyMatrix4(renderer->camera->view, model);
 	Matrix4 modelViewPerspective = matrix4MultiplyMatrix4(renderer->camera->perspective, modelView);
 
