@@ -1,142 +1,149 @@
 #include "input.h"
 
-static void inputSetKeyRelease(int);
-static void inputSetKeyPress(int);
+static void inputSetButtonState(int, int);
+static void inputSetPosition(int, int);
 
-static int keySpace = INPUT_KEY_RELEASE;
-static int keyLeftShift = INPUT_KEY_RELEASE;
-static int keyRightShift = INPUT_KEY_RELEASE;
-static int keyLeftControl = INPUT_KEY_RELEASE;
-static int keyRightControl = INPUT_KEY_RELEASE;
-static int keyLeftAlt = INPUT_KEY_RELEASE;
-static int keyRightAlt = INPUT_KEY_RELEASE;
-static int keyLeftSuper = INPUT_KEY_RELEASE;
-static int keyRightSuper = INPUT_KEY_RELEASE;
-static int keyEscape = INPUT_KEY_RELEASE;
-static int keyEnter = INPUT_KEY_RELEASE;
-static int keyTab = INPUT_KEY_RELEASE;
-static int keyBackspace = INPUT_KEY_RELEASE;
-static int keyInsert = INPUT_KEY_RELEASE;
-static int keyDelete = INPUT_KEY_RELEASE;
-static int keyUp = INPUT_KEY_RELEASE;
-static int keyDown = INPUT_KEY_RELEASE;
-static int keyLeft = INPUT_KEY_RELEASE;
-static int keyRight = INPUT_KEY_RELEASE;
-static int keyPageUp = INPUT_KEY_RELEASE;
-static int keyPageDown = INPUT_KEY_RELEASE;
-static int keyHome = INPUT_KEY_RELEASE;
-static int keyEnd = INPUT_KEY_RELEASE;
-static int keyCapsLock = INPUT_KEY_RELEASE;
-static int keyScrollLock = INPUT_KEY_RELEASE;
-static int keyNumLock = INPUT_KEY_RELEASE;
-static int keyPrintScreen = INPUT_KEY_RELEASE;
-static int keyPause = INPUT_KEY_RELEASE;
+static int keySpace = INPUT_RELEASE;
+static int keyLeftShift = INPUT_RELEASE;
+static int keyRightShift = INPUT_RELEASE;
+static int keyLeftControl = INPUT_RELEASE;
+static int keyRightControl = INPUT_RELEASE;
+static int keyLeftAlt = INPUT_RELEASE;
+static int keyRightAlt = INPUT_RELEASE;
+static int keyLeftSuper = INPUT_RELEASE;
+static int keyRightSuper = INPUT_RELEASE;
+static int keyEscape = INPUT_RELEASE;
+static int keyEnter = INPUT_RELEASE;
+static int keyTab = INPUT_RELEASE;
+static int keyBackspace = INPUT_RELEASE;
+static int keyInsert = INPUT_RELEASE;
+static int keyDelete = INPUT_RELEASE;
+static int keyUp = INPUT_RELEASE;
+static int keyDown = INPUT_RELEASE;
+static int keyLeft = INPUT_RELEASE;
+static int keyRight = INPUT_RELEASE;
+static int keyPageUp = INPUT_RELEASE;
+static int keyPageDown = INPUT_RELEASE;
+static int keyHome = INPUT_RELEASE;
+static int keyEnd = INPUT_RELEASE;
+static int keyCapsLock = INPUT_RELEASE;
+static int keyScrollLock = INPUT_RELEASE;
+static int keyNumLock = INPUT_RELEASE;
+static int keyPrintScreen = INPUT_RELEASE;
+static int keyPause = INPUT_RELEASE;
 
-static int keyApostrophe = INPUT_KEY_RELEASE; /* ' */
-static int keyComma = INPUT_KEY_RELEASE; /* , */
-static int keyMinus = INPUT_KEY_RELEASE; /* - */
-static int keyPeriod = INPUT_KEY_RELEASE; /* . */
-static int keySlash = INPUT_KEY_RELEASE; /* / */
-static int keyBackslash = INPUT_KEY_RELEASE; /* \ */
-static int keySemicolon = INPUT_KEY_RELEASE; /* ; */
-static int keyEqual = INPUT_KEY_RELEASE; /* = */
-static int keyLeftBracket = INPUT_KEY_RELEASE; /* [ */
-static int keyRightBracket = INPUT_KEY_RELEASE; /* ] */
-static int keyGraveAccent = INPUT_KEY_RELEASE; /* ` */
+static int keyApostrophe = INPUT_RELEASE; /* ' */
+static int keyComma = INPUT_RELEASE; /* , */
+static int keyMinus = INPUT_RELEASE; /* - */
+static int keyPeriod = INPUT_RELEASE; /* . */
+static int keySlash = INPUT_RELEASE; /* / */
+static int keyBackslash = INPUT_RELEASE; /* \ */
+static int keySemicolon = INPUT_RELEASE; /* ; */
+static int keyEqual = INPUT_RELEASE; /* = */
+static int keyLeftBracket = INPUT_RELEASE; /* [ */
+static int keyRightBracket = INPUT_RELEASE; /* ] */
+static int keyGraveAccent = INPUT_RELEASE; /* ` */
 
-static int key0 = INPUT_KEY_RELEASE;
-static int key1 = INPUT_KEY_RELEASE;
-static int key2 = INPUT_KEY_RELEASE;
-static int key3 = INPUT_KEY_RELEASE;
-static int key4 = INPUT_KEY_RELEASE;
-static int key5 = INPUT_KEY_RELEASE;
-static int key6 = INPUT_KEY_RELEASE;
-static int key7 = INPUT_KEY_RELEASE;
-static int key8 = INPUT_KEY_RELEASE;
-static int key9 = INPUT_KEY_RELEASE;
+static int key0 = INPUT_RELEASE;
+static int key1 = INPUT_RELEASE;
+static int key2 = INPUT_RELEASE;
+static int key3 = INPUT_RELEASE;
+static int key4 = INPUT_RELEASE;
+static int key5 = INPUT_RELEASE;
+static int key6 = INPUT_RELEASE;
+static int key7 = INPUT_RELEASE;
+static int key8 = INPUT_RELEASE;
+static int key9 = INPUT_RELEASE;
 
-static int keyA = INPUT_KEY_RELEASE;
-static int keyB = INPUT_KEY_RELEASE;
-static int keyC = INPUT_KEY_RELEASE;
-static int keyD = INPUT_KEY_RELEASE;
-static int keyE = INPUT_KEY_RELEASE;
-static int keyF = INPUT_KEY_RELEASE;
-static int keyG = INPUT_KEY_RELEASE;
-static int keyH = INPUT_KEY_RELEASE;
-static int keyI = INPUT_KEY_RELEASE;
-static int keyJ = INPUT_KEY_RELEASE;
-static int keyK = INPUT_KEY_RELEASE;
-static int keyL = INPUT_KEY_RELEASE;
-static int keyM = INPUT_KEY_RELEASE;
-static int keyN = INPUT_KEY_RELEASE;
-static int keyO = INPUT_KEY_RELEASE;
-static int keyP = INPUT_KEY_RELEASE;
-static int keyQ = INPUT_KEY_RELEASE;
-static int keyR = INPUT_KEY_RELEASE;
-static int keyS = INPUT_KEY_RELEASE;
-static int keyT = INPUT_KEY_RELEASE;
-static int keyU = INPUT_KEY_RELEASE;
-static int keyV = INPUT_KEY_RELEASE;
-static int keyW = INPUT_KEY_RELEASE;
-static int keyX = INPUT_KEY_RELEASE;
-static int keyY = INPUT_KEY_RELEASE;
-static int keyZ = INPUT_KEY_RELEASE;
+static int keyA = INPUT_RELEASE;
+static int keyB = INPUT_RELEASE;
+static int keyC = INPUT_RELEASE;
+static int keyD = INPUT_RELEASE;
+static int keyE = INPUT_RELEASE;
+static int keyF = INPUT_RELEASE;
+static int keyG = INPUT_RELEASE;
+static int keyH = INPUT_RELEASE;
+static int keyI = INPUT_RELEASE;
+static int keyJ = INPUT_RELEASE;
+static int keyK = INPUT_RELEASE;
+static int keyL = INPUT_RELEASE;
+static int keyM = INPUT_RELEASE;
+static int keyN = INPUT_RELEASE;
+static int keyO = INPUT_RELEASE;
+static int keyP = INPUT_RELEASE;
+static int keyQ = INPUT_RELEASE;
+static int keyR = INPUT_RELEASE;
+static int keyS = INPUT_RELEASE;
+static int keyT = INPUT_RELEASE;
+static int keyU = INPUT_RELEASE;
+static int keyV = INPUT_RELEASE;
+static int keyW = INPUT_RELEASE;
+static int keyX = INPUT_RELEASE;
+static int keyY = INPUT_RELEASE;
+static int keyZ = INPUT_RELEASE;
 
-static int keyF1 = INPUT_KEY_RELEASE;
-static int keyF2 = INPUT_KEY_RELEASE;
-static int keyF3 = INPUT_KEY_RELEASE;
-static int keyF4 = INPUT_KEY_RELEASE;
-static int keyF5 = INPUT_KEY_RELEASE;
-static int keyF6 = INPUT_KEY_RELEASE;
-static int keyF7 = INPUT_KEY_RELEASE;
-static int keyF8 = INPUT_KEY_RELEASE;
-static int keyF9 = INPUT_KEY_RELEASE;
-static int keyF10 = INPUT_KEY_RELEASE;
-static int keyF11 = INPUT_KEY_RELEASE;
-static int keyF12 = INPUT_KEY_RELEASE;
-static int keyF13 = INPUT_KEY_RELEASE;
-static int keyF14 = INPUT_KEY_RELEASE;
-static int keyF15 = INPUT_KEY_RELEASE;
-static int keyF16 = INPUT_KEY_RELEASE;
-static int keyF17 = INPUT_KEY_RELEASE;
-static int keyF18 = INPUT_KEY_RELEASE;
-static int keyF19 = INPUT_KEY_RELEASE;
-static int keyF20 = INPUT_KEY_RELEASE;
-static int keyF21 = INPUT_KEY_RELEASE;
-static int keyF22 = INPUT_KEY_RELEASE;
-static int keyF23 = INPUT_KEY_RELEASE;
-static int keyF24 = INPUT_KEY_RELEASE;
-static int keyF25 = INPUT_KEY_RELEASE;
+static int keyF1 = INPUT_RELEASE;
+static int keyF2 = INPUT_RELEASE;
+static int keyF3 = INPUT_RELEASE;
+static int keyF4 = INPUT_RELEASE;
+static int keyF5 = INPUT_RELEASE;
+static int keyF6 = INPUT_RELEASE;
+static int keyF7 = INPUT_RELEASE;
+static int keyF8 = INPUT_RELEASE;
+static int keyF9 = INPUT_RELEASE;
+static int keyF10 = INPUT_RELEASE;
+static int keyF11 = INPUT_RELEASE;
+static int keyF12 = INPUT_RELEASE;
+static int keyF13 = INPUT_RELEASE;
+static int keyF14 = INPUT_RELEASE;
+static int keyF15 = INPUT_RELEASE;
+static int keyF16 = INPUT_RELEASE;
+static int keyF17 = INPUT_RELEASE;
+static int keyF18 = INPUT_RELEASE;
+static int keyF19 = INPUT_RELEASE;
+static int keyF20 = INPUT_RELEASE;
+static int keyF21 = INPUT_RELEASE;
+static int keyF22 = INPUT_RELEASE;
+static int keyF23 = INPUT_RELEASE;
+static int keyF24 = INPUT_RELEASE;
+static int keyF25 = INPUT_RELEASE;
 
-static int keyNumDecimal = INPUT_KEY_RELEASE;
-static int keyNumDivide = INPUT_KEY_RELEASE;
-static int keyNumMultiply = INPUT_KEY_RELEASE;
-static int keyNumSubtract = INPUT_KEY_RELEASE;
-static int keyNumAdd = INPUT_KEY_RELEASE;
-static int keyNumEnter = INPUT_KEY_RELEASE;
-static int keyNumEqual = INPUT_KEY_RELEASE;
+static int keyNumDecimal = INPUT_RELEASE;
+static int keyNumDivide = INPUT_RELEASE;
+static int keyNumMultiply = INPUT_RELEASE;
+static int keyNumSubtract = INPUT_RELEASE;
+static int keyNumAdd = INPUT_RELEASE;
+static int keyNumEnter = INPUT_RELEASE;
+static int keyNumEqual = INPUT_RELEASE;
 
-static int keyNum0 = INPUT_KEY_RELEASE;
-static int keyNum1 = INPUT_KEY_RELEASE;
-static int keyNum2 = INPUT_KEY_RELEASE;
-static int keyNum3 = INPUT_KEY_RELEASE;
-static int keyNum4 = INPUT_KEY_RELEASE;
-static int keyNum5 = INPUT_KEY_RELEASE;
-static int keyNum6 = INPUT_KEY_RELEASE;
-static int keyNum7 = INPUT_KEY_RELEASE;
-static int keyNum8 = INPUT_KEY_RELEASE;
-static int keyNum9 = INPUT_KEY_RELEASE;
+static int keyNum0 = INPUT_RELEASE;
+static int keyNum1 = INPUT_RELEASE;
+static int keyNum2 = INPUT_RELEASE;
+static int keyNum3 = INPUT_RELEASE;
+static int keyNum4 = INPUT_RELEASE;
+static int keyNum5 = INPUT_RELEASE;
+static int keyNum6 = INPUT_RELEASE;
+static int keyNum7 = INPUT_RELEASE;
+static int keyNum8 = INPUT_RELEASE;
+static int keyNum9 = INPUT_RELEASE;
 
-void inputSetState(int input, int state)
+static int mouseLeft = INPUT_RELEASE;
+static int mouseMiddle = INPUT_RELEASE;
+static int mouseRight = INPUT_RELEASE;
+
+static int mouseX = 0;
+static int mouseY = 0;
+
+void inputSetState(int input, int state, int value)
 {
-	if (state == INPUT_KEY_RELEASE)
+	switch (state)
 	{
-		inputSetKeyRelease(input);
-	}
+		case INPUT_RELEASE:
+		case INPUT_PRESS:
+			inputSetButtonState(input, state);
 
-	if (state == INPUT_KEY_PRESS)
-	{
-		inputSetKeyPress(input);
+		case INPUT_MOVE:
+			inputSetPosition(input, value);
 	}
 }
 
@@ -611,955 +618,526 @@ int inputGetState(int input)
 		case INPUT_KEY_NUM_9:
 			return keyNum9;
 			break;
+
+		case INPUT_MOUSE_LEFT:
+			return mouseLeft;
+			break;
+
+		case INPUT_MOUSE_MIDDLE:
+			return mouseMiddle;
+			break;
+
+		case INPUT_MOUSE_RIGHT:
+			return mouseRight;
+			break;
+
+		case INPUT_MOUSE_X:
+			return mouseX;
+			break;
+
+		case INPUT_MOUSE_Y:
+			return mouseY;
+			break;
 	}
 
 	return INPUT_INVALID;
 }
 
-void inputSetKeyRelease(int key)
+void inputSetButtonState(int button, int state)
 {
-	switch (key)
+	switch (button)
 	{
 		case INPUT_KEY_SPACE:
-			keySpace = INPUT_KEY_RELEASE;
+			keySpace = state;
 			break;
 
 		case INPUT_KEY_LEFT_SHIFT:
-			keyLeftShift = INPUT_KEY_RELEASE;
+			keyLeftShift = state;
 			break;
 
 		case INPUT_KEY_RIGHT_SHIFT:
-			keyRightShift = INPUT_KEY_RELEASE;
+			keyRightShift = state;
 			break;
 
 		case INPUT_KEY_LEFT_CONTROL:
-			keyLeftControl = INPUT_KEY_RELEASE;
+			keyLeftControl = state;
 			break;
 
 		case INPUT_KEY_RIGHT_CONTROL:
-			keyRightControl = INPUT_KEY_RELEASE;
+			keyRightControl = state;
 			break;
 
 		case INPUT_KEY_LEFT_ALT:
-			keyLeftAlt = INPUT_KEY_RELEASE;
+			keyLeftAlt = state;
 			break;
 
 		case INPUT_KEY_RIGHT_ALT:
-			keyRightAlt = INPUT_KEY_RELEASE;
+			keyRightAlt = state;
 			break;
 
 		case INPUT_KEY_LEFT_SUPER:
-			keyLeftSuper = INPUT_KEY_RELEASE;
+			keyLeftSuper = state;
 			break;
 
 		case INPUT_KEY_RIGHT_SUPER:
-			keyRightSuper = INPUT_KEY_RELEASE;
+			keyRightSuper = state;
 			break;
 
 		case INPUT_KEY_ESCAPE:
-			keyEscape = INPUT_KEY_RELEASE;
+			keyEscape = state;
 			break;
 
 		case INPUT_KEY_ENTER:
-			keyEnter = INPUT_KEY_RELEASE;
+			keyEnter = state;
 			break;
 
 		case INPUT_KEY_TAB:
-			keyTab = INPUT_KEY_RELEASE;
+			keyTab = state;
 			break;
 
 		case INPUT_KEY_BACKSPACE:
-			keyBackspace = INPUT_KEY_RELEASE;
+			keyBackspace = state;
 			break;
 
 		case INPUT_KEY_INSERT:
-			keyInsert = INPUT_KEY_RELEASE;
+			keyInsert = state;
 			break;
 
 		case INPUT_KEY_DELETE:
-			keyDelete = INPUT_KEY_RELEASE;
+			keyDelete = state;
 			break;
 
 		case INPUT_KEY_UP:
-			keyUp = INPUT_KEY_RELEASE;
+			keyUp = state;
 			break;
 
 		case INPUT_KEY_DOWN:
-			keyDown = INPUT_KEY_RELEASE;
+			keyDown = state;
 			break;
 
 		case INPUT_KEY_LEFT:
-			keyLeft = INPUT_KEY_RELEASE;
+			keyLeft = state;
 			break;
 
 		case INPUT_KEY_RIGHT:
-			keyRight = INPUT_KEY_RELEASE;
+			keyRight = state;
 			break;
 
 		case INPUT_KEY_PAGE_UP:
-			keyPageUp = INPUT_KEY_RELEASE;
+			keyPageUp = state;
 			break;
 
 		case INPUT_KEY_PAGE_DOWN:
-			keyPageDown = INPUT_KEY_RELEASE;
+			keyPageDown = state;
 			break;
 
 		case INPUT_KEY_HOME:
-			keyHome = INPUT_KEY_RELEASE;
+			keyHome = state;
 			break;
 
 		case INPUT_KEY_END:
-			keyEnd = INPUT_KEY_RELEASE;
+			keyEnd = state;
 			break;
 
 		case INPUT_KEY_CAPS_LOCK:
-			keyCapsLock = INPUT_KEY_RELEASE;
+			keyCapsLock = state;
 			break;
 
 		case INPUT_KEY_SCROLL_LOCK:
-			keyScrollLock = INPUT_KEY_RELEASE;
+			keyScrollLock = state;
 			break;
 
 		case INPUT_KEY_NUM_LOCK:
-			keyNumLock = INPUT_KEY_RELEASE;
+			keyNumLock = state;
 			break;
 
 		case INPUT_KEY_PRINT_SCREEN:
-			keyPrintScreen = INPUT_KEY_RELEASE;
+			keyPrintScreen = state;
 			break;
 
 		case INPUT_KEY_PAUSE:
-			keyPause = INPUT_KEY_RELEASE;
+			keyPause = state;
 			break;
 
 		case INPUT_KEY_APOSTROPHE:
-			keyApostrophe = INPUT_KEY_RELEASE;
+			keyApostrophe = state;
 			break;
 
 		case INPUT_KEY_COMMA:
-			keyComma = INPUT_KEY_RELEASE;
+			keyComma = state;
 			break;
 
 		case INPUT_KEY_MINUS:
-			keyMinus = INPUT_KEY_RELEASE;
+			keyMinus = state;
 			break;
 
 		case INPUT_KEY_PERIOD:
-			keyPeriod = INPUT_KEY_RELEASE;
+			keyPeriod = state;
 			break;
 
 		case INPUT_KEY_SLASH:
-			keySlash = INPUT_KEY_RELEASE;
+			keySlash = state;
 			break;
 
 		case INPUT_KEY_BACKSLASH:
-			keyBackslash = INPUT_KEY_RELEASE;
+			keyBackslash = state;
 			break;
 
 		case INPUT_KEY_SEMICOLON:
-			keySemicolon = INPUT_KEY_RELEASE;
+			keySemicolon = state;
 			break;
 
 		case INPUT_KEY_EQUAL:
-			keyEqual = INPUT_KEY_RELEASE;
+			keyEqual = state;
 			break;
 
 		case INPUT_KEY_LEFT_BRACKET:
-			keyLeftBracket = INPUT_KEY_RELEASE;
+			keyLeftBracket = state;
 			break;
 
 		case INPUT_KEY_RIGHT_BRACKET:
-			keyRightBracket = INPUT_KEY_RELEASE;
+			keyRightBracket = state;
 			break;
 
 		case INPUT_KEY_GRAVE_ACCENT:
-			keyGraveAccent = INPUT_KEY_RELEASE;
+			keyGraveAccent = state;
 			break;
 
 		case INPUT_KEY_0:
-			key0 = INPUT_KEY_RELEASE;
+			key0 = state;
 			break;
 
 		case INPUT_KEY_1:
-			key1 = INPUT_KEY_RELEASE;
+			key1 = state;
 			break;
 
 		case INPUT_KEY_2:
-			key2 = INPUT_KEY_RELEASE;
+			key2 = state;
 			break;
 
 		case INPUT_KEY_3:
-			key3 = INPUT_KEY_RELEASE;
+			key3 = state;
 			break;
 
 		case INPUT_KEY_4:
-			key4 = INPUT_KEY_RELEASE;
+			key4 = state;
 			break;
 
 		case INPUT_KEY_5:
-			key5 = INPUT_KEY_RELEASE;
+			key5 = state;
 			break;
 
 		case INPUT_KEY_6:
-			key6 = INPUT_KEY_RELEASE;
+			key6 = state;
 			break;
 
 		case INPUT_KEY_7:
-			key7 = INPUT_KEY_RELEASE;
+			key7 = state;
 			break;
 
 		case INPUT_KEY_8:
-			key8 = INPUT_KEY_RELEASE;
+			key8 = state;
 			break;
 
 		case INPUT_KEY_9:
-			key9 = INPUT_KEY_RELEASE;
+			key9 = state;
 			break;
 
 		case INPUT_KEY_A:
-			keyA = INPUT_KEY_RELEASE;
+			keyA = state;
 			break;
 
 		case INPUT_KEY_B:
-			keyB = INPUT_KEY_RELEASE;
+			keyB = state;
 			break;
 
 		case INPUT_KEY_C:
-			keyC = INPUT_KEY_RELEASE;
+			keyC = state;
 			break;
 
 		case INPUT_KEY_D:
-			keyD = INPUT_KEY_RELEASE;
+			keyD = state;
 			break;
 
 		case INPUT_KEY_E:
-			keyE = INPUT_KEY_RELEASE;
+			keyE = state;
 			break;
 
 		case INPUT_KEY_F:
-			keyF = INPUT_KEY_RELEASE;
+			keyF = state;
 			break;
 
 		case INPUT_KEY_G:
-			keyG = INPUT_KEY_RELEASE;
+			keyG = state;
 			break;
 
 		case INPUT_KEY_H:
-			keyH = INPUT_KEY_RELEASE;
+			keyH = state;
 			break;
 
 		case INPUT_KEY_I:
-			keyI = INPUT_KEY_RELEASE;
+			keyI = state;
 			break;
 
 		case INPUT_KEY_J:
-			keyJ = INPUT_KEY_RELEASE;
+			keyJ = state;
 			break;
 
 		case INPUT_KEY_K:
-			keyK = INPUT_KEY_RELEASE;
+			keyK = state;
 			break;
 
 		case INPUT_KEY_L:
-			keyL = INPUT_KEY_RELEASE;
+			keyL = state;
 			break;
 
 		case INPUT_KEY_M:
-			keyM = INPUT_KEY_RELEASE;
+			keyM = state;
 			break;
 
 		case INPUT_KEY_N:
-			keyN = INPUT_KEY_RELEASE;
+			keyN = state;
 			break;
 
 		case INPUT_KEY_O:
-			keyO = INPUT_KEY_RELEASE;
+			keyO = state;
 			break;
 
 		case INPUT_KEY_P:
-			keyP = INPUT_KEY_RELEASE;
+			keyP = state;
 			break;
 
 		case INPUT_KEY_Q:
-			keyQ = INPUT_KEY_RELEASE;
+			keyQ = state;
 			break;
 
 		case INPUT_KEY_R:
-			keyR = INPUT_KEY_RELEASE;
+			keyR = state;
 			break;
 
 		case INPUT_KEY_S:
-			keyS = INPUT_KEY_RELEASE;
+			keyS = state;
 			break;
 
 		case INPUT_KEY_T:
-			keyT = INPUT_KEY_RELEASE;
+			keyT = state;
 			break;
 
 		case INPUT_KEY_U:
-			keyU = INPUT_KEY_RELEASE;
+			keyU = state;
 			break;
 
 		case INPUT_KEY_V:
-			keyV = INPUT_KEY_RELEASE;
+			keyV = state;
 			break;
 
 		case INPUT_KEY_W:
-			keyW = INPUT_KEY_RELEASE;
+			keyW = state;
 			break;
 
 		case INPUT_KEY_X:
-			keyX = INPUT_KEY_RELEASE;
+			keyX = state;
 			break;
 
 		case INPUT_KEY_Y:
-			keyY = INPUT_KEY_RELEASE;
+			keyY = state;
 			break;
 
 		case INPUT_KEY_Z:
-			keyZ = INPUT_KEY_RELEASE;
+			keyZ = state;
 			break;
 
 		case INPUT_KEY_F1:
-			keyF1 = INPUT_KEY_RELEASE;
+			keyF1 = state;
 			break;
 
 		case INPUT_KEY_F2:
-			keyF2 = INPUT_KEY_RELEASE;
+			keyF2 = state;
 			break;
 
 		case INPUT_KEY_F3:
-			keyF3 = INPUT_KEY_RELEASE;
+			keyF3 = state;
 			break;
 
 		case INPUT_KEY_F4:
-			keyF4 = INPUT_KEY_RELEASE;
+			keyF4 = state;
 			break;
 
 		case INPUT_KEY_F5:
-			keyF5 = INPUT_KEY_RELEASE;
+			keyF5 = state;
 			break;
 
 		case INPUT_KEY_F6:
-			keyF6 = INPUT_KEY_RELEASE;
+			keyF6 = state;
 			break;
 
 		case INPUT_KEY_F7:
-			keyF7 = INPUT_KEY_RELEASE;
+			keyF7 = state;
 			break;
 
 		case INPUT_KEY_F8:
-			keyF8 = INPUT_KEY_RELEASE;
+			keyF8 = state;
 			break;
 
 		case INPUT_KEY_F9:
-			keyF9 = INPUT_KEY_RELEASE;
+			keyF9 = state;
 			break;
 
 		case INPUT_KEY_F10:
-			keyF10 = INPUT_KEY_RELEASE;
+			keyF10 = state;
 			break;
 
 		case INPUT_KEY_F11:
-			keyF11 = INPUT_KEY_RELEASE;
+			keyF11 = state;
 			break;
 
 		case INPUT_KEY_F12:
-			keyF12 = INPUT_KEY_RELEASE;
+			keyF12 = state;
 			break;
 
 		case INPUT_KEY_F13:
-			keyF13 = INPUT_KEY_RELEASE;
+			keyF13 = state;
 			break;
 
 		case INPUT_KEY_F14:
-			keyF14 = INPUT_KEY_RELEASE;
+			keyF14 = state;
 			break;
 
 		case INPUT_KEY_F15:
-			keyF15 = INPUT_KEY_RELEASE;
+			keyF15 = state;
 			break;
 
 		case INPUT_KEY_F16:
-			keyF16 = INPUT_KEY_RELEASE;
+			keyF16 = state;
 			break;
 
 		case INPUT_KEY_F17:
-			keyF17 = INPUT_KEY_RELEASE;
+			keyF17 = state;
 			break;
 
 		case INPUT_KEY_F18:
-			keyF18 = INPUT_KEY_RELEASE;
+			keyF18 = state;
 			break;
 
 		case INPUT_KEY_F19:
-			keyF19 = INPUT_KEY_RELEASE;
+			keyF19 = state;
 			break;
 
 		case INPUT_KEY_F20:
-			keyF20 = INPUT_KEY_RELEASE;
+			keyF20 = state;
 			break;
 
 		case INPUT_KEY_F21:
-			keyF21 = INPUT_KEY_RELEASE;
+			keyF21 = state;
 			break;
 
 		case INPUT_KEY_F22:
-			keyF22 = INPUT_KEY_RELEASE;
+			keyF22 = state;
 			break;
 
 		case INPUT_KEY_F23:
-			keyF23 = INPUT_KEY_RELEASE;
+			keyF23 = state;
 			break;
 
 		case INPUT_KEY_F24:
-			keyF24 = INPUT_KEY_RELEASE;
+			keyF24 = state;
 			break;
 
 		case INPUT_KEY_F25:
-			keyF25 = INPUT_KEY_RELEASE;
+			keyF25 = state;
 			break;
 
 		case INPUT_KEY_NUM_DECIMAL:
-			keyNumDecimal = INPUT_KEY_RELEASE;
+			keyNumDecimal = state;
 			break;
 
 		case INPUT_KEY_NUM_DIVIDE:
-			keyNumDivide = INPUT_KEY_RELEASE;
+			keyNumDivide = state;
 			break;
 
 		case INPUT_KEY_NUM_MULTIPLY:
-			keyNumMultiply = INPUT_KEY_RELEASE;
+			keyNumMultiply = state;
 			break;
 
 		case INPUT_KEY_NUM_SUBTRACT:
-			keyNumSubtract = INPUT_KEY_RELEASE;
+			keyNumSubtract = state;
 			break;
 
 		case INPUT_KEY_NUM_ADD:
-			keyNumAdd = INPUT_KEY_RELEASE;
+			keyNumAdd = state;
 			break;
 
 		case INPUT_KEY_NUM_ENTER:
-			keyNumEnter = INPUT_KEY_RELEASE;
+			keyNumEnter = state;
 			break;
 
 		case INPUT_KEY_NUM_EQUAL:
-			keyNumEqual = INPUT_KEY_RELEASE;
+			keyNumEqual = state;
 			break;
 
 		case INPUT_KEY_NUM_0:
-			keyNum0 = INPUT_KEY_RELEASE;
+			keyNum0 = state;
 			break;
 
 		case INPUT_KEY_NUM_1:
-			keyNum1 = INPUT_KEY_RELEASE;
+			keyNum1 = state;
 			break;
 
 		case INPUT_KEY_NUM_2:
-			keyNum2 = INPUT_KEY_RELEASE;
+			keyNum2 = state;
 			break;
 
 		case INPUT_KEY_NUM_3:
-			keyNum3 = INPUT_KEY_RELEASE;
+			keyNum3 = state;
 			break;
 
 		case INPUT_KEY_NUM_4:
-			keyNum4 = INPUT_KEY_RELEASE;
+			keyNum4 = state;
 			break;
 
 		case INPUT_KEY_NUM_5:
-			keyNum5 = INPUT_KEY_RELEASE;
+			keyNum5 = state;
 			break;
 
 		case INPUT_KEY_NUM_6:
-			keyNum6 = INPUT_KEY_RELEASE;
+			keyNum6 = state;
 			break;
 
 		case INPUT_KEY_NUM_7:
-			keyNum7 = INPUT_KEY_RELEASE;
+			keyNum7 = state;
 			break;
 
 		case INPUT_KEY_NUM_8:
-			keyNum8 = INPUT_KEY_RELEASE;
+			keyNum8 = state;
 			break;
 
 		case INPUT_KEY_NUM_9:
-			keyNum9 = INPUT_KEY_RELEASE;
+			keyNum9 = state;
+			break;
+
+		case INPUT_MOUSE_LEFT:
+			mouseLeft = state;
+			break;
+
+		case INPUT_MOUSE_MIDDLE:
+			mouseMiddle = state;
+			break;
+
+		case INPUT_MOUSE_RIGHT:
+			mouseRight = state;
 			break;
 	}
 }
 
-void inputSetKeyPress(int key)
+static void inputSetPosition(int input, int value)
 {
-	switch (key)
+	switch (input)
 	{
-		case INPUT_KEY_SPACE:
-			keySpace = INPUT_KEY_PRESS;
+		case INPUT_MOUSE_X:
+			mouseX = value;
 			break;
 
-		case INPUT_KEY_LEFT_SHIFT:
-			keyLeftShift = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT_SHIFT:
-			keyRightShift = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_LEFT_CONTROL:
-			keyLeftControl = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT_CONTROL:
-			keyRightControl = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_LEFT_ALT:
-			keyLeftAlt = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT_ALT:
-			keyRightAlt = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_LEFT_SUPER:
-			keyLeftSuper = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT_SUPER:
-			keyRightSuper = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_ESCAPE:
-			keyEscape = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_ENTER:
-			keyEnter = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_TAB:
-			keyTab = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_BACKSPACE:
-			keyBackspace = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_INSERT:
-			keyInsert = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_DELETE:
-			keyDelete = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_UP:
-			keyUp = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_DOWN:
-			keyDown = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_LEFT:
-			keyLeft = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT:
-			keyRight = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_PAGE_UP:
-			keyPageUp = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_PAGE_DOWN:
-			keyPageDown = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_HOME:
-			keyHome = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_END:
-			keyEnd = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_CAPS_LOCK:
-			keyCapsLock = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_SCROLL_LOCK:
-			keyScrollLock = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_LOCK:
-			keyNumLock = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_PRINT_SCREEN:
-			keyPrintScreen = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_PAUSE:
-			keyPause = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_APOSTROPHE:
-			keyApostrophe = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_COMMA:
-			keyComma = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_MINUS:
-			keyMinus = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_PERIOD:
-			keyPeriod = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_SLASH:
-			keySlash = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_BACKSLASH:
-			keyBackslash = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_SEMICOLON:
-			keySemicolon = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_EQUAL:
-			keyEqual = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_LEFT_BRACKET:
-			keyLeftBracket = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_RIGHT_BRACKET:
-			keyRightBracket = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_GRAVE_ACCENT:
-			keyGraveAccent = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_0:
-			key0 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_1:
-			key1 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_2:
-			key2 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_3:
-			key3 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_4:
-			key4 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_5:
-			key5 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_6:
-			key6 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_7:
-			key7 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_8:
-			key8 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_9:
-			key9 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_A:
-			keyA = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_B:
-			keyB = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_C:
-			keyC = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_D:
-			keyD = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_E:
-			keyE = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F:
-			keyF = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_G:
-			keyG = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_H:
-			keyH = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_I:
-			keyI = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_J:
-			keyJ = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_K:
-			keyK = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_L:
-			keyL = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_M:
-			keyM = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_N:
-			keyN = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_O:
-			keyO = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_P:
-			keyP = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_Q:
-			keyQ = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_R:
-			keyR = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_S:
-			keyS = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_T:
-			keyT = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_U:
-			keyU = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_V:
-			keyV = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_W:
-			keyW = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_X:
-			keyX = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_Y:
-			keyY = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_Z:
-			keyZ = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F1:
-			keyF1 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F2:
-			keyF2 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F3:
-			keyF3 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F4:
-			keyF4 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F5:
-			keyF5 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F6:
-			keyF6 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F7:
-			keyF7 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F8:
-			keyF8 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F9:
-			keyF9 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F10:
-			keyF10 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F11:
-			keyF11 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F12:
-			keyF12 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F13:
-			keyF13 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F14:
-			keyF14 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F15:
-			keyF15 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F16:
-			keyF16 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F17:
-			keyF17 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F18:
-			keyF18 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F19:
-			keyF19 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F20:
-			keyF20 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F21:
-			keyF21 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F22:
-			keyF22 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F23:
-			keyF23 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F24:
-			keyF24 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_F25:
-			keyF25 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_DECIMAL:
-			keyNumDecimal = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_DIVIDE:
-			keyNumDivide = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_MULTIPLY:
-			keyNumMultiply = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_SUBTRACT:
-			keyNumSubtract = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_ADD:
-			keyNumAdd = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_ENTER:
-			keyNumEnter = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_EQUAL:
-			keyNumEqual = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_0:
-			keyNum0 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_1:
-			keyNum1 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_2:
-			keyNum2 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_3:
-			keyNum3 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_4:
-			keyNum4 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_5:
-			keyNum5 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_6:
-			keyNum6 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_7:
-			keyNum7 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_8:
-			keyNum8 = INPUT_KEY_PRESS;
-			break;
-
-		case INPUT_KEY_NUM_9:
-			keyNum9 = INPUT_KEY_PRESS;
-			break;
+		case INPUT_MOUSE_Y:
+			mouseY = value;
 	}
 }

@@ -2,13 +2,13 @@
 
 static Obj *objNew();
 static void objFree(Obj*);
-static int objProcessVector3f(char*, Vector3f*);
-static int objProcessVector2f(char*, Vector2f*);
-static int objProcessFace(char*, Vector3i*, Vector3i*, Vector3i*);
+static int objProcessVec3(char*, Vec3*);
+static int objProcessVec2(char*, Vec2*);
+static int objProcessFace(char*, Vec3*, Vec3*, Vec3*);
 
 Obj *objNew()
 {
-	Obj *obj;
+	Obj *obj = NULL;
 
 	if ((obj = malloc(sizeof(Obj))) != NULL)
 	{
@@ -28,11 +28,14 @@ Obj *objNew()
 
 void objFree(Obj *obj)
 {
-	free(obj->vertices);
-	free(obj->uvs);
-	free(obj->normals);
-	free(obj->indices);
-	free(obj);
+	if (obj != NULL)
+	{
+		free(obj->vertices);
+		free(obj->uvs);
+		free(obj->normals);
+		free(obj->indices);
+		free(obj);
+	}
 }
 
 int objToFem(uint8_t *objData, uint8_t **femData)
@@ -54,14 +57,14 @@ int objToFem(uint8_t *objData, uint8_t **femData)
 	 * elements and 4 integers for the
 	 * header.
 	 */
-	int headerLength = 4 * sizeof(int);
-	int verticesLength = obj->verticesLength * sizeof(Vector3f);
-	int uvsLength = obj->uvsLength * sizeof(Vector2f);
-	int normalsLength = obj->normalsLength * sizeof(Vector3f);
-	int indicesLength = obj->indicesLength * sizeof(Vector3i);
-	int totalLength = headerLength + verticesLength + uvsLength + normalsLength + indicesLength;
+	int headerSize = 4 * sizeof(int);
+	int verticesSize = obj->verticesLength * sizeof(Vec3);
+	int uvsSize = obj->uvsLength * sizeof(Vec2);
+	int normalsSize = obj->normalsLength * sizeof(Vec3);
+	int indicesSize = obj->indicesLength * sizeof(Vec3);
+	int totalSize = headerSize + verticesSize + uvsSize + normalsSize + indicesSize;
 
-	*femData = malloc(totalLength * sizeof(uint8_t));
+	*femData = calloc(1, totalSize);
 
 	/**
 	 * Assemble the binary file.
@@ -72,14 +75,14 @@ int objToFem(uint8_t *objData, uint8_t **femData)
 	memcpy(&(*femData)[sizeof(int)], &obj->uvsLength, sizeof(int));
 	memcpy(&(*femData)[sizeof(int) * 2], &obj->normalsLength, sizeof(int));
 	memcpy(&(*femData)[sizeof(int) * 3], &obj->indicesLength, sizeof(int));
-	memcpy(&(*femData)[headerLength], obj->vertices, verticesLength);
-	memcpy(&(*femData)[headerLength + verticesLength], obj->uvs, uvsLength);
-	memcpy(&(*femData)[headerLength + verticesLength + uvsLength], obj->normals, normalsLength);
-	memcpy(&(*femData)[headerLength + verticesLength + uvsLength + normalsLength], obj->indices, indicesLength);
+	memcpy(&(*femData)[headerSize], obj->vertices, verticesSize);
+	memcpy(&(*femData)[headerSize + verticesSize], obj->uvs, uvsSize);
+	memcpy(&(*femData)[headerSize + verticesSize + uvsSize], obj->normals, normalsSize);
+	memcpy(&(*femData)[headerSize + verticesSize + uvsSize + normalsSize], obj->indices, indicesSize);
 
 	objFree(obj);
 
-	return totalLength;
+	return totalSize;
 }
 
 int objProcess(uint8_t *objData, Obj **obj)
@@ -121,12 +124,12 @@ int objProcess(uint8_t *objData, Obj **obj)
 	/**
 	 * Extract object data.
 	 */
-	if (((*obj)->vertices = malloc((*obj)->verticesLength * sizeof(Vector3f))) != NULL &&	
-		((*obj)->uvs = malloc((*obj)->uvsLength * sizeof(Vector2f))) != NULL &&
-		((*obj)->normals = malloc((*obj)->normalsLength * sizeof(Vector3f))) != NULL &&
-		((*obj)->indices = malloc(((*obj)->indicesLength * 3) * sizeof(Vector3i))) != NULL)
+	if (((*obj)->vertices = malloc((*obj)->verticesLength * sizeof(Vec3))) != NULL &&	
+		((*obj)->uvs = malloc((*obj)->uvsLength * sizeof(Vec2))) != NULL &&
+		((*obj)->normals = malloc((*obj)->normalsLength * sizeof(Vec3))) != NULL &&
+		((*obj)->indices = malloc(((*obj)->indicesLength * 3) * sizeof(Vec3))) != NULL)
 	{
-		int returnError = 0;
+		int error = 0;
 
 		(*obj)->verticesLength = 0;
 		(*obj)->uvsLength = 0;
@@ -148,35 +151,35 @@ int objProcess(uint8_t *objData, Obj **obj)
 			{
 				if (currentLine[1] == ' ')
 				{
-					if (!objProcessVector3f(currentLine, &(*obj)->vertices[(*obj)->verticesLength]))
+					if (!objProcessVec3(currentLine, &(*obj)->vertices[(*obj)->verticesLength]))
 					{
 						(*obj)->verticesLength++;
 					}
 					else
 					{
-						returnError = -1;
+						error = 1;
 					}
 				}
 				else if (currentLine[1] == 't' && currentLine[2] == ' ')
 				{
-					if (!objProcessVector2f(currentLine, &(*obj)->uvs[(*obj)->uvsLength]))
+					if (!objProcessVec2(currentLine, &(*obj)->uvs[(*obj)->uvsLength]))
 					{
 						(*obj)->uvsLength++;
 					}
 					else
 					{
-						returnError = -1;
+						error = 1;
 					}
 				}
 				else if (currentLine[1] == 'n' && currentLine[2] == ' ')
 				{
-					if (!objProcessVector3f(currentLine, &(*obj)->normals[(*obj)->normalsLength]))
+					if (!objProcessVec3(currentLine, &(*obj)->normals[(*obj)->normalsLength]))
 					{
 						(*obj)->normalsLength++;
 					}
 					else
 					{
-						returnError = -1;
+						error = 1;
 					}
 				}
 			}
@@ -188,7 +191,7 @@ int objProcess(uint8_t *objData, Obj **obj)
 				}
 				else
 				{
-					returnError = -1;
+					error = 1;
 				}
 			}
 
@@ -200,9 +203,9 @@ int objProcess(uint8_t *objData, Obj **obj)
 			currentLine = nextLine ? (nextLine + 1) : NULL;
 		}
 
-		if (returnError)
+		if (error)
 		{
-			return returnError;
+			return -1;
 		}
 	}
 	else
@@ -213,17 +216,17 @@ int objProcess(uint8_t *objData, Obj **obj)
 	/**
 	 * Index object.
 	 */
-	Obj *indexed;
-	HashTable *hashTable;
-
-	if ((indexed = objNew()) != NULL &&
-		(indexed->vertices = malloc((*obj)->indicesLength * sizeof(Vector3f))) != NULL &&
-		(indexed->uvs = malloc((*obj)->indicesLength * sizeof(Vector2f))) != NULL &&
-		(indexed->normals = malloc((*obj)->indicesLength * sizeof(Vector3f))) != NULL &&
-		(indexed->indices = malloc(((*obj)->indicesLength / 3) * sizeof(Vector3i))) != NULL &&
-		(hashTable = hashTableNew((*obj)->indicesLength * 4)) != NULL)
+	Obj *indexed = objNew();
+	HashTable *hashTable = hashTableNew((*obj)->indicesLength * 4);
+	
+	if (indexed &&
+		hashTable &&
+		(indexed->vertices = malloc((*obj)->indicesLength * sizeof(Vec3))) != NULL &&
+		(indexed->uvs = malloc((*obj)->indicesLength * sizeof(Vec2))) != NULL &&
+		(indexed->normals = malloc((*obj)->indicesLength * sizeof(Vec3))) != NULL &&
+		(indexed->indices = malloc(((*obj)->indicesLength / 3) * sizeof(Vec3))) != NULL)
 	{
-		int returnError = 0;
+		int error = 0;
 		int indexCount = 0;
 		int *indexArray = (int*)indexed->indices;
 
@@ -238,50 +241,48 @@ int objProcess(uint8_t *objData, Obj **obj)
 			int duplicate;
 			int hashKey = 0;
 
-			hashKey = hashTableKey((*obj)->indices[i].x, hashKey);
-			hashKey = hashTableKey((*obj)->indices[i].y, hashKey);
-			hashKey = hashTableKey((*obj)->indices[i].z, hashKey);
+			hashKey = hashTableKey(hashKey, (int)(*obj)->indices[i].x);
+			hashKey = hashTableKey(hashKey, (int)(*obj)->indices[i].y);
+			hashKey = hashTableKey(hashKey, (int)(*obj)->indices[i].z);
 
-			if ((duplicate = hashTableGet(hashTable, hashKey)) < 0)
+			if ((duplicate = hashTableGet(hashTable, hashKey)) == -1)
 			{
-				if ((*obj)->indices[i].x > 0)
+				if ((*obj)->indices[i].x > 0.0f)
 				{
-					indexed->vertices[indexCount] = (*obj)->vertices[(*obj)->indices[i].x - 1];
+					indexed->vertices[indexCount] = (*obj)->vertices[(int)(*obj)->indices[i].x - 1];
 					indexed->verticesLength++;
 				}
-				else if ((*obj)->indices[i].x < 0)
+				else if ((*obj)->indices[i].x < 0.0f)
 				{
-					indexed->vertices[indexCount] = (*obj)->vertices[(*obj)->verticesLength + (*obj)->indices[i].x];
+					indexed->vertices[indexCount] = (*obj)->vertices[(*obj)->verticesLength + (int)(*obj)->indices[i].x];
 					indexed->verticesLength++;
 				}
 				else
 				{
-					returnError = -3;
+					error = 1;
 				}
 
-				if ((*obj)->indices[i].y > 0)
+				if ((*obj)->indices[i].y > 0.0f)
 				{
-					indexed->uvs[indexCount] = (*obj)->uvs[(*obj)->indices[i].y - 1];
+					indexed->uvs[indexCount] = (*obj)->uvs[(int)(*obj)->indices[i].y - 1];
 					indexed->uvsLength++;
 				}
-				else if ((*obj)->indices[i].y < 0)
+				else if ((*obj)->indices[i].y < 0.0f)
 				{
-					indexed->uvs[indexCount] = (*obj)->uvs[(*obj)->uvsLength + (*obj)->indices[i].y];
+					indexed->uvs[indexCount] = (*obj)->uvs[(*obj)->uvsLength + (int)(*obj)->indices[i].y];
 					indexed->uvsLength++;
 				}
 
-				if ((*obj)->indices[i].z > 0)
+				if ((*obj)->indices[i].z > 0.0f)
 				{
-					indexed->normals[indexCount] = (*obj)->normals[(*obj)->indices[i].z - 1];
+					indexed->normals[indexCount] = (*obj)->normals[(int)(*obj)->indices[i].z - 1];
 					indexed->normalsLength++;
 				}
-				else if ((*obj)->indices[i].z < 0)
+				else if ((*obj)->indices[i].z < 0.0f)
 				{
-					indexed->normals[indexCount] = (*obj)->normals[(*obj)->normalsLength + (*obj)->indices[i].z];
+					indexed->normals[indexCount] = (*obj)->normals[(*obj)->normalsLength + (int)(*obj)->indices[i].z];
 					indexed->normalsLength++;
 				}
-
-				hashTableSet(hashTable, hashKey, indexCount);
 
 				indexArray[i] = indexCount;
 				indexCount++;
@@ -292,41 +293,38 @@ int objProcess(uint8_t *objData, Obj **obj)
 			}
 		}
 
-		hashTableFree(hashTable);
-
-		if (returnError)
+		if (!error)
 		{
-			objFree(indexed);
-			return returnError;
+			if (indexed->uvsLength != indexed->verticesLength)
+			{
+				indexed->uvsLength = 0;
+			}
+			
+			if (indexed->normalsLength != indexed->verticesLength)
+			{
+				indexed->normalsLength = 0;
+			}
+
+			indexed->vertices = realloc(indexed->vertices, indexed->verticesLength * sizeof(Vec3));
+			indexed->uvs = realloc(indexed->uvs, indexed->uvsLength * sizeof(Vec2));
+			indexed->normals = realloc(indexed->normals, indexed->normalsLength * sizeof(Vec3));
+
+			hashTableFree(hashTable);
+			objFree(*obj);
+
+			*obj = indexed;
+
+			return 0;
 		}
-
-		if (indexed->uvsLength != indexed->verticesLength)
-		{
-			indexed->uvsLength = 0;
-		}
-		
-		if (indexed->normalsLength != indexed->verticesLength)
-		{
-			indexed->normalsLength = 0;
-		}
-
-		indexed->vertices = realloc(indexed->vertices, indexed->verticesLength * sizeof(Vector3f));
-		indexed->uvs = realloc(indexed->uvs, indexed->uvsLength * sizeof(Vector2f));
-		indexed->normals = realloc(indexed->normals, indexed->normalsLength * sizeof(Vector3f));
-
-		objFree(*obj);
-
-		*obj = indexed;
-	}
-	else
-	{
-		return -2;
 	}
 
-	return 0;
+	hashTableFree(hashTable);
+	objFree(indexed);
+
+	return -4;
 }
 
-int objProcessVector3f(char *line, Vector3f *vector3)
+int objProcessVec3(char *line, Vec3 *vector3)
 {
 	if (sscanf(line, "%*s%f %f %f", &vector3->x, &vector3->y, &vector3->z) == 3)
 	{
@@ -336,7 +334,7 @@ int objProcessVector3f(char *line, Vector3f *vector3)
 	return -1;
 }
 
-int objProcessVector2f(char *line, Vector2f *vector2)
+int objProcessVec2(char *line, Vec2 *vector2)
 {
 	if (sscanf(line, "%*s%f %f", &vector2->x, &vector2->y) == 2)
 	{
@@ -346,13 +344,13 @@ int objProcessVector2f(char *line, Vector2f *vector2)
 	return -1;
 }
 
-int objProcessFace(char *line, Vector3i *face1, Vector3i *face2, Vector3i *face3)
+int objProcessFace(char *line, Vec3 *face1, Vec3 *face2, Vec3 *face3)
 {
-	if (sscanf(line, "%*s%i/%i/%i %i/%i/%i %i/%i/%i", &face1->x, &face1->y, &face1->z, &face2->x, &face2->y, &face2->z, &face3->x, &face3->y, &face3->z) == 9)
+	if (sscanf(line, "%*s%f/%f/%f %f/%f/%f %f/%f/%f", &face1->x, &face1->y, &face1->z, &face2->x, &face2->y, &face2->z, &face3->x, &face3->y, &face3->z) == 9)
 	{
 		return 0;
 	}
-	else if (sscanf(line, "%*s%i//%i %i//%i %i//%i", &face1->x, &face1->z, &face2->x, &face2->z, &face3->x, &face3->z) == 6)
+	else if (sscanf(line, "%*s%f//%f %f//%f %f//%f", &face1->x, &face1->z, &face2->x, &face2->z, &face3->x, &face3->z) == 6)
 	{
 		face1->y = 0;
 		face2->y = 0;
@@ -360,7 +358,7 @@ int objProcessFace(char *line, Vector3i *face1, Vector3i *face2, Vector3i *face3
 
 		return 0;
 	}
-	else if (sscanf(line, "%*s%i/%i %i/%i %i/%i", &face1->x, &face1->y, &face2->x, &face2->y, &face3->x, &face3->y) == 6)
+	else if (sscanf(line, "%*s%f/%f %f/%f %f/%f", &face1->x, &face1->y, &face2->x, &face2->y, &face3->x, &face3->y) == 6)
 	{
 		face1->z = 0;
 		face2->z = 0;
@@ -368,7 +366,7 @@ int objProcessFace(char *line, Vector3i *face1, Vector3i *face2, Vector3i *face3
 
 		return 0;
 	}
-	else if (sscanf(line, "%*s%i %i %i", &face1->x, &face2->x, &face3->x) == 3)
+	else if (sscanf(line, "%*s%f %f %f", &face1->x, &face2->x, &face3->x) == 3)
 	{
 		face1->y = 0;
 		face2->y = 0;

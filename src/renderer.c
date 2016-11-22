@@ -2,106 +2,37 @@
 
 static void rendererBindVariables(Renderer*, ShaderProgram*, Object*);
 
-static int defaultShaderID;
-
-int rendererInit(Renderer *renderer, Camera *camera)
+Renderer *rendererNew(Camera *camera)
 {
-	int returnError = 0;
+	Renderer *renderer = NULL;
 
-	Array *shaders = malloc(sizeof(Array));
-	arrayInit(shaders);
-
-	Array *objectsVAO = malloc(sizeof(Array));
-	arrayInit(objectsVAO);
-
-	Array *objectsStatic = malloc(sizeof(Array));
-	arrayInit(objectsStatic);
-
-	Array *objectsDynamic = malloc(sizeof(Array));
-	arrayInit(objectsDynamic);
-
-	glGenVertexArrays(1, &renderer->staticVAO);
-
-	renderer->camera = camera;
-	renderer->shaders = shaders;
-	renderer->objectsVAO = objectsVAO;
-	
-	renderer->objectsDynamic = objectsDynamic;
-	renderer->objectsStatic = objectsStatic;
-
-	/**
-	 * Initialize a default scene shader.
-	 */
-	ShaderProgram *defaultShader = malloc(sizeof(ShaderProgram));
-	shaderProgramInit(defaultShader);
-
-	Shader defaultVertex;
-	Shader defaultFragment;
-
-	if (shaderInit(&defaultVertex, SHADER_VERTEX, "./assets/shaders/default.vs"))
+	if ((renderer = malloc(sizeof(Renderer))) != NULL)
 	{
-		shaderDestroy(&defaultVertex);
-		return -1;
+		renderer->shaders = arrayNew();
+		renderer->dynamicVAOs = arrayNew();
+		renderer->objectsStatic = arrayNew();
+		renderer->objectsDynamic = arrayNew();
+		renderer->shaders = arrayNew();
+		renderer->camera = camera;
+
+		glGenVertexArrays(1, &renderer->staticVAO);
 	}
 
-	
-	if (shaderInit(&defaultFragment, SHADER_FRAGMENT, "./assets/shaders/default.fs"))
-	{
-		shaderDestroy(&defaultVertex);
-		shaderDestroy(&defaultFragment);
-		return -2;
-	}
-
-	shaderAttach(defaultShader, &defaultVertex);
-	shaderAttach(defaultShader, &defaultFragment);
-	
-	if (shaderProgramLink(defaultShader))
-	{
-		returnError = -3;
-	}
-
-	defaultShaderID = rendererAddShader(renderer, defaultShader);
-	
-	shaderDestroy(&defaultVertex);
-	shaderDestroy(&defaultFragment);
-
-	return returnError;
+	return renderer;
 }
 
-/**
- * TODO: Implement better destroy.
- */
-void rendererDestroy(Renderer *renderer)
+void rendererFree(Renderer *renderer)
 {
-	glDeleteVertexArrays(1, &renderer->staticVAO);
-
-	if (defaultShaderID)
+	if (renderer != NULL)
 	{
-		ShaderProgram *shader = arrayGet(renderer->shaders, defaultShaderID - 1);
-		shaderProgramDestroy(shader);
+		glDeleteVertexArrays(1, &renderer->staticVAO);
+		arrayFree(renderer->shaders);
+		arrayFree(renderer->dynamicVAOs);
+		arrayFree(renderer->objectsDynamic);
+		arrayFree(renderer->objectsStatic);
+		arrayFree(renderer->shaders);
+		free(renderer);
 	}
-	
-	for (int i = 0; i < arrayLength(renderer->objectsDynamic); i++)
-	{
-		Object *objectDynamic = arrayGet(renderer->objectsDynamic, i);
-
-		if (objectDynamic)
-		{
-			rendererRemoveObject(renderer, i, OBJECT_DYNAMIC);
-		}
-	}
-
-	glDeleteVertexArrays(1, &renderer->staticVAO);
-
-	arrayDestroy(renderer->shaders);
-	arrayDestroy(renderer->objectsVAO);
-	arrayDestroy(renderer->objectsDynamic);
-	arrayDestroy(renderer->objectsStatic);
-
-	free(renderer->shaders);
-	free(renderer->objectsVAO);
-	free(renderer->objectsDynamic);
-	free(renderer->objectsStatic);
 }
 
 int rendererAddShader(Renderer *renderer, ShaderProgram *program)
@@ -112,10 +43,7 @@ int rendererAddShader(Renderer *renderer, ShaderProgram *program)
 
 void rendererRemoveShader(Renderer *renderer, int shaderID)
 {
-	if (shaderID != defaultShaderID)
-	{
-		arrayRemove(renderer->shaders, shaderID - 1);
-	}
+	arrayRemove(renderer->shaders, shaderID - 1);
 }
 
 int rendererAddObject(Renderer *renderer, Object *object, int objectType)
@@ -128,7 +56,7 @@ int rendererAddObject(Renderer *renderer, Object *object, int objectType)
 			GLuint *vao = malloc(sizeof(GLuint));
 			glGenVertexArrays(1, vao);
 			glBindVertexArray(*vao);
-			arrayPush(renderer->objectsVAO, vao);
+			arrayPush(renderer->dynamicVAOs, vao);
 			arrayPush(renderer->objectsDynamic, object);
 			objectID = arrayLength(renderer->objectsDynamic);
 			break;
@@ -167,9 +95,9 @@ void rendererRemoveObject(Renderer *renderer, int objectID, int objectType)
 	switch (objectType)
 	{
 		case OBJECT_DYNAMIC: ;
-			GLuint *vao = arrayGet(renderer->objectsVAO, objectID - 1);
+			GLuint *vao = arrayGet(renderer->dynamicVAOs, objectID - 1);
 			arrayRemove(renderer->objectsDynamic, objectID - 1);
-			arrayRemove(renderer->objectsVAO, objectID - 1);
+			arrayRemove(renderer->dynamicVAOs, objectID - 1);
 			glDeleteVertexArrays(1, vao);
 			free(vao);
 			break;
@@ -200,7 +128,7 @@ void rendererExecute(Renderer *renderer)
 
 			rendererBindVariables(renderer, shader, objectStatic);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectStatic->vbo[3]);
-			glDrawElements(GL_TRIANGLES, objectStatic->mesh->indicesLength * 3, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, objectStatic->indicesLength * 3, GL_UNSIGNED_INT, 0);
 		}
 
 		for (int i = 0; i < dynamicLength; i++)
@@ -209,13 +137,12 @@ void rendererExecute(Renderer *renderer)
 
 			if (objectDynamic)
 			{
-				GLuint* objectVAO = (GLuint*) arrayGet(renderer->objectsVAO, i);
+				GLuint* objectVAO = (GLuint*)arrayGet(renderer->dynamicVAOs, i);
 
 				glBindVertexArray(*objectVAO);
-
 				rendererBindVariables(renderer, shader, objectDynamic);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDynamic->vbo[3]);
-				glDrawElements(GL_TRIANGLES, objectDynamic->mesh->indicesLength * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, objectDynamic->indicesLength * 3, GL_UNSIGNED_INT, 0);
 			}
 		}
 	}
@@ -227,12 +154,12 @@ void rendererExecute(Renderer *renderer)
 
 void rendererBindVariables(Renderer *renderer, ShaderProgram *shader, Object *object)
 {
-	Matrix4 model = object->transformMatrix;
-	Matrix4 modelView = matrix4MultiplyMatrix4(renderer->camera->view, model);
-	Matrix4 modelViewPerspective = matrix4MultiplyMatrix4(renderer->camera->perspective, modelView);
+	Mat4 model = object->transformMatrix;
+	Mat4 modelView = mat4MultiplyMat4(renderer->camera->view, model);
+	Mat4 modelViewPerspective = mat4MultiplyMat4(renderer->camera->projection, modelView);
 
-	shaderProgramSetMatrix4(shader, "model", model);
-	shaderProgramSetMatrix4(shader, "modelView", modelView);
-	shaderProgramSetMatrix4(shader, "modelViewPerspective", modelViewPerspective);
-	shaderProgramSetMatrix4(shader, "normalMatrix", matrix4Transpose(matrix4Invert(modelView)));
+	shaderProgramSetMat4(shader, "model", model);
+	shaderProgramSetMat4(shader, "modelView", modelView);
+	shaderProgramSetMat4(shader, "modelViewPerspective", modelViewPerspective);
+	shaderProgramSetMat4(shader, "normalMatrix", mat4Transpose(mat4Inverse(modelView)));
 }

@@ -1,5 +1,5 @@
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
+#ifndef TOOLS_HASHTABLE_H
+#define TOOLS_HASHTABLE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,16 +10,16 @@
 typedef struct {
 	int size;
 	int length;
-	int offset;
+	int count;
 	int *hashes;
 	int *data;
 } HashTable;
 
-HashTable *hashTableNew(int);
+HashTable *hashTableNew(unsigned int);
 void hashTableFree(HashTable*);
 int hashTableLength(HashTable*);
-int hashTableKey(int, int);
-int hashTableSet(HashTable*, int, int);
-int hashTableGet(HashTable*, int);
+int hashTableKey(unsigned int, unsigned int);
+int hashTableSet(HashTable*, unsigned int, unsigned int);
+int hashTableGet(HashTable*, unsigned int);
 
 #endif

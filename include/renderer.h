@@ -11,20 +11,22 @@
 
 typedef struct {
 	Camera *camera;
-	Array *lights;
-	Array *shaders;
 	GLuint staticVAO;
-	Array *objectsVAO;
+	Array *dynamicVAOs;
 	Array *objectsDynamic;
 	Array *objectsStatic;
+	Array *shaders;
 } Renderer;
 
-int rendererInit(Renderer*, Camera*);
-void rendererDestroy(Renderer*);
+Renderer *rendererNew(Camera*);
+void rendererFree(Renderer*);
+
 int rendererAddShader(Renderer*, ShaderProgram*);
 void rendererRemoveShader(Renderer*, int);
+
 int rendererAddObject(Renderer*, Object*, int);
 void rendererRemoveObject(Renderer*, int, int);
+
 void rendererExecute(Renderer*);
 
 #endif

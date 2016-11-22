@@ -14,10 +14,10 @@ typedef struct {
 	int uvsLength;
 	int normalsLength;
 	int indicesLength;
-	Vector3f *vertices;
-	Vector2f *uvs;
-	Vector3f *normals;
-	Vector3i *indices;
+	Vec3 *vertices;
+	Vec2 *uvs;
+	Vec3 *normals;
+	Vec3 *indices;
 } Obj;
 
 int objToFem(uint8_t*, uint8_t**);

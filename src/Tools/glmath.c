@@ -1,44 +1,325 @@
 #include "Tools/glmath.h"
 
-Vector2i vector2i(int x, int y)
+Vec2 vec2(float x, float y)
 {
-	Vector2i vector = { x, y };
+	Vec2 vector = { x, y };
 	return vector;
 }
 
-Vector3i vector3i(int x, int y, int z)
+Vec3 vec3(float x, float y, float z)
 {
-	Vector3i vector = { x, y, z };
+	Vec3 vector = { x, y, z };
 	return vector;
 }
 
-Vector4i vector4i(int x, int y, int z, int w)
+Vec4 vec4(float x, float y, float z, float w)
 {
-	Vector4i vector = { x, y, z, w };
+	Vec4 vector = { x, y, z, w };
 	return vector;
 }
 
-Vector2f vector2f(float x, float y)
+Vec2 vec2Negative(Vec2 v)
 {
-	Vector2f vector = { x, y };
+	Vec2 vector = {
+		-v.x, -v.y
+	};
+
 	return vector;
 }
 
-Vector3f vector3f(float x, float y, float z)
+Vec3 vec3Negative(Vec3 v)
 {
-	Vector3f vector = { x, y, z };
+	Vec3 vector = {
+		-v.x, -v.y, -v.z
+	};
+
 	return vector;
 }
 
-Vector4f vector4f(float x, float y, float z, float w)
+Vec4 vec4Negative(Vec4 v)
 {
-	Vector4f vector = { x, y, z, w };
+	Vec4 vector = {
+		-v.x, -v.y, -v.z, -v.w
+	};
+
 	return vector;
 }
 
-Vector3f quatConvertEuler(Vector4f q)
+Vec3 vec3CrossProduct(Vec3 v1, Vec3 v2)
 {
-	Vector3f euler;
+	Vec3 vector = {
+		(v1.y * v2.z) - (v1.z * v2.y),
+		(v1.z * v2.x) - (v1.x * v2.z),
+		(v1.x * v2.y) - (v1.y * v2.x)
+	};
+
+	return vector;
+}
+
+Vec2 vec2Normalize(Vec2 v)
+{	
+	float length = sqrt((v.x * v.x) + (v.y * v.y));
+	return length == 0.0f ? vec2(0.0f, 0.0f) : vec2DivideVec2(v, vec2(length, length));
+}
+
+Vec3 vec3Normalize(Vec3 v)
+{	
+	float length = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z));
+	return length == 0.0f ? vec3(0.0f, 0.0f, 0.0f) : vec3DivideVec3(v, vec3(length, length, length));
+}
+
+Vec4 vec4Normalize(Vec4 v)
+{	
+	float length = sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z) + (v.w * v.w));
+	return length == 0.0f ? vec4(0.0f, 0.0f, 0.0f, 0.0f) : vec4DivideVec4(v, vec4(length, length, length, length));
+}
+
+/**
+ * Vector multiplication.
+ */
+Vec2 vec2MultiplyVec2(Vec2 v1, Vec2 v2)
+{
+	return vec2(v1.x * v2.x, v1.y * v2.y);
+}
+
+Vec2 vec2MultiplyVec3(Vec2 v1, Vec3 v2)
+{
+	return vec2(v1.x * v2.x, v1.y * v2.y);
+}
+
+Vec2 vec2MultiplyVec4(Vec2 v1, Vec4 v2)
+{
+	return vec2(v1.x * v2.x, v1.y * v2.y);
+}
+
+Vec3 vec3MultiplyVec2(Vec3 v1, Vec2 v2)
+{
+	return vec3(v1.x * v2.x, v1.y * v2.y, v1.z);
+}
+
+Vec3 vec3MultiplyVec3(Vec3 v1, Vec3 v2)
+{
+	return vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+}
+
+Vec3 vec3MultiplyVec4(Vec3 v1, Vec4 v2)
+{
+	return vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+}
+
+Vec4 vec4MultiplyVec2(Vec4 v1, Vec2 v2)
+{
+	return vec4(v1.x * v2.x, v1.y * v2.y, v1.z, v1.w);
+}
+
+Vec4 vec4MultiplyVec3(Vec4 v1, Vec3 v2)
+{
+	return vec4(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w);
+}
+
+Vec4 vec4MultiplyVec4(Vec4 v1, Vec4 v2)
+{
+	return vec4(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w);
+}
+
+Vec2 vec2MultiplyMat4(Vec2 v, Mat4 m)
+{
+	Vec2 vector = {
+		(v.x * m.xx) + (v.y * m.xy),
+		(v.x * m.yx) + (v.y * m.yy)
+	};
+
+	return vector;
+}
+
+Vec3 vec3MultiplyMat4(Vec3 v, Mat4 m)
+{
+	Vec3 vector = {
+		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz),
+		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz),
+		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz)
+	};
+
+	return vector;
+}
+
+Vec4 vec4MultiplyMat4(Vec4 v, Mat4 m)
+{
+	Vec4 vector = {
+		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz) + (v.z * m.xw),
+		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz) + (v.z * m.yw),
+		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz) + (v.z * m.zw),
+		(v.x * m.wx) + (v.y * m.wy) + (v.z * m.wz) + (v.z * m.ww)
+	};
+
+	return vector;
+}
+
+/**
+ * Vector addition.
+ */
+Vec2 vec2AddVec2(Vec2 v1, Vec2 v2)
+{
+	return vec2(v1.x + v2.x, v1.y + v2.y);
+}
+
+Vec2 vec2AddVec3(Vec2 v1, Vec3 v2)
+{
+	return vec2(v1.x + v2.x, v1.y + v2.y);
+}
+
+Vec2 vec2AddVec4(Vec2 v1, Vec4 v2)
+{
+	return vec2(v1.x + v2.x, v1.y + v2.y);
+}
+
+Vec3 vec3AddVec2(Vec3 v1, Vec2 v2)
+{
+	return vec3(v1.x + v2.x, v1.y + v2.y, v1.z);
+}
+
+Vec3 vec3AddVec3(Vec3 v1, Vec3 v2)
+{
+	return vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+}
+
+Vec3 vec3AddVec4(Vec3 v1, Vec4 v2)
+{
+	return vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+}
+
+Vec4 vec4AddVec2(Vec4 v1, Vec2 v2)
+{
+	return vec4(v1.x + v2.x, v1.y + v2.y, v1.z, v1.w);
+}
+
+Vec4 vec4AddVec3(Vec4 v1, Vec3 v2)
+{
+	return vec4(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w);
+}
+
+Vec4 vec4AddVec4(Vec4 v1, Vec4 v2)
+{
+	return vec4(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w);
+}
+
+Vec2 vec2AddMat4(Vec2 v, Mat4 m)
+{
+	Vec2 vector = {
+		v.x + m.xx + v.y + m.xy,
+		v.x + m.yx + v.y + m.yy
+	};
+
+	return vector;
+}
+
+Vec3 vec3AddMat4(Vec3 v, Mat4 m)
+{
+	Vec3 vector = {
+		v.x + m.xx + v.y + m.xy + v.z + m.xz,
+		v.x + m.yx + v.y + m.yy + v.z + m.yz,
+		v.x + m.zx + v.y + m.zy + v.z + m.zz
+	};
+
+	return vector;
+}
+
+Vec4 vec4AddMat4(Vec4 v, Mat4 m)
+{
+	Vec4 vector = {
+		v.x + m.xx + v.y + m.xy + v.z + m.xz + v.z + m.xw,
+		v.x + m.yx + v.y + m.yy + v.z + m.yz + v.z + m.yw,
+		v.x + m.zx + v.y + m.zy + v.z + m.zz + v.z + m.zw,
+		v.x + m.wx + v.y + m.wy + v.z + m.wz + v.z + m.ww
+	};
+
+	return vector;
+}
+
+/**
+ * Vector division.
+ */
+Vec2 vec2DivideVec2(Vec2 v1, Vec2 v2)
+{
+	return vec2(v1.x / v2.x, v1.y / v2.y);
+}
+
+Vec2 vec2DivideVec3(Vec2 v1, Vec3 v2)
+{
+	return vec2(v1.x / v2.x, v1.y / v2.y);
+}
+
+Vec2 vec2DivideVec4(Vec2 v1, Vec4 v2)
+{
+	return vec2(v1.x / v2.x, v1.y / v2.y);
+}
+
+Vec3 vec3DivideVec2(Vec3 v1, Vec2 v2)
+{
+	return vec3(v1.x / v2.x, v1.y / v2.y, v1.z);
+}
+
+Vec3 vec3DivideVec3(Vec3 v1, Vec3 v2)
+{
+	return vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);
+}
+
+Vec3 vec3DivideVec4(Vec3 v1, Vec4 v2)
+{
+	return vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);
+}
+
+Vec4 vec4DivideVec2(Vec4 v1, Vec2 v2)
+{
+	return vec4(v1.x / v2.x, v1.y / v2.y, v1.z, v1.w);
+}
+
+Vec4 vec4DivideVec3(Vec4 v1, Vec3 v2)
+{
+	return vec4(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w);
+}
+
+Vec4 vec4DivideVec4(Vec4 v1, Vec4 v2)
+{
+	return vec4(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z, v1.w / v2.w);
+}
+
+Vec2 vec2DivideMat4(Vec2 v, Mat4 m)
+{
+	Vec2 vector = {
+		(v.x / m.xx) + (v.y / m.xy),
+		(v.x / m.yx) + (v.y / m.yy)
+	};
+
+	return vector;
+}
+
+Vec3 vec3DivideMat4(Vec3 v, Mat4 m)
+{
+	Vec3 vector = {
+		(v.x / m.xx) + (v.y / m.xy) + (v.z / m.xz),
+		(v.x / m.yx) + (v.y / m.yy) + (v.z / m.yz),
+		(v.x / m.zx) + (v.y / m.zy) + (v.z / m.zz)
+	};
+
+	return vector;
+}
+
+Vec4 vec4DivideMat4(Vec4 v, Mat4 m)
+{
+	Vec4 vector = {
+		(v.x / m.xx) + (v.y / m.xy) + (v.z / m.xz) + (v.z / m.xw),
+		(v.x / m.yx) + (v.y / m.yy) + (v.z / m.yz) + (v.z / m.yw),
+		(v.x / m.zx) + (v.y / m.zy) + (v.z / m.zz) + (v.z / m.zw),
+		(v.x / m.wx) + (v.y / m.wy) + (v.z / m.wz) + (v.z / m.ww)
+	};
+
+	return vector;
+}
+
+Vec3 quatConvertEuler(Vec4 q)
+{
+	Vec3 euler;
 
 	float sqrX = q.x * q.x; 
 	float sqrY = q.y * q.y; 
@@ -52,9 +333,9 @@ Vector3f quatConvertEuler(Vector4f q)
 	return euler;
 }
 
-Vector4f eulerConvertQuat(Vector3f e)
+Vec4 eulerConvertQuat(Vec3 e)
 {
-	Vector4f quat;
+	Vec4 quat;
 
 	float cosX = cosf(e.x / 2.0f); 
 	float cosY = cosf(e.y / 2.0f); 
@@ -72,9 +353,9 @@ Vector4f eulerConvertQuat(Vector3f e)
 	return quat;
 }
 
-Matrix4 matrix4Empty()
+Mat4 mat4Empty()
 {
-	Matrix4 matrix = {
+	Mat4 matrix = {
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
@@ -84,9 +365,9 @@ Matrix4 matrix4Empty()
 	return matrix;
 }
 
-Matrix4 matrix4Identity()
+Mat4 mat4Identity()
 {
-	Matrix4 matrix = {
+	Mat4 matrix = {
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
@@ -96,9 +377,9 @@ Matrix4 matrix4Identity()
 	return matrix;
 }
 
-Matrix4 matrix4Translate(Vector3f t)
+Mat4 mat4Translation(Vec3 t)
 {
-	Matrix4 matrix = matrix4Identity();
+	Mat4 matrix = mat4Identity();
 
 	matrix.xw = t.x;
 	matrix.yw = t.y;
@@ -107,20 +388,33 @@ Matrix4 matrix4Translate(Vector3f t)
 	return matrix;
 }
 
-Matrix4 matrix4Scale(Vector3f s)
+Mat4 mat4RotationAxis(Vec3 v, float angle)
 {
-	Matrix4 matrix = matrix4Identity();
+  Mat4 matrix = mat4Identity();
 
-	matrix.xx = s.x;
-	matrix.yy = s.y;
-	matrix.zz = s.z;
+  float cosA = cos(angle);
+  float sinA = sin(angle);
+  float cosN = 1.0f - cosA;
+  
+  matrix.xx = v.x * v.x * cosN + cosA;
+  matrix.xy = v.x * v.y * cosN - v.z * sinA;
+  matrix.xz = v.x * v.z * cosN + v.y * sinA;
+  
+  matrix.yx = v.y * v.x * cosN + v.z * sinA;
+  matrix.yy = v.y * v.y * cosN + cosA;
+  matrix.yz = v.y * v.z * cosN - v.x * sinA;
+  
+  matrix.zx = v.z * v.x * cosN - v.y * sinA;
+  matrix.zy = v.z * v.y * cosN + v.x * sinA;
+  matrix.zz = v.z * v.z * cosN + cosA;
+  
+  return matrix;
 
-	return matrix;
 }
 
-Matrix4 matrix4Euler(Vector3f e)
+Mat4 mat4RotationEuler(Vec3 e)
 {
-	Matrix4 matrix = matrix4Identity();
+	Mat4 matrix = mat4Identity();
 
 	float cosX = cos(e.x);
 	float cosY = cos(e.y);
@@ -145,9 +439,9 @@ Matrix4 matrix4Euler(Vector3f e)
 	return matrix;
 }
 
-Matrix4 matrix4Quat(Vector4f q)
+Mat4 mat4RotationQuat(Vec4 q)
 {
-	Matrix4 matrix = matrix4Identity();
+	Mat4 matrix = mat4Identity();
 
     float xx = q.x * q.x;
     float xy = q.x * q.y;
@@ -176,7 +470,18 @@ Matrix4 matrix4Quat(Vector4f q)
 	return matrix;
 }
 
-float matrix4Determinant(Matrix4 m)
+Mat4 mat4Scale(Vec3 s)
+{
+	Mat4 matrix = mat4Identity();
+
+	matrix.xx = s.x;
+	matrix.yy = s.y;
+	matrix.zz = s.z;
+
+	return matrix;
+}
+
+float mat4Determinant(Mat4 m)
 {
 	return m.xw * m.yz * m.zy * m.wx - m.xz * m.yw * m.zy * m.wx -
 		   m.xw * m.yy * m.zz * m.wx + m.xy * m.yw * m.zz * m.wx +
@@ -192,11 +497,11 @@ float matrix4Determinant(Matrix4 m)
 		   m.xy * m.yx * m.zz * m.ww + m.xx * m.yy * m.zz * m.ww;
 }
 
-Matrix4 matrix4Invert(Matrix4 m)
+Mat4 mat4Inverse(Mat4 m)
 {
-	Matrix4 matrix = matrix4Empty();
+	Mat4 matrix = mat4Empty();
 
-	float determinant = 1.0f / matrix4Determinant(m);
+	float determinant = 1.0f / mat4Determinant(m);
 
 	matrix.xx = (m.yz * m.zw * m.wy - m.yw * m.zz * m.wy + m.yw * m.zy * m.wz - m.yy * m.zw * m.wz - m.yz * m.zy * m.ww + m.yy * m.zz * m.ww) * determinant;
 	matrix.xy = (m.xw * m.zz * m.wy - m.xz * m.zw * m.wy - m.xw * m.zy * m.wz + m.xy * m.zw * m.wz + m.xz * m.zy * m.ww - m.xy * m.zz * m.ww) * determinant;
@@ -221,9 +526,9 @@ Matrix4 matrix4Invert(Matrix4 m)
 	return matrix;
 }
 
-Matrix4 matrix4Transpose(Matrix4 m)
+Mat4 mat4Transpose(Mat4 m)
 {
-	Matrix4 matrix = matrix4Empty();
+	Mat4 matrix = mat4Empty();
 
 	matrix.xx = m.xx;
 	matrix.xy = m.yx;
@@ -248,9 +553,32 @@ Matrix4 matrix4Transpose(Matrix4 m)
 	return matrix;
 }
 
-Matrix4 matrix4Orthographic(float left, float right, float bottom, float top, float nearClip, float farClip)
+Mat4 mat4LookAt(Vec3 position, Vec3 target, Vec3 up)
 {
-	Matrix4 matrix = matrix4Empty();
+	Mat4 matrix = mat4Identity();
+
+	Vec3 z = vec3Normalize(vec3AddVec3(position, vec3Negative(target)));
+	Vec3 x = vec3Normalize(vec3CrossProduct(up, z));
+	Vec3 y = vec3CrossProduct(z, x);
+
+	matrix.xx = x.x;
+	matrix.xy = x.y;
+	matrix.xz = x.z;
+
+	matrix.yx = y.x;
+	matrix.yy = y.y;
+	matrix.yz = y.z;
+
+	matrix.zx = z.x;
+	matrix.zy = z.y;
+	matrix.zz = z.z;
+
+	return mat4MultiplyMat4(matrix, mat4Translation(vec3Negative(position)));
+}
+
+Mat4 mat4Orthographic(float left, float right, float top, float bottom, float nearClip, float farClip)
+{
+	Mat4 matrix = mat4Empty();
 
 	matrix.xx = 2.0f / (right - left); 
 	matrix.yy = 2.0f / (top - bottom); 
@@ -263,9 +591,9 @@ Matrix4 matrix4Orthographic(float left, float right, float bottom, float top, fl
 	return matrix;
 }
 
-Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float farClip)
+Mat4 mat4Perspective(float fov, float aspectRatio, float nearClip, float farClip)
 {
-	Matrix4 matrix = matrix4Empty();
+	Mat4 matrix = mat4Empty();
 
 	float cotan = 1.0f / tanf(fov / 2.0f); 
 
@@ -279,61 +607,28 @@ Matrix4 matrix4Perspective(float fov, float aspectRatio, float nearClip, float f
 	return matrix;
 }
 
-Vector2f vector2fMultiplyMatrix4(Vector2f v, Matrix4 m)
+Mat4 mat4MultiplyMat4(Mat4 m1, Mat4 m2)
 {
-	Vector2f vector = {
-		(v.x * m.xx) + (v.y * m.xy),
-		(v.x * m.yx) + (v.y * m.yy)
-	};
-
-	return vector;
-}
-
-Vector3f vector3fMultiplyMatrix4(Vector3f v, Matrix4 m)
-{
-	Vector3f vector = {
-		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz),
-		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz),
-		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz)
-	};
-
-	return vector;
-}
-
-Vector4f vector4fMultiplyMatrix4(Vector4f v, Matrix4 m)
-{
-	Vector4f vector = {
-		(v.x * m.xx) + (v.y * m.xy) + (v.z * m.xz) + (v.z * m.xw),
-		(v.x * m.yx) + (v.y * m.yy) + (v.z * m.yz) + (v.z * m.yw),
-		(v.x * m.zx) + (v.y * m.zy) + (v.z * m.zz) + (v.z * m.zw),
-		(v.x * m.wx) + (v.y * m.wy) + (v.z * m.wz) + (v.z * m.ww)
-	};
-
-	return vector;
-}
-
-Matrix4 matrix4MultiplyMatrix4(Matrix4 m1, Matrix4 m2)
-{
-	Matrix4 matrix = matrix4Empty();
+	Mat4 matrix = mat4Empty();
 
 	matrix.xx = (m1.xx * m2.xx) + (m1.xy * m2.yx) + (m1.xz * m2.zx) + (m1.xw * m2.wx);
-	matrix.yx = (m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx) + (m1.yw * m2.wx);
-	matrix.zx = (m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx) + (m1.zw * m2.wx);
-	matrix.wx = (m1.wx * m2.xx) + (m1.wy * m2.yx) + (m1.wz * m2.zx) + (m1.ww * m2.wx); 
-
 	matrix.xy = (m1.xx * m2.xy) + (m1.xy * m2.yy) + (m1.xz * m2.zy) + (m1.xw * m2.wy);
-	matrix.yy = (m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy) + (m1.yw * m2.wy);
-	matrix.zy = (m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy) + (m1.zw * m2.wy);
-	matrix.wy = (m1.wx * m2.xy) + (m1.wy * m2.yy) + (m1.wz * m2.zy) + (m1.ww * m2.wy);
-
 	matrix.xz = (m1.xx * m2.xz) + (m1.xy * m2.yz) + (m1.xz * m2.zz) + (m1.xw * m2.wz);
-	matrix.yz = (m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz) + (m1.yw * m2.wz);
-	matrix.zz = (m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz) + (m1.zw * m2.wz);
-	matrix.wz = (m1.wx * m2.xz) + (m1.wy * m2.yz) + (m1.wz * m2.zz) + (m1.ww * m2.wz); 
-
 	matrix.xw = (m1.xx * m2.xw) + (m1.xy * m2.yw) + (m1.xz * m2.zw) + (m1.xw * m2.ww); 
-	matrix.yw = (m1.yx * m2.xw) + (m1.yy * m2.yw) + (m1.yz * m2.zw) + (m1.yw * m2.ww); 
+
+	matrix.yx = (m1.yx * m2.xx) + (m1.yy * m2.yx) + (m1.yz * m2.zx) + (m1.yw * m2.wx);
+	matrix.yy = (m1.yx * m2.xy) + (m1.yy * m2.yy) + (m1.yz * m2.zy) + (m1.yw * m2.wy);
+	matrix.yz = (m1.yx * m2.xz) + (m1.yy * m2.yz) + (m1.yz * m2.zz) + (m1.yw * m2.wz);
+	matrix.yw = (m1.yx * m2.xw) + (m1.yy * m2.yw) + (m1.yz * m2.zw) + (m1.yw * m2.ww);
+
+	matrix.zx = (m1.zx * m2.xx) + (m1.zy * m2.yx) + (m1.zz * m2.zx) + (m1.zw * m2.wx);
+	matrix.zy = (m1.zx * m2.xy) + (m1.zy * m2.yy) + (m1.zz * m2.zy) + (m1.zw * m2.wy);
+	matrix.zz = (m1.zx * m2.xz) + (m1.zy * m2.yz) + (m1.zz * m2.zz) + (m1.zw * m2.wz);
 	matrix.zw = (m1.zx * m2.xw) + (m1.zy * m2.yw) + (m1.zz * m2.zw) + (m1.zw * m2.ww); 
+
+	matrix.wx = (m1.wx * m2.xx) + (m1.wy * m2.yx) + (m1.wz * m2.zx) + (m1.ww * m2.wx); 
+	matrix.wy = (m1.wx * m2.xy) + (m1.wy * m2.yy) + (m1.wz * m2.zy) + (m1.ww * m2.wy);
+	matrix.wz = (m1.wx * m2.xz) + (m1.wy * m2.yz) + (m1.wz * m2.zz) + (m1.ww * m2.wz); 
 	matrix.ww = (m1.wx * m2.xw) + (m1.wy * m2.yw) + (m1.wz * m2.zw) + (m1.ww * m2.ww);
 
 	return matrix;

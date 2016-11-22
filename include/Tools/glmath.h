@@ -1,78 +1,120 @@
-#ifndef GLMATH_H
-#define GLMATH_H
+#ifndef TOOLS_GLMATH_H
+#define TOOLS_GLMATH_H
+
+#ifndef PI
+#define PI 3.14159265359
+#endif
 
 #include <stdio.h>
 #include <math.h>
 
 typedef struct {
-	int x;
-	int y;
-} Vector2i;
-
-typedef struct {
-	int x;
-	int y;
-	int z;
-} Vector3i;
-
-typedef struct {
-	int x;
-	int y;
-	int z;
-	int w;
-} Vector4i;
-
-typedef struct {
 	float x;
 	float y;
-} Vector2f;
+} Vec2;
 
 typedef struct {
 	float x;
 	float y;
 	float z;
-} Vector3f;
+} Vec3;
 
 typedef struct {
 	float x;
 	float y;
 	float z;
 	float w;
-} Vector4f;
+} Vec4;
 
 typedef struct {
 	float xx; float yx; float zx; float wx;
 	float xy; float yy; float zy; float wy;
 	float xz; float yz; float zz; float wz;
 	float xw; float yw; float zw; float ww;
-} Matrix4;
+} Mat4;
 
-Vector2i vector2i(int, int);
-Vector3i vector3i(int, int, int);
-Vector4i vector4i(int, int, int, int);
+Vec2 vec2(float, float);
+Vec3 vec3(float, float, float);
+Vec4 vec4(float, float, float, float);
 
-Vector2f vector2f(float, float);
-Vector3f vector3f(float, float, float);
-Vector4f vector4f(float, float, float, float);
+Vec2 vec2Negative(Vec2);
+Vec3 vec3Negative(Vec3);
+Vec4 vec4Negative(Vec4);
 
-Vector3f quatConvertEuler(Vector4f);
-Vector4f eulerConvertQuat(Vector3f);
+Vec2 vec2Normalize();
+Vec3 vec3Normalize();
+Vec4 vec4Normalize();
 
-Matrix4 matrix4Empty();
-Matrix4 matrix4Identity();
-Matrix4 matrix4Translate(Vector3f);
-Matrix4 matrix4Scale(Vector3f);
-Matrix4 matrix4Euler(Vector3f);
-Matrix4 matrix4Quat(Vector4f);
-float matrix4Determinant(Matrix4);
-Matrix4 matrix4Invert(Matrix4);
-Matrix4 matrix4Transpose(Matrix4);
-Matrix4 matrix4Orthographic(float, float, float, float, float, float);
-Matrix4 matrix4Perspective(float, float, float, float);
+Vec3 vec3CrossProduct();
 
-Vector2f vector2fMultiplyMatrix4(Vector2f, Matrix4);
-Vector3f vector3fMultiplyMatrix4(Vector3f, Matrix4);
-Vector4f vector4fMultiplyMatrix4(Vector4f, Matrix4);
-Matrix4 matrix4MultiplyMatrix4(Matrix4, Matrix4);
+Vec2 vec2MultiplyVec2(Vec2, Vec2);
+Vec2 vec2MultiplyVec3(Vec2, Vec3);
+Vec2 vec2MultiplyVec4(Vec2, Vec4);
+
+Vec3 vec3MultiplyVec2(Vec3, Vec2);
+Vec3 vec3MultiplyVec3(Vec3, Vec3);
+Vec3 vec3MultiplyVec4(Vec3, Vec4);
+
+Vec4 vec4MultiplyVec2(Vec4, Vec2);
+Vec4 vec4MultiplyVec3(Vec4, Vec3);
+Vec4 vec4MultiplyVec4(Vec4, Vec4);
+
+Vec2 vec2MultiplyMat4(Vec2, Mat4);
+Vec3 vec3MultiplyMat4(Vec3, Mat4);
+Vec4 vec4MultiplyMat4(Vec4, Mat4);
+
+Vec2 vec2AddVec2(Vec2, Vec2);
+Vec2 vec2AddVec3(Vec2, Vec3);
+Vec2 vec2AddVec4(Vec2, Vec4);
+
+Vec3 vec3AddVec2(Vec3, Vec2);
+Vec3 vec3AddVec3(Vec3, Vec3);
+Vec3 vec3AddVec4(Vec3, Vec4);
+
+Vec4 vec4AddVec2(Vec4, Vec2);
+Vec4 vec4AddVec3(Vec4, Vec3);
+Vec4 vec4AddVec4(Vec4, Vec4);
+
+Vec2 vec2AddMat4(Vec2, Mat4);
+Vec3 vec3AddMat4(Vec3, Mat4);
+Vec4 vec4AddMat4(Vec4, Mat4);
+
+Vec2 vec2DivideVec2(Vec2, Vec2);
+Vec2 vec2DivideVec3(Vec2, Vec3);
+Vec2 vec2DivideVec4(Vec2, Vec4);
+
+Vec3 vec3DivideVec2(Vec3, Vec2);
+Vec3 vec3DivideVec3(Vec3, Vec3);
+Vec3 vec3DivideVec4(Vec3, Vec4);
+
+Vec4 vec4DivideVec2(Vec4, Vec2);
+Vec4 vec4DivideVec3(Vec4, Vec3);
+Vec4 vec4DivideVec4(Vec4, Vec4);
+
+Vec2 vec2DivideMat4(Vec2, Mat4);
+Vec3 vec3DivideMat4(Vec3, Mat4);
+Vec4 vec4DivideMat4(Vec4, Mat4);
+
+Vec3 quatConvertEuler(Vec4);
+Vec4 eulerConvertQuat(Vec3);
+
+Mat4 mat4Empty();
+Mat4 mat4Identity();
+
+Mat4 mat4Translation(Vec3);
+Mat4 mat4RotationAxis(Vec3, float);
+Mat4 mat4RotationEuler(Vec3);
+Mat4 mat4RotationQuat(Vec4);
+Mat4 mat4Scale(Vec3);
+
+float mat4Determinant(Mat4);
+Mat4 mat4Inverse(Mat4);
+Mat4 mat4Transpose(Mat4);
+
+Mat4 mat4LookAt(Vec3, Vec3, Vec3);
+Mat4 mat4Orthographic(float, float, float, float, float, float);
+Mat4 mat4Perspective(float, float, float, float);
+
+Mat4 mat4MultiplyMat4(Mat4, Mat4);
 
 #endif

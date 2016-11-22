@@ -1,3 +1,86 @@
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Press any key to continue...
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+Vertex shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
+
+Failed to initialize renderer.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
@@ -5,11 +88,236 @@ NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
-CRITICAL: Could not initialize OpenGL.
-CRITICAL: Could not initialize OpenGL.
-CRITICAL: Could not initialize OpenGL.
-CRITICAL: Could not initialize OpenGL.
-CRITICAL: Could not initialize OpenGL.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.

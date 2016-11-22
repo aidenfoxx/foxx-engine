@@ -7,16 +7,16 @@ INC_DIR=include
 
 # Standard Build Flags
 CC=gcc
-CFLAGS=-o -std=c99 -pedantic -c -Wall -g -I $(INC_DIR)
+CFLAGS=-o -std=c99 -pedantic -c -Wall -g -I $(INC_DIR) `pkg-config --cflags libarchive`
 
 ifeq ($(OS), Windows_NT)
-	LDFLAGS=-L $(LIB_DIR) -lfreeglut.dll -larchive.dll -lz.dll -lopengl32 -glu32
+	LDFLAGS=-L $(LIB_DIR) -lfreeglut.dll -larchive.dll -lz.dll -lopengl32 -glu32 `pkg-config --libs libarchive`
 else
-	LDFLAGS=-L $(LIB_DIR) -lfreeglut_static -larchive_static -lz -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl
+	LDFLAGS=-L $(LIB_DIR) -lfreeglut_static -larchive_static -lz -lGL -lX11 -lXi -lXrandr -lXxf86vm -lXinerama -lXcursor -lrt -lm -pthread -ldl `pkg-config --libs libarchive`
 endif
 
 # Files
-SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c) $(wildcard $(SRC_DIR)/*/*/*.c)
+SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)
 OBJ=$(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
 BIN=foxx
 
@@ -30,9 +30,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/*/%.c
-	$(CC) $(CFLAGS) $< -o $@
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/*/*/%.c
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:

@@ -1,48 +1,97 @@
 #include "Renderer/camera.h"
 
+static Camera *cameraNew(Mat4);
 static void cameraUpdateView(Camera*);
 
-void cameraInit(Camera *camera)
+Camera *cameraNew(Mat4 projection)
 {
-	camera->rotation = vector3f(0.0f, 0.0f, 0.0f);
-	camera->translation = vector3f(0.0f, 0.0f, -5.0f);
+	Camera *camera = NULL;
+
+	if ((camera = malloc(sizeof(Camera))) != NULL)
+	{
+		camera->forward = vec3(0.0f, 0.0f, -1.0f);
+		camera->up = vec3(0.0f, 1.0f, 0.0f);
+		camera->right = vec3(1.0f, 0.0f, 0.0f);
+		camera->rotation = vec3(0.0f, 0.0f, 0.0f);
+		camera->translation = vec3(0.0f, 0.0f, 0.0f);
+		camera->projection = projection;
+		
+		cameraUpdateView(camera);
+	}
+
+	return camera;
+}
+
+Camera *cameraPerspectiveNew(float fov, float aspectRatio)
+{
+	return cameraNew(mat4Perspective(fov, aspectRatio, 0.1f, 100.0f));
+}
+
+Camera *cameraOrthographicNew(float left, float right, float top, float bottom)
+{
+	return cameraNew(mat4Orthographic(left, right, top, bottom, 0.1f, 100.0f));
+}
+
+void cameraFree(Camera *camera)
+{
+	if (camera != NULL)
+	{
+		free(camera);
+	}
+}
+
+void cameraTranslate(Camera *camera, Vec3 translation)
+{
+	Vec3 vecX = vec3(translation.x, translation.x, translation.x);
+	Vec3 vecY = vec3(translation.y, translation.y, translation.y);
+	Vec3 vecZ = vec3(translation.z, translation.z, translation.z);
+
+	camera->translation = vec3AddVec3(camera->translation, vec3MultiplyVec3(camera->right, vecX));
+	camera->translation = vec3AddVec3(camera->translation, vec3MultiplyVec3(camera->up, vecY));
+	camera->translation = vec3AddVec3(camera->translation, vec3MultiplyVec3(camera->forward, vecZ));
+
+	cameraUpdateView(camera);
+}
+
+void cameraRotate(Camera *camera, Vec3 rotation)
+{
+	camera->rotation = vec3AddVec3(camera->rotation, rotation);
+
+	Mat4 rotationMatrix = mat4Inverse(mat4RotationEuler(camera->rotation));
+	
+	camera->forward = vec3Normalize(vec3MultiplyMat4(vec3(0.0f, 0.0f, -1.0f), rotationMatrix));
+	camera->up = vec3Normalize(vec3MultiplyMat4(vec3(0.0f, 1.0f, 0.0f), rotationMatrix));
+	camera->right = vec3Normalize(vec3MultiplyMat4(vec3(1.0f, 0.0f, 0.0f), rotationMatrix));
 	
 	cameraUpdateView(camera);
-	cameraPerspective(camera, 1.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 }
 
-void cameraPerspective(Camera *camera, float fov, float aspectRatio, float nearClip, float farClip)
+void cameraSetTranslation(Camera *camera, Vec3 translation)
 {
-	camera->perspective = matrix4Perspective(fov, aspectRatio, nearClip, farClip);
-}
-
-void cameraOrthographic(Camera *camera, float left, float right, float bottom, float top, float nearClip, float farClip)
-{
-	camera->perspective = matrix4Orthographic(left, right, bottom, top, nearClip, farClip);
-}
-
-void cameraRotate(Camera *camera, float x, float y, float z)
-{
-	camera->rotation.x += x;
-	camera->rotation.y += y;
-	camera->rotation.z += z;
-
+	camera->translation = translation;
 	cameraUpdateView(camera);
 }
 
-void cameraTranslate(Camera *camera, float x, float y, float z)
+void cameraSetRotation(Camera *camera, Vec3 rotation)
 {
-	camera->translation.x += x;
-	camera->translation.y += y;
-	camera->translation.z += z;
-
+	camera->rotation = rotation;
 	cameraUpdateView(camera);
+}
+
+Vec3 cameraGetTranslation(Camera *camera)
+{
+	return camera->translation;
+}
+
+Vec3 cameraGetRotation(Camera *camera)
+{
+	return camera->rotation;
 }
 
 void cameraUpdateView(Camera *camera)
 {
-	Matrix4 rotationMatrix  = matrix4Quat(eulerConvertQuat(camera->rotation));
-	Matrix4 translateMatrix = matrix4Translate(camera->translation);
+	Mat4 rotation = mat4RotationEuler(camera->rotation);
+	Mat4 translation = mat4Translation(camera->translation);
 
-	camera->view = matrix4MultiplyMatrix4(translateMatrix, rotationMatrix);
+	camera->view = mat4MultiplyMat4(rotation, translation);
 }

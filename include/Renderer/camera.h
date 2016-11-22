@@ -1,22 +1,32 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef RENDERER_CAMERA_H
+#define RENDERER_CAMERA_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "Tools/glmath.h"
 
 typedef struct {
-	Vector3f rotation;
-	Vector3f translation;
-	Matrix4 perspective;
-	Matrix4 view;
+	Vec3 up;
+	Vec3 forward;
+	Vec3 right;
+	Vec3 rotation;
+	Vec3 translation;
+	Mat4 projection;
+	Mat4 view;
 } Camera;
 
-void cameraInit(Camera*);
-void cameraDestroy(Camera*);
-void cameraPerspective(Camera*, float, float, float, float);
-void cameraOrthographic(Camera*, float, float, float, float, float, float);
-void cameraRotate(Camera*, float, float, float);
-void cameraTranslate(Camera*, float, float, float);
+Camera *cameraPerspectiveNew(float, float);
+Camera *cameraOrthographic(float, float, float, float);
+void cameraFree(Camera*);
+
+void cameraTranslate(Camera*, Vec3);
+void cameraRotate(Camera*, Vec3);
+
+void cameraSetTranslation(Camera*, Vec3);
+void cameraSetRotation(Camera*, Vec3);
+
+Vec3 cameraGetTranslation(Camera*);
+Vec3 cameraGetRotation(Camera*);
 
 #endif

@@ -1,10 +1,26 @@
 #include "Tools/array.h"
 
-void arrayInit(Array *array)
+Array *arrayNew()
 {
-	array->length = 0;
-	array->capacity = ARRAY_INITIAL_CAPACITY;
-	array->data = malloc(array->capacity * sizeof(void*));
+	Array *array = NULL;
+
+	if ((array = malloc(sizeof(Array))) != NULL)
+	{
+		array->length = 0;
+		array->capacity = ARRAY_INITIAL_CAPACITY;
+		array->data = malloc(ARRAY_INITIAL_CAPACITY * sizeof(void*));
+	}
+
+	return array;
+}
+
+void arrayFree(Array *array)
+{
+	if (array != NULL)
+	{
+		free(array->data);
+		free(array);
+	}
 }
 
 int arrayLength(Array *array)
@@ -86,15 +102,3 @@ void arrayRemove(Array *array, unsigned int index)
 		}
 	}
 }
-
-void arrayDestroy(Array *array)
-{
-	free(array->data);
-}
-
-void arrayEmpty(Array *array)
-{
-	arrayDestroy(array);
-	arrayInit(array);	
-}
-

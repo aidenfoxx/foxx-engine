@@ -1,5 +1,5 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef TOOLS_ARRAY_H
+#define TOOLS_ARRAY_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,14 +13,15 @@ typedef struct {
 	void **data;
 } Array;
 
-void arrayInit(Array*);
+Array *arrayNew();
+void arrayFree(Array*);
+
 int arrayLength(Array*);
 void arrayPush(Array*, void*);
 void arraySet(Array*, unsigned int, void*);
 void *arrayPop(Array*);
 void *arrayGet(Array*, unsigned int);
 void arrayRemove(Array*, unsigned int);
-void arrayDestroy(Array*);
 void arrayEmpty(Array*);
 
 #endif

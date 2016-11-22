@@ -5,78 +5,20 @@
 
 #include "obj.h"
 
-int modelLength = 0;
-uint8_t *model = NULL;
+int modelLength;
+uint8_t *model;
 
-int diffuseLength = 0;
-uint8_t *diffuse = NULL;
+int diffuseLength;
+uint8_t *diffuse;
 
-int normalLength = 0;
-uint8_t *normal = NULL;
+int normalLength;
+uint8_t *normal;
 
-int specularLength = 0;
-uint8_t *specular = NULL;
+int specularLength;
+uint8_t *specular;
 
 GtkBuilder *builder;
 GtkWidget *window;
-
-/**
- * TODO: Remove
- */
-void debugModel()
-{
-	/**
-	 * Debug stuff to make sure the data is correct.
-	 */
-	if (modelLength > sizeof(int) * 4)
-	{
-		int verticesLength = (int)model[0];
-		int uvsLength = (int)model[sizeof(int)];
-		int normalsLength = (int)model[sizeof(int) * 2];
-		int indicesLength = (int)model[sizeof(int) * 3];
-
-		int headerSize = sizeof(int) * 4;
-		int verticesSize = verticesLength * sizeof(Vector3f);
-		int uvsSize = uvsLength * sizeof(Vector2f);
-		int normalsSize = normalsLength * sizeof(Vector3f);
-		int indicesSize = indicesLength * sizeof(Vector3i);
-		
-		printf("Vertices Length: %i\n", verticesLength);
-		printf("UVs Length: %i\n", uvsLength);
-		printf("Normals Length: %i\n", normalsLength);
-		printf("Indices Length: %i\n", indicesLength);
-
-		Vector3f *vertices = malloc(verticesSize);
-		Vector2f *uvs = malloc(uvsSize);
-		Vector3f *normals = malloc(normalsSize);
-		Vector3i *indices = malloc(indicesSize);
-
-		memcpy(vertices, &model[headerSize], verticesSize);
-		memcpy(uvs, &model[headerSize + verticesSize], uvsSize);
-		memcpy(normals, &model[headerSize + verticesSize + uvsSize], normalsSize);
-		memcpy(indices, &model[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
-
-		printf("Vertices:\n");
-
-		for (int i = 0; i < verticesLength; ++i)
-			printf("%f %f %f\n", vertices[i].x, vertices[i].y, vertices[i].z);
-
-		printf("UVs:\n");
-
-		for (int i = 0; i < uvsLength; ++i)
-			printf("%f %f\n", uvs[i].x, uvs[i].y);
-
-		printf("Normals:\n");
-
-		for (int i = 0; i < normalsLength; ++i)
-			printf("%f %f %f\n", normals[i].x, normals[i].y, normals[i].z);
-
-		printf("Indices:\n");
-
-		for (int i = 0; i < indicesLength; ++i)
-			printf("%i %i %i\n", indices[i].x, indices[i].y, indices[i].z);
-	}
-}
 
 int loadFile(const char *path, uint8_t **buffer)
 {
@@ -84,7 +26,7 @@ int loadFile(const char *path, uint8_t **buffer)
 
 	if (!file)
 	{
-		return -1;
+		return 0;
 	}
 
 	fseek(file, 0, SEEK_END);
@@ -96,7 +38,7 @@ int loadFile(const char *path, uint8_t **buffer)
 	if (length != fread(*buffer, sizeof(uint8_t), length, file)) 
 	{ 
 		free(buffer);
-		return -2;
+		return 0;
 	}
 
 	fclose(file);
@@ -129,7 +71,7 @@ int main(int argc, char *argv[])
 	gtk_widget_show(window);
 	gtk_main();
 
-	return 0;
+	exit(EXIT_SUCCESS);
 }
 
 G_MODULE_EXPORT void destroyWindow()
@@ -174,19 +116,19 @@ G_MODULE_EXPORT void setModel(GtkFileChooserButton *button)
 	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
 	uint8_t *obj;
 
-	if (loadFile(file, &obj) < 1)
+	if (loadFile(file, &obj) == 0)
 	{
 		clearModel();
 		showError("There was a problem loading the mesh.");
 	}
 
-	if ((modelLength = objToFem(obj, &model)) < 1)
+	if ((modelLength = objToFem(obj, &model)) == 0)
 	{
 		clearModel();
 		showError("There was a problem processing the mesh.");
 	}
 
-	debugModel();
+	// debugModel();
 
 	free(obj);
 }
@@ -195,7 +137,7 @@ G_MODULE_EXPORT void setDiffuse(GtkFileChooserButton *button)
 {
 	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
 
-	if ((diffuseLength = loadFile(file, &diffuse)) < 1)
+	if ((diffuseLength = loadFile(file, &diffuse)) == 0)
 	{
 		clearDiffuse();
 		showError("There was a problem loading the diffuse texture.");
@@ -206,7 +148,7 @@ G_MODULE_EXPORT void setNormal(GtkFileChooserButton *button)
 {
 	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
 
-	if ((normalLength = loadFile(file, &normal)) < 1)
+	if ((normalLength = loadFile(file, &normal)) == 0)
 	{
 		clearNormal();
 		showError("There was a problem loading the normal texture.");
@@ -217,7 +159,7 @@ G_MODULE_EXPORT void setSpecular(GtkFileChooserButton *button)
 {
 	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
 
-	if ((specularLength = loadFile(file, &specular)) < 1)
+	if ((specularLength = loadFile(file, &specular)) == 0)
 	{
 		clearSpecular();
 		showError("There was a problem loading the normal texture.");
@@ -259,7 +201,7 @@ G_MODULE_EXPORT void openFile()
 				modelLength += (int)length;
 				model = malloc(modelLength);
 
-				if (archive_read_data(archive, model, length) < 1)
+				if (archive_read_data(archive, model, length) == 0)
 				{
 					showError("There was a problem loading the mode.");
 				}
@@ -270,7 +212,7 @@ G_MODULE_EXPORT void openFile()
 				diffuseLength += (int)length;
 				diffuse = malloc(diffuseLength);
 
-				if (archive_read_data(archive, diffuse, length) < 1)
+				if (archive_read_data(archive, diffuse, length) == 0)
 				{
 					showError("There was a problem loading the mode.");
 				}
@@ -281,7 +223,7 @@ G_MODULE_EXPORT void openFile()
 				normalLength += (int)length;
 				normal = malloc(normalLength);
 
-				if (archive_read_data(archive, normal, length) < 1)
+				if (archive_read_data(archive, normal, length) == 0)
 				{
 					showError("There was a problem loading the mode.");
 				}
@@ -292,7 +234,7 @@ G_MODULE_EXPORT void openFile()
 				specularLength += (int)length;
 				specular = malloc(specularLength);
 
-				if (archive_read_data(archive, specular, length) < 1)
+				if (archive_read_data(archive, specular, length) == 0)
 				{
 					showError("There was a problem loading the mode.");
 				}
@@ -313,7 +255,7 @@ G_MODULE_EXPORT void exportFile(GtkButton *button)
 	GtkWidget *fileChooser = gtk_file_chooser_dialog_new("Export File", NULL, GTK_FILE_CHOOSER_ACTION_SAVE, "_Save", GTK_RESPONSE_ACCEPT, "_Cancel", GTK_RESPONSE_CANCEL, NULL);
 
 	gtk_window_set_transient_for(GTK_WINDOW(fileChooser), GTK_WINDOW(window));
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(fileChooser), "untitled.tar.z");
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(fileChooser), "untitled.fem");
 
 	if (gtk_dialog_run(GTK_DIALOG(fileChooser)) == GTK_RESPONSE_ACCEPT)
 	{

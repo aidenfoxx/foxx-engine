@@ -3,136 +3,145 @@
 
 #include <stdio.h>
 
-#define INPUT_KEY_SPACE 1
-#define INPUT_KEY_LEFT_SHIFT 2
-#define INPUT_KEY_RIGHT_SHIFT 3
-#define INPUT_KEY_LEFT_CONTROL 4
-#define INPUT_KEY_RIGHT_CONTROL 5
-#define INPUT_KEY_LEFT_ALT 6
-#define INPUT_KEY_RIGHT_ALT 7
-#define INPUT_KEY_LEFT_SUPER 8
-#define INPUT_KEY_RIGHT_SUPER 9
-#define INPUT_KEY_ESCAPE 10
-#define INPUT_KEY_ENTER 11
-#define INPUT_KEY_TAB 12
-#define INPUT_KEY_BACKSPACE 13
-#define INPUT_KEY_INSERT 14
-#define INPUT_KEY_DELETE 15
-#define INPUT_KEY_UP 16
-#define INPUT_KEY_DOWN 17
-#define INPUT_KEY_LEFT 18
-#define INPUT_KEY_RIGHT 19
-#define INPUT_KEY_PAGE_UP 20
-#define INPUT_KEY_PAGE_DOWN 21
-#define INPUT_KEY_HOME 22
-#define INPUT_KEY_END 23
-#define INPUT_KEY_CAPS_LOCK 24
-#define INPUT_KEY_SCROLL_LOCK 25
-#define INPUT_KEY_NUM_LOCK 26
-#define INPUT_KEY_PRINT_SCREEN 27
-#define INPUT_KEY_PAUSE 28
-
-#define INPUT_KEY_APOSTROPHE 29 /* ' */
-#define INPUT_KEY_COMMA 30 /* , */
-#define INPUT_KEY_MINUS 31 /* - */
-#define INPUT_KEY_PERIOD 32 /* . */
-#define INPUT_KEY_SLASH 33 /* / */
-#define INPUT_KEY_BACKSLASH 34 /* \ */
-#define INPUT_KEY_SEMICOLON 35 /* ; */
-#define INPUT_KEY_EQUAL 36 /* = */
-#define INPUT_KEY_LEFT_BRACKET 37 /* [ */
-#define INPUT_KEY_RIGHT_BRACKET 38 /* ] */
-#define INPUT_KEY_GRAVE_ACCENT 39 /* ` */
-
-#define INPUT_KEY_0 40
-#define INPUT_KEY_1 41
-#define INPUT_KEY_2 42
-#define INPUT_KEY_3 43
-#define INPUT_KEY_4 44
-#define INPUT_KEY_5 45
-#define INPUT_KEY_6 46
-#define INPUT_KEY_7 47
-#define INPUT_KEY_8 48
-#define INPUT_KEY_9 49
-
-#define INPUT_KEY_A 50
-#define INPUT_KEY_B 51
-#define INPUT_KEY_C 52
-#define INPUT_KEY_D 53
-#define INPUT_KEY_E 54
-#define INPUT_KEY_F 55
-#define INPUT_KEY_G 56
-#define INPUT_KEY_H 57
-#define INPUT_KEY_I 58
-#define INPUT_KEY_J 59
-#define INPUT_KEY_K 60
-#define INPUT_KEY_L 61
-#define INPUT_KEY_M 62
-#define INPUT_KEY_N 63
-#define INPUT_KEY_O 64
-#define INPUT_KEY_P 65
-#define INPUT_KEY_Q 66
-#define INPUT_KEY_R 67
-#define INPUT_KEY_S 68
-#define INPUT_KEY_T 69
-#define INPUT_KEY_U 70
-#define INPUT_KEY_V 71
-#define INPUT_KEY_W 72
-#define INPUT_KEY_X 73
-#define INPUT_KEY_Y 74
-#define INPUT_KEY_Z 75
-
-#define INPUT_KEY_F1 76
-#define INPUT_KEY_F2 77
-#define INPUT_KEY_F3 78
-#define INPUT_KEY_F4 79
-#define INPUT_KEY_F5 80
-#define INPUT_KEY_F6 81
-#define INPUT_KEY_F7 82
-#define INPUT_KEY_F8 83
-#define INPUT_KEY_F9 84
-#define INPUT_KEY_F10 85
-#define INPUT_KEY_F11 86
-#define INPUT_KEY_F12 87
-#define INPUT_KEY_F13 88
-#define INPUT_KEY_F14 89
-#define INPUT_KEY_F15 90
-#define INPUT_KEY_F16 91
-#define INPUT_KEY_F17 92
-#define INPUT_KEY_F18 93
-#define INPUT_KEY_F19 94
-#define INPUT_KEY_F20 95
-#define INPUT_KEY_F21 96
-#define INPUT_KEY_F22 97
-#define INPUT_KEY_F23 98
-#define INPUT_KEY_F24 99
-#define INPUT_KEY_F25 100
-
-#define INPUT_KEY_NUM_DECIMAL 101
-#define INPUT_KEY_NUM_DIVIDE 102
-#define INPUT_KEY_NUM_MULTIPLY 103
-#define INPUT_KEY_NUM_SUBTRACT 104
-#define INPUT_KEY_NUM_ADD 105
-#define INPUT_KEY_NUM_ENTER 106
-#define INPUT_KEY_NUM_EQUAL 107
-
-#define INPUT_KEY_NUM_0 108
-#define INPUT_KEY_NUM_1 109
-#define INPUT_KEY_NUM_2 110
-#define INPUT_KEY_NUM_3 111
-#define INPUT_KEY_NUM_4 112
-#define INPUT_KEY_NUM_5 113
-#define INPUT_KEY_NUM_6 114
-#define INPUT_KEY_NUM_7 115
-#define INPUT_KEY_NUM_8 116
-#define INPUT_KEY_NUM_9 117
-
+#define INPUT_NULL 0
 #define INPUT_INVALID -1
 
-#define INPUT_KEY_RELEASE 0
-#define INPUT_KEY_PRESS 1
+#define INPUT_KEY_SPACE 0
+#define INPUT_KEY_LEFT_SHIFT 1
+#define INPUT_KEY_RIGHT_SHIFT 2
+#define INPUT_KEY_LEFT_CONTROL 3
+#define INPUT_KEY_RIGHT_CONTROL 4
+#define INPUT_KEY_LEFT_ALT 5
+#define INPUT_KEY_RIGHT_ALT 6
+#define INPUT_KEY_LEFT_SUPER 7
+#define INPUT_KEY_RIGHT_SUPER 8
+#define INPUT_KEY_ESCAPE 9
+#define INPUT_KEY_ENTER 10
+#define INPUT_KEY_TAB 11
+#define INPUT_KEY_BACKSPACE 12
+#define INPUT_KEY_INSERT 13
+#define INPUT_KEY_DELETE 14
+#define INPUT_KEY_UP 15
+#define INPUT_KEY_DOWN 16
+#define INPUT_KEY_LEFT 17
+#define INPUT_KEY_RIGHT 18
+#define INPUT_KEY_PAGE_UP 19
+#define INPUT_KEY_PAGE_DOWN 20
+#define INPUT_KEY_HOME 21
+#define INPUT_KEY_END 22
+#define INPUT_KEY_CAPS_LOCK 23
+#define INPUT_KEY_SCROLL_LOCK 24
+#define INPUT_KEY_NUM_LOCK 25
+#define INPUT_KEY_PRINT_SCREEN 26
+#define INPUT_KEY_PAUSE 27
 
-void inputSetState(int, int);
+#define INPUT_KEY_APOSTROPHE 100 /* ' */
+#define INPUT_KEY_COMMA 101 /* , */
+#define INPUT_KEY_MINUS 102 /* - */
+#define INPUT_KEY_PERIOD 103 /* . */
+#define INPUT_KEY_SLASH 104 /* / */
+#define INPUT_KEY_BACKSLASH 105 /* \ */
+#define INPUT_KEY_SEMICOLON 106 /* ; */
+#define INPUT_KEY_EQUAL 107 /* = */
+#define INPUT_KEY_LEFT_BRACKET 108 /* [ */
+#define INPUT_KEY_RIGHT_BRACKET 109 /* ] */
+#define INPUT_KEY_GRAVE_ACCENT 110 /* ` */
+
+#define INPUT_KEY_0 200
+#define INPUT_KEY_1 201
+#define INPUT_KEY_2 202
+#define INPUT_KEY_3 203
+#define INPUT_KEY_4 204
+#define INPUT_KEY_5 205
+#define INPUT_KEY_6 206
+#define INPUT_KEY_7 207
+#define INPUT_KEY_8 208
+#define INPUT_KEY_9 209
+
+#define INPUT_KEY_A 300
+#define INPUT_KEY_B 301
+#define INPUT_KEY_C 302
+#define INPUT_KEY_D 303
+#define INPUT_KEY_E 304
+#define INPUT_KEY_F 305
+#define INPUT_KEY_G 306
+#define INPUT_KEY_H 307
+#define INPUT_KEY_I 308
+#define INPUT_KEY_J 309
+#define INPUT_KEY_K 310
+#define INPUT_KEY_L 311
+#define INPUT_KEY_M 312
+#define INPUT_KEY_N 313
+#define INPUT_KEY_O 314
+#define INPUT_KEY_P 315
+#define INPUT_KEY_Q 316
+#define INPUT_KEY_R 317
+#define INPUT_KEY_S 318
+#define INPUT_KEY_T 319
+#define INPUT_KEY_U 320
+#define INPUT_KEY_V 321
+#define INPUT_KEY_W 322
+#define INPUT_KEY_X 323
+#define INPUT_KEY_Y 324
+#define INPUT_KEY_Z 325
+
+#define INPUT_KEY_F1 400
+#define INPUT_KEY_F2 401
+#define INPUT_KEY_F3 402
+#define INPUT_KEY_F4 403
+#define INPUT_KEY_F5 404
+#define INPUT_KEY_F6 405
+#define INPUT_KEY_F7 406
+#define INPUT_KEY_F8 407
+#define INPUT_KEY_F9 408
+#define INPUT_KEY_F10 409
+#define INPUT_KEY_F11 410
+#define INPUT_KEY_F12 411
+#define INPUT_KEY_F13 412
+#define INPUT_KEY_F14 413
+#define INPUT_KEY_F15 414
+#define INPUT_KEY_F16 415
+#define INPUT_KEY_F17 416
+#define INPUT_KEY_F18 417
+#define INPUT_KEY_F19 418
+#define INPUT_KEY_F20 419
+#define INPUT_KEY_F21 420
+#define INPUT_KEY_F22 421
+#define INPUT_KEY_F23 422
+#define INPUT_KEY_F24 423
+#define INPUT_KEY_F25 424
+
+#define INPUT_KEY_NUM_DECIMAL 500
+#define INPUT_KEY_NUM_DIVIDE 501
+#define INPUT_KEY_NUM_MULTIPLY 502
+#define INPUT_KEY_NUM_SUBTRACT 503
+#define INPUT_KEY_NUM_ADD 504
+#define INPUT_KEY_NUM_ENTER 505
+#define INPUT_KEY_NUM_EQUAL 506
+
+#define INPUT_KEY_NUM_0 600
+#define INPUT_KEY_NUM_1 601
+#define INPUT_KEY_NUM_2 602
+#define INPUT_KEY_NUM_3 603
+#define INPUT_KEY_NUM_4 604
+#define INPUT_KEY_NUM_5 605
+#define INPUT_KEY_NUM_6 606
+#define INPUT_KEY_NUM_7 607
+#define INPUT_KEY_NUM_8 608
+#define INPUT_KEY_NUM_9 609
+
+#define INPUT_MOUSE_LEFT 700
+#define INPUT_MOUSE_MIDDLE 701
+#define INPUT_MOUSE_RIGHT 702
+
+#define INPUT_MOUSE_X 800
+#define INPUT_MOUSE_Y 801
+
+#define INPUT_RELEASE 0
+#define INPUT_PRESS 1
+#define INPUT_MOVE 2
+
+void inputSetState(int, int, int);
 int inputGetState(int);
 
 #endif
