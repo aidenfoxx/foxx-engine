@@ -1,3 +1,0 @@
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\example64.dir/objects.a
-D:\Development\Other\MinGW\mingw64\bin\ar.exe cr CMakeFiles\example64.dir/objects.a @CMakeFiles\example64.dir\objects1.rsp
-D:\Development\Other\MinGW\mingw64\bin\gcc.exe     -Wl,--whole-archive CMakeFiles\example64.dir/objects.a -Wl,--no-whole-archive  -o example64.exe -Wl,--out-implib,libexample64.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\example64.dir\linklibs.rsp

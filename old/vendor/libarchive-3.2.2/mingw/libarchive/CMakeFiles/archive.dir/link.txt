@@ -1,3 +1,0 @@
-"C:\Program Files (x86)\CMake\bin\cmake.exe" -E remove -f CMakeFiles\archive.dir/objects.a
-D:\Development\Other\MinGW\mingw64\bin\ar.exe cr CMakeFiles\archive.dir/objects.a @CMakeFiles\archive.dir\objects1.rsp
-D:\Development\Other\MinGW\mingw64\bin\gcc.exe    -Wall -Wformat -Wformat-security -O3 -DNDEBUG  -shared -o ..\bin\libarchive.dll -Wl,--out-implib,libarchive.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles\archive.dir/objects.a -Wl,--no-whole-archive @CMakeFiles\archive.dir\linklibs.rsp
