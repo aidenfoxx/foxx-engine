@@ -3,3 +3,6 @@ build/*
 
 tools/model-editor/build/*
 !tools/model-editor/build/.gitkeep
+
+vendor/*
+!vendor/.gitkeep
