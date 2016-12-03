@@ -63,8 +63,8 @@ int renderInit()
 	/**
 	 * Initialize shaders.
 	 */
-	Shader *phongVertex = shaderNew("./assets/shaders/phong.vs", SHADER_VERTEX);
-	Shader *phongFragment = shaderNew("./assets/shaders/phong.fs", SHADER_FRAGMENT);
+	Shader *phongVertex = shaderNew(SHADER_VERTEX, "./assets/shaders/phong.vert");
+	Shader *phongFragment = shaderNew(SHADER_FRAGMENT, "./assets/shaders/phong.frag");
 
 	phongShader = shaderProgramNew();
 
@@ -111,8 +111,8 @@ int renderInit()
 	objectSetTranslation(teapot, vec3(-2.0f, 0.0f, 0.0f));
 
 	rendererAddShader(renderer, phongShader);
-	rendererAddObject(renderer, crate, OBJECT_DYNAMIC);
-	rendererAddObject(renderer, teapot, OBJECT_DYNAMIC);
+	rendererAddObject(OBJECT_DYNAMIC, renderer, crate);
+	rendererAddObject(OBJECT_DYNAMIC, renderer, teapot);
 
 	return 0;
 }

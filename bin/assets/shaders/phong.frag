@@ -5,6 +5,9 @@ const vec3 diffuseColor = vec3(0.9, 0.5, 1);
 const vec3 ambientColor = vec3(0.1, 0.1, 0.1);
 const vec3 specularColor = vec3(1.0, 1.0, 1.0);
 
+uniform sampler2D diffuseTexture;
+
+in vec2 uv;
 in vec3 vertexPosition;
 in vec3 normalInterp;
 
@@ -12,6 +15,7 @@ out vec4 gl_FragColor;
 
 void main()
 {
+    vec3 diffuse = diffuseColor;
     vec3 normal = normalize(normalInterp);
     vec3 lightDirection = normalize(lightPosition - vertexPosition);
     vec3 reflectDirection = reflect(-lightDirection, normal);
@@ -26,5 +30,10 @@ void main()
        specular = pow(specularAngle, 4.0);
     }
 
-    gl_FragColor = vec4(ambientColor + lambertian * diffuseColor + specular * specularColor, 1.0);
+    if (textureSize(diffuseTexture, 1).x > 0)
+    {
+        diffuse = texture(diffuseTexture, uv).rgb;
+    }
+
+    gl_FragColor = vec4(ambientColor + lambertian * diffuse + specular * specularColor, 1.0);
 }

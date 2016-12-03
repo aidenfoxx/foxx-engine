@@ -14,9 +14,12 @@ Array *arrayNew()
 	return array;
 }
 
+/**
+ * TODO: Come up with better free solution.
+ */
 void arrayFree(Array *array)
 {
-	if (array != NULL)
+	if (array)
 	{
 		free(array->data);
 		free(array);

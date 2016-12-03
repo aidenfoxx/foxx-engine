@@ -1,6 +1,6 @@
 #include "object.h"
 
-Object *objectNew()
+Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *normal)
 {
 	Object *object = NULL;
 
@@ -8,14 +8,18 @@ Object *objectNew()
 	{
 		glGenBuffers(4, object->vbo);
 
-		object->verticesLength = 0;
-		object->uvsLength = 0;
-		object->normalsLength = 0;
-		object->indicesLength = 0;
+		objectUpdateModel(object, model);
 
-		object->diffuse = NULL;
-		object->specular = NULL;
-		object->normal = NULL;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenTextures(1, &object->diffuse);
+		glGenTextures(1, &object->specular);
+		glGenTextures(1, &object->normal);
+
+		objectUpdateTexture(TEXTURE_DIFFUSE, object, diffuse);
+		objectUpdateTexture(TEXTURE_SPECULAR, object, specular);
+		objectUpdateTexture(TEXTURE_NORMAL, object, normal);
 
 		object->scale = vec3(1.0f, 1.0f, 1.0f);
 		object->rotation = vec3(0.0f, 0.0f, 0.0f);
@@ -33,9 +37,6 @@ Object *objectDuplicate(Object *object)
 
 	if ((duplicate = malloc(sizeof(Object))) != NULL)
 	{
-		/**
-		 * TODO: Copy textures.
-		 */
 		memcpy(duplicate, object, sizeof(Object));
 	}
 
@@ -44,13 +45,83 @@ Object *objectDuplicate(Object *object)
 
 void objectFree(Object *object)
 {
-	if (object != NULL)
+	if (object)
 	{
 		glDeleteBuffers(4, object->vbo);
-		free(object->diffuse);
-		free(object->specular);
-		free(object->normal);
+		glDeleteTextures(1, &object->diffuse);
+		glDeleteTextures(1, &object->specular);
+		glDeleteTextures(1, &object->normal);
 		free(object);
+	}
+}
+
+void objectUpdateModel(Object *object, Model *model)
+{
+	if (model)
+	{
+		object->verticesLength = model->verticesLength;
+		object->uvsLength = model->uvsLength;
+		object->normalsLength = model->normalsLength;
+		object->indicesLength = model->indicesLength;
+
+		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[0]);
+		glBufferData(GL_ARRAY_BUFFER, object->verticesLength * sizeof(Vec3), (float*)model->vertices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, object->uvsLength * sizeof(Vec2), (float*)model->uvs, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[2]);
+		glBufferData(GL_ARRAY_BUFFER, object->normalsLength * sizeof(Vec3), (float*)model->normals, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->vbo[3]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, object->indicesLength * sizeof(Vec3), (int*)model->indices, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+}
+
+void objectUpdateTexture(int textureType, Object *object, Texture *texture)
+{
+	if (texture)
+	{
+		switch (textureType)
+		{
+			case TEXTURE_DIFFUSE:
+				glBindTexture(GL_TEXTURE_2D, object->diffuse);
+				break;
+
+			case TEXTURE_SPECULAR:
+				glBindTexture(GL_TEXTURE_2D, object->specular);
+				break;
+
+			case TEXTURE_NORMAL:
+				glBindTexture(GL_TEXTURE_2D, object->normal);
+				break;
+		}
+
+		int dataSize = 0;
+		int dataOffset = 0;
+
+		int mipmapWidth = texture->width;
+		int mipmapHeight = texture->height;
+
+		for (int i = 0; i < texture->mipmaps; i++)
+		{
+			dataSize = fmax(4, mipmapWidth) / 4 * fmax(4, mipmapHeight) / 4 * texture->blockBytes;
+			
+			/**
+			 * TODO: Check format to decide how to bind.
+			 */
+			glCompressedTexImage2D(GL_TEXTURE_2D, i, texture->format, mipmapWidth, mipmapHeight, 0, dataSize, &texture->data[dataOffset]);
+
+			dataOffset += dataSize;
+
+			mipmapWidth = floor(mipmapWidth / 2);
+			mipmapHeight = floor(mipmapHeight / 2);
+		}
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
 
@@ -103,60 +174,6 @@ Vec3 objectGetRotation(Object *object)
 Vec3 objectGetScale(Object *object)
 {
 	return object->scale;
-}
-
-void objectUpdateModel(Object *object, 
-					  int verticesLength, 
-					  int uvsLength, 
-					  int normalsLength, 
-					  int indicesLength,
-					  Vec3 *vertices,
-					  Vec2 *uvs,
-					  Vec3 *normals,
-					  Vec3 *indices)
-{
-	object->verticesLength = verticesLength;
-	object->uvsLength = uvsLength;
-	object->normalsLength = normalsLength;
-	object->indicesLength = indicesLength;
-
-	glBindBuffer(GL_ARRAY_BUFFER, object->vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, verticesLength * sizeof(Vec3), (float*)vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, object->vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, uvsLength * sizeof(Vec2), (float*)uvs, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, object->vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, normalsLength * sizeof(Vec3), (float*)normals, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->vbo[3]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesLength * sizeof(Vec3), (int*)indices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void objectUpdateTexture(int textureType, Object *object, char *texture)
-{
-	int textureLength = strlen(texture) + 1;
-
-	switch (textureType)
-	{
-		case TEXTURE_DIFFUSE:
-			object->diffuse = malloc(textureLength);
-			memcpy(object->diffuse, texture, textureLength);
-			break;
-
-		case TEXTURE_NORMAL:
-			object->normal = malloc(textureLength);
-			memcpy(object->normal, texture, textureLength);
-			break;
-
-		case TEXTURE_SPECULAR:
-			object->specular = malloc(textureLength);
-			memcpy(object->specular, texture, textureLength);
-			break;
-	}
 }
 
 void objectUpdateMatrix(Object *object)

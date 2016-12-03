@@ -28,7 +28,7 @@ Obj *objNew()
 
 void objFree(Obj *obj)
 {
-	if (obj != NULL)
+	if (obj)
 	{
 		free(obj->vertices);
 		free(obj->uvs);

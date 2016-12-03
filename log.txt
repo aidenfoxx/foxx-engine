@@ -18,3 +18,11 @@ ERROR:  Failed to link shader with the following error(s):
 Vertex and Fragment shader(s) were not successfully compiled before glLinkProgram() was called.  Link failed. 
 
 Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.

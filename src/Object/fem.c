@@ -1,71 +1,82 @@
 #include "Object/fem.h"
 
 Object *objectFemNew(const char *path)
-{
-	Object *fem = objectNew();
+{	
+	Model *model = NULL;
+	Texture *diffuse = NULL;
+	Texture *specular = NULL;
+	Texture *normal = NULL;
 
-	if (fem)
+	uint8_t *dataBuffer = NULL;
+
+	struct archive *archive = archive_read_new();
+	struct archive_entry *entry;
+
+	archive_read_support_format_tar(archive);
+	archive_read_support_filter_compress(archive);
+	archive_read_open_filename(archive, path, 10240);
+
+	while (archive_read_next_header(archive, &entry) == ARCHIVE_OK)
 	{
-		uint8_t *modelData = NULL;
-		char *diffuseData = NULL;
-		char *normalData = NULL;
-		char *specularData = NULL;
+		int64_t length = archive_entry_size(entry);
+		const char *filename = archive_entry_pathname(entry);
 
-		struct archive *archive = archive_read_new();
-		struct archive_entry *entry;
-
-		archive_read_support_format_tar(archive);
-		archive_read_support_filter_compress(archive);
-		archive_read_open_filename(archive, path, 10240);
-
-		while (archive_read_next_header(archive, &entry) == ARCHIVE_OK)
+		if (!strcmp(filename, "model") && 
+			(dataBuffer = malloc((int)length)) != NULL &&
+			archive_read_data(archive, dataBuffer, length) == length)
 		{
-			int64_t length = archive_entry_size(entry);
-			const char *filename = archive_entry_pathname(entry);
-
-			if (!strcmp(filename, "model") && 
-				(modelData = malloc((int)length)) != NULL &&
-				archive_read_data(archive, modelData, length) == length)
-			{
-				objectFemUpdateModel(fem, modelData);
-			}
-
-			if (!strcmp(filename, "diffuse") &&
-				(diffuseData = calloc(sizeof(char), (int)length + 1)) != NULL &&
-				archive_read_data(archive, diffuseData, length) == length)
-			{
-				objectUpdateTexture(TEXTURE_DIFFUSE, fem, diffuseData);
-			}
-
-			if (!strcmp(filename, "normal") && 
-				(normalData = calloc(sizeof(char), (int)length + 1)) != NULL &&
-				archive_read_data(archive, normalData, length) == length)
-			{
-				objectUpdateTexture(TEXTURE_NORMAL, fem, normalData);
-			}
-
-			if (!strcmp(filename, "specular") && 
-				(specularData = calloc(sizeof(char), (int)length + 1)) != NULL &&
-				archive_read_data(archive, specularData, length) == length)
-			{
-				objectUpdateTexture(TEXTURE_SPECULAR, fem, specularData);
-			}
+			model = objectFemModel(dataBuffer);
+			free(dataBuffer);
+			dataBuffer = NULL;
 		}
 
-		archive_read_close(archive);
-		archive_read_free(archive);
+		if (!strcmp(filename, "diffuse") &&
+			(dataBuffer = malloc((int)length)) != NULL &&
+			archive_read_data(archive, dataBuffer, length) == length)
+		{
+			diffuse = textureDDSNew(dataBuffer);
+			free(dataBuffer);
+			dataBuffer = NULL;
+		}
 
-		free(modelData);
-		free(diffuseData);
-		free(normalData);
-		free(specularData);
+		if (!strcmp(filename, "specular") && 
+			(dataBuffer = malloc((int)length)) != NULL &&
+			archive_read_data(archive, dataBuffer, length) == length)
+		{
+			specular = textureDDSNew(dataBuffer);
+			free(dataBuffer);
+			dataBuffer = NULL;
+		}
+
+		if (!strcmp(filename, "normal") && 
+			(dataBuffer = malloc((int)length)) != NULL &&
+			archive_read_data(archive, dataBuffer, length) == length)
+		{
+			normal = textureDDSNew(dataBuffer);
+			free(dataBuffer);
+			dataBuffer = NULL;
+		}
 	}
 
-	return fem;
+	archive_read_close(archive);
+	archive_read_free(archive);
+
+	Object *object = objectNew(model, diffuse, specular, normal);
+
+	modelFree(model);
+	textureFree(diffuse);
+	textureFree(specular);
+	textureFree(normal);
+	free(dataBuffer);
+
+	return object;
 }
 
-void objectFemUpdateModel(Object *object, uint8_t *data)
+Model *objectFemModel(uint8_t *data)
 {
+	/**
+	 * Get the size of data.
+	 */
 	int verticesLength = 0;
 	int uvsLength = 0;
 	int normalsLength = 0;
@@ -76,6 +87,9 @@ void objectFemUpdateModel(Object *object, uint8_t *data)
 	memcpy(&normalsLength, &data[sizeof(int) * 2], sizeof(int));
 	memcpy(&indicesLength, &data[sizeof(int) * 3], sizeof(int));
 
+	/**
+	 * Get the data.
+	 */
 	int headerSize = sizeof(int) * 4;
 	int verticesSize = verticesLength * sizeof(Vec3);
 	int uvsSize = uvsLength * sizeof(Vec2);
@@ -92,5 +106,5 @@ void objectFemUpdateModel(Object *object, uint8_t *data)
 	memcpy(normals, &data[headerSize + verticesSize + uvsSize], normalsSize);
 	memcpy(indices, &data[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
 
-	objectUpdateModel(object, verticesLength, uvsLength, normalsLength, indicesLength, vertices, uvs, normals, indices);
+	return modelNew(verticesLength, uvsLength, normalsLength, indicesLength, vertices, uvs, normals, indices);
 }

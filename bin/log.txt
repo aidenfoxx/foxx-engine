@@ -385,3 +385,252 @@ NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+(null)
+ERROR:  Failed to link shader with the following error(s):
+(null)
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+(null)
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+
+
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+ERROR:  Failed to link shader with the following error(s):
+(null)
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+ERROR:  Failed to link shader with the following error(s):
+
+
+Failed to initialize renderer.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.

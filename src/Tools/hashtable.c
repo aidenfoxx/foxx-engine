@@ -1,6 +1,6 @@
 #include "Tools/hashtable.h"
 
-HashTable *hashTableNew(unsigned int size)
+HashTable *hashTableNew(int size)
 {
 	HashTable *table = NULL;
 
@@ -9,8 +9,8 @@ HashTable *hashTableNew(unsigned int size)
 		table->size = size;
 		table->length = 0;
 		table->count = 0;
-		table->hashes = calloc(size, sizeof(int));
-		table->data = malloc(size * sizeof(int));
+		table->hashes = calloc(size, sizeof(unsigned int));
+		table->data = malloc(size * sizeof(unsigned int));
 	}
 
 	return table;
@@ -18,7 +18,7 @@ HashTable *hashTableNew(unsigned int size)
 
 void hashTableFree(HashTable *table)
 {
-	if (table != NULL)
+	if (table)
 	{
 		free(table->hashes);
 		free(table->data);
@@ -31,7 +31,7 @@ int hashTableLength(HashTable *table)
 	return table->length;
 }
 
-int hashTableKey(unsigned int key, unsigned int value)
+int hashTableKey(unsigned int key, int value)
 {
 	if (key == 0)
 	{
@@ -40,14 +40,11 @@ int hashTableKey(unsigned int key, unsigned int value)
 	return HASH_MULTIPLIER * key + value;
 }
 
-int hashTableSet(HashTable *table, unsigned int key, unsigned int value)
+int hashTableSet(HashTable *table, unsigned int key, int value)
 {
 	int count = 0;
 	unsigned int hashIndex = key % (table->size - 1);
 
-	/**
-	 * Don't minus 1 to make it equivelent to <=
-	 */
 	while (table->count < table->size)
 	{
 		if (count == table->count)

@@ -2,7 +2,7 @@
 
 static int shaderRead(const char*, char**);
 
-Shader *shaderNew(const char *shaderPath, int shaderType)
+Shader *shaderNew(int shaderType, const char *shaderPath)
 {
 	Shader *shader = NULL;
 	char *shaderData = NULL;
@@ -25,11 +25,7 @@ Shader *shaderNew(const char *shaderPath, int shaderType)
 				GLint errorLength;
 				glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &errorLength);
 
-				/**
-				 * Use +2 so we can add a newline character
-				 * at the begining.
-				 */
-				shader->error = malloc((errorLength * sizeof(char)) + 1);
+				shader->error = calloc(sizeof(char), errorLength + 2);
 				glGetShaderInfoLog(shader->shaderID, errorLength, NULL, shader->error);
 				memmove(&shader->error[1], &shader->error[0], errorLength);
 				shader->error[0] = '\n';
@@ -44,7 +40,7 @@ Shader *shaderNew(const char *shaderPath, int shaderType)
 
 void shaderFree(Shader *shader)
 {
-	if (shader != NULL)
+	if (shader)
 	{
 		glDeleteShader(shader->shaderID);
 		free(shader->error);
@@ -67,9 +63,12 @@ ShaderProgram *shaderProgramNew()
 
 void shaderProgramFree(ShaderProgram *program)
 {
-	glDeleteProgram(program->programID);
-	free(program->error);
-	free(program);
+	if (program)
+	{
+		glDeleteProgram(program->programID);
+		free(program->error);
+		free(program);
+	}
 }
 
 void shaderProgramAttach(ShaderProgram *program, Shader *shader)
@@ -94,8 +93,8 @@ int shaderProgramLink(ShaderProgram *program)
 		GLint errorLength;
 		glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &errorLength);
 
-		program->error = realloc(program->error, (errorLength * sizeof(char)) + 2);
-		glGetProgramInfoLog(program->programID, errorLength, NULL, program->error);
+		program->error = calloc(sizeof(char), errorLength + 2);
+		glGetShaderInfoLog(program->programID, errorLength, NULL, program->error);
 		memmove(&program->error[1], &program->error[0], errorLength);
 		program->error[0] = '\n';
 

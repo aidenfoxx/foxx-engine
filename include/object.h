@@ -5,31 +5,30 @@
 #include <stdint.h>
 
 #include "context.h"
+#include "model.h"
+#include "texture.h"
 #include "Tools/glmath.h"
-
-#define OBJECT_DYNAMIC 0
-#define OBJECT_STATIC 1
 
 #define TEXTURE_DIFFUSE 0
 #define TEXTURE_NORMAL 1
 #define TEXTURE_SPECULAR 2
 
 typedef struct {
-	GLuint vbo[4];
 	int verticesLength;
 	int uvsLength;
 	int normalsLength;
 	int indicesLength;
-	char *diffuse;
-	char *normal;
-	char *specular;
+	GLuint vbo[4];
+	GLuint diffuse;
+	GLuint normal;
+	GLuint specular;
 	Vec3 scale;
 	Vec3 rotation;
 	Vec3 translation;
 	Mat4 transformMatrix;
 } Object;
 
-Object *objectNew();
+Object *objectNew(Model*, Texture*, Texture*, Texture*);
 void objectFree(Object*);
 
 void objectTranslate(Object*, Vec3);
@@ -44,8 +43,8 @@ Vec3 objectGetTranslation(Object*);
 Vec3 objectGetRotation(Object*);
 Vec3 objectGetScale(Object*);
 
-void objectUpdateModel(Object*, int, int, int, int, Vec3*, Vec2*, Vec3*, Vec3*);
-void objectUpdateTexture(int, Object*, char*);
+void objectUpdateModel(Object*, Model*);
+void objectUpdateTexture(int, Object*, Texture*);
 void objectUpdateMatrix(Object*);
 
 #endif

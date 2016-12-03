@@ -3,14 +3,14 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
 
 #include "object.h"
+#include "texture.h"
+#include "Texture/dds.h"
 
 Object *objectFemNew(const char*);
-
-void objectFemUpdateModel(Object*, uint8_t*);
+Model *objectFemModel(uint8_t*);
 
 #endif

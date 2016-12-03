@@ -34,7 +34,7 @@ Camera *cameraOrthographicNew(float left, float right, float top, float bottom)
 
 void cameraFree(Camera *camera)
 {
-	if (camera != NULL)
+	if (camera)
 	{
 		free(camera);
 	}

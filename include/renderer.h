@@ -9,6 +9,9 @@
 #include "Renderer/camera.h"
 #include "Tools/array.h"
 
+#define OBJECT_DYNAMIC 0
+#define OBJECT_STATIC 1
+
 typedef struct {
 	Camera *camera;
 	GLuint staticVAO;
@@ -24,8 +27,8 @@ void rendererFree(Renderer*);
 int rendererAddShader(Renderer*, ShaderProgram*);
 void rendererRemoveShader(Renderer*, int);
 
-int rendererAddObject(Renderer*, Object*, int);
-void rendererRemoveObject(Renderer*, int, int);
+int rendererAddObject(int, Renderer*, Object*);
+void rendererRemoveObject(int, Renderer*, int);
 
 void rendererExecute(Renderer*);
 
