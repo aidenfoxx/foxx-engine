@@ -28,7 +28,11 @@ The engine is in a constant state of development and the requirements are liable
 ## Nomenclature
 
 Model - Contains the 3D structure of an object including vertices, uvs and normals.
+
 Texture - Contains 2D texture data.
+
 Object - Handles the OpenGL loading and unloading of models and textures. Created from a model and/or textues.
+
 Shader - GLSL shader loaded into OpenGL.
+
 Renderer - On execute, renders a number of Objects using various Shaders in OpenGL. Accepts Objects and Shaders.
