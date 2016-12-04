@@ -111,8 +111,6 @@ int renderInit()
 	crate = objectFemLoad("assets/models/crate.fem");
 	teapot = objectFemLoad("assets/models/monkey.fem");
 
-
-
 	objectSetTranslation(crate, vec3(2.0f, 0.0f, 0.0f));
 	objectSetTranslation(teapot, vec3(-2.0f, 0.0f, 0.0f));
 

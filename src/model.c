@@ -17,6 +17,7 @@ Model *modelNew(int verticesLength,
 		model->uvsLength = uvsLength;
 		model->normalsLength = normalsLength;
 		model->indicesLength = indicesLength;
+		
 		model->vertices = NULL;
 		model->uvs = NULL;
 		model->normals = NULL;
