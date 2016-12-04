@@ -20,7 +20,8 @@ typedef struct {
 	GLuint programID;
 } ShaderProgram;
 
-Shader *shaderNew(int, const char*);
+Shader *shaderNew(int, char*);
+Shader *shaderLoad(int, const char*);
 void shaderFree(Shader*);
 
 ShaderProgram *shaderProgramNew();

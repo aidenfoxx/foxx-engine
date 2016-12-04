@@ -638,3 +638,19 @@ NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
 NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+ERROR:  Failed to compile vertex shader with the following error(s):
+ERROR:  Failed to compile vertex shader with the following error(s):
+ERROR:  Failed to compile vertex shader with the following error(s):
+ERROR:  Failed to load shader(s).
+ERROR:  Failed to load shader(s).
+Failed to initialize renderer.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.
+NOTICE: Program initialized.

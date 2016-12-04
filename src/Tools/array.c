@@ -2,7 +2,7 @@
 
 Array *arrayNew()
 {
-	Array *array = NULL;
+	Array *array;
 
 	if ((array = malloc(sizeof(Array))) != NULL)
 	{
@@ -14,9 +14,6 @@ Array *arrayNew()
 	return array;
 }
 
-/**
- * TODO: Come up with better free solution.
- */
 void arrayFree(Array *array)
 {
 	if (array)

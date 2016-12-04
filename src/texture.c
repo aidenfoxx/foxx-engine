@@ -2,9 +2,7 @@
 
 Texture *textureNew(GLenum format, int width, int height, int mipmaps, int blockBytes, uint8_t *data)
 {
-	Texture *texture = NULL;
-
-
+	Texture *texture;
 
 	if ((texture = malloc(sizeof(Texture))) != NULL)
 	{

@@ -10,7 +10,6 @@
 #include "texture.h"
 #include "Texture/dds.h"
 
-Object *objectFemNew(const char*);
-Model *objectFemModel(uint8_t*);
+Object *objectFemLoad(const char*);
 
 #endif

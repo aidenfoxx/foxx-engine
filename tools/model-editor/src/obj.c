@@ -8,7 +8,7 @@ static int objProcessFace(char*, Vec3*, Vec3*, Vec3*);
 
 Obj *objNew()
 {
-	Obj *obj = NULL;
+	Obj *obj;
 
 	if ((obj = malloc(sizeof(Obj))) != NULL)
 	{

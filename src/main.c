@@ -63,25 +63,30 @@ int renderInit()
 	/**
 	 * Initialize shaders.
 	 */
-	Shader *phongVertex = shaderNew(SHADER_VERTEX, "./assets/shaders/phong.vert");
-	Shader *phongFragment = shaderNew(SHADER_FRAGMENT, "./assets/shaders/phong.frag");
+	Shader *phongVertex = shaderLoad(SHADER_VERTEX, "./assets/shaders/phong.vert");
+	Shader *phongFragment = shaderLoad(SHADER_FRAGMENT, "./assets/shaders/phong.frag");
 
 	phongShader = shaderProgramNew();
 
-	if (phongVertex == NULL)
+	if (phongVertex == NULL || phongFragment == NULL || phongShader == NULL)
 	{
-		char *error = shaderError(phongVertex); 
-		logMessage(LOG_ERROR, "Failed to compile vertex shader with the following error(s):"); 
-		logMessage(LOG_NONE, error);
+		logMessage(LOG_ERROR, "Failed to load shader(s)."); 
 		renderFree();
 		return -1;
 	}
 
-	if (phongFragment == NULL)
+	if (shaderError(phongVertex))
 	{
-		char *error = shaderError(phongFragment); 
+		logMessage(LOG_ERROR, "Failed to compile vertex shader with the following error(s):"); 
+		logMessage(LOG_NONE, shaderError(phongVertex));
+		renderFree();
+		return -1;
+	}
+
+	if (shaderError(phongFragment))
+	{
 		logMessage(LOG_ERROR, "Failed to compile fragment shader with the following error(s):"); 
-		logMessage(LOG_NONE, error);
+		logMessage(LOG_NONE, shaderError(phongFragment));
 		renderFree();
 		return -1;
 	}
@@ -91,9 +96,8 @@ int renderInit()
 
 	if (shaderProgramLink(phongShader))
 	{
-		char *error = shaderProgramError(phongShader); 
 		logMessage(LOG_ERROR, "Failed to link shader with the following error(s):"); 
-		logMessage(LOG_NONE, error);
+		logMessage(LOG_NONE, shaderProgramError(phongShader));
 		renderFree();
 		return -1;
 	}
@@ -104,8 +108,10 @@ int renderInit()
 	/**
 	 * Add entities to renderer.
 	 */
-	crate = objectFemNew("assets/models/crate.fem");
-	teapot = objectFemNew("assets/models/monkey.fem");
+	crate = objectFemLoad("assets/models/crate.fem");
+	teapot = objectFemLoad("assets/models/monkey.fem");
+
+
 
 	objectSetTranslation(crate, vec3(2.0f, 0.0f, 0.0f));
 	objectSetTranslation(teapot, vec3(-2.0f, 0.0f, 0.0f));

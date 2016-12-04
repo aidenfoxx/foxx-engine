@@ -2,7 +2,7 @@
 
 HashTable *hashTableNew(int size)
 {
-	HashTable *table = NULL;
+	HashTable *table;
 
 	if ((table = malloc(sizeof(HashTable))) != NULL)
 	{

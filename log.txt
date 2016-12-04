@@ -26,3 +26,5 @@ ERROR:  Failed to link shader with the following error(s):
 
 
 Failed to initialize renderer.
+ERROR:  Failed to load shader(s).
+Failed to initialize renderer.

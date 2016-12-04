@@ -1,7 +1,11 @@
 #include "Object/fem.h"
 
-Object *objectFemNew(const char *path)
-{	
+Model *objectFemModel(uint8_t*);
+
+Object *objectFemLoad(const char *path)
+{
+	Object *object = NULL;
+
 	Model *model = NULL;
 	Texture *diffuse = NULL;
 	Texture *specular = NULL;
@@ -55,8 +59,11 @@ Object *objectFemNew(const char *path)
 	archive_read_close(archive);
 	archive_read_free(archive);
 
-	Object *object = objectNew(model, diffuse, specular, normal);
-
+	if (model != NULL || diffuse != NULL || specular != NULL || normal != NULL)
+	{
+		object = objectNew(model, diffuse, specular, normal);
+	}
+	
 	modelFree(model);
 	textureFree(diffuse);
 	textureFree(specular);

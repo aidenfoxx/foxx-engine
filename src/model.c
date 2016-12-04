@@ -9,7 +9,7 @@ Model *modelNew(int verticesLength,
 				Vec3 *normals, 
 				Vec3 *indices)
 {
-	Model *model = NULL;
+	Model *model;
 
 	if ((model = malloc(sizeof(Model))) != NULL)
 	{

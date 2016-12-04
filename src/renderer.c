@@ -4,7 +4,7 @@ static void rendererBindVariables(Renderer*, ShaderProgram*, Object*);
 
 Renderer *rendererNew(Camera *camera)
 {
-	Renderer *renderer = NULL;
+	Renderer *renderer;
 
 	if ((renderer = malloc(sizeof(Renderer))) != NULL)
 	{
@@ -162,8 +162,8 @@ void rendererExecute(Renderer *renderer)
 void rendererBindVariables(Renderer *renderer, ShaderProgram *shader, Object *object)
 {
 	Mat4 model = object->transformMatrix;
-	Mat4 modelView = mat4MultiplyMat4(renderer->camera->view, model);
-	Mat4 modelViewPerspective = mat4MultiplyMat4(renderer->camera->projection, modelView);
+	Mat4 modelView = mat4MultiplyMat4(cameraGetView(renderer->camera), model);
+	Mat4 modelViewPerspective = mat4MultiplyMat4(cameraGetProjection(renderer->camera), modelView);
 
 	shaderProgramSetMat4(shader, "model", model);
 	shaderProgramSetMat4(shader, "modelView", modelView);

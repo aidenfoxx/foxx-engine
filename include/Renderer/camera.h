@@ -25,8 +25,11 @@ void cameraRotate(Camera*, Vec3);
 
 void cameraSetTranslation(Camera*, Vec3);
 void cameraSetRotation(Camera*, Vec3);
+void cameraSetProjection(Camera*, Mat4);
 
 Vec3 cameraGetTranslation(Camera*);
 Vec3 cameraGetRotation(Camera*);
+Mat4 cameraGetProjection(Camera*);
+Mat4 cameraGetView(Camera*);
 
 #endif

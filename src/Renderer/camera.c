@@ -5,7 +5,7 @@ static void cameraUpdateView(Camera*);
 
 Camera *cameraNew(Mat4 projection)
 {
-	Camera *camera = NULL;
+	Camera *camera;
 
 	if ((camera = malloc(sizeof(Camera))) != NULL)
 	{
@@ -78,6 +78,11 @@ void cameraSetRotation(Camera *camera, Vec3 rotation)
 	cameraUpdateView(camera);
 }
 
+void cameraSetProjection(Camera *camera, Mat4 projection)
+{
+	camera->projection = projection;
+}
+
 Vec3 cameraGetTranslation(Camera *camera)
 {
 	return camera->translation;
@@ -88,10 +93,17 @@ Vec3 cameraGetRotation(Camera *camera)
 	return camera->rotation;
 }
 
+Mat4 cameraGetProjection(Camera *camera)
+{
+	return camera->projection;
+}
+
+Mat4 cameraGetView(Camera *camera)
+{
+	return camera->view;
+}
+
 void cameraUpdateView(Camera *camera)
 {
-	Mat4 rotation = mat4RotationEuler(camera->rotation);
-	Mat4 translation = mat4Translation(camera->translation);
-
-	camera->view = mat4MultiplyMat4(rotation, translation);
+	camera->view = mat4MultiplyMat4(mat4RotationEuler(camera->rotation), mat4Translation(camera->translation));
 }

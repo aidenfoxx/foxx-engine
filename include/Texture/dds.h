@@ -22,5 +22,6 @@
 #define TEXTURE_DDS_DXT5_VALUE 0x35545844
 
 Texture *textureDDSNew(uint8_t*);
+Texture *textureDDSLoad(const char*);
 
 #endif

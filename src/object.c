@@ -2,7 +2,7 @@
 
 Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *normal)
 {
-	Object *object = NULL;
+	Object *object;
 
 	if ((object = malloc(sizeof(Object))) != NULL)
 	{

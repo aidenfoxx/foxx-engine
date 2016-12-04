@@ -20,29 +20,17 @@ Vec4 vec4(float x, float y, float z, float w)
 
 Vec2 vec2Negative(Vec2 v)
 {
-	Vec2 vector = {
-		-v.x, -v.y
-	};
-
-	return vector;
+	return vec2(-v.x, -v.y);
 }
 
 Vec3 vec3Negative(Vec3 v)
 {
-	Vec3 vector = {
-		-v.x, -v.y, -v.z
-	};
-
-	return vector;
+	return vec3(-v.x, -v.y, -v.z);
 }
 
 Vec4 vec4Negative(Vec4 v)
 {
-	Vec4 vector = {
-		-v.x, -v.y, -v.z, -v.w
-	};
-
-	return vector;
+	return vec4(-v.x, -v.y, -v.z, -v.w);
 }
 
 Vec3 vec3CrossProduct(Vec3 v1, Vec3 v2)

@@ -2,38 +2,46 @@
 
 static int shaderRead(const char*, char**);
 
-Shader *shaderNew(int shaderType, const char *shaderPath)
+Shader *shaderNew(int shaderType, char *shaderData)
 {
-	Shader *shader = NULL;
-	char *shaderData = NULL;
+	Shader *shader;
 
 	if ((shader = malloc(sizeof(Shader))) != NULL)
 	{
 		shader->error = NULL;
 		shader->shaderID = glCreateShader(shaderType);
 
-		if (shaderRead(shaderPath, &shaderData) > 0)
+		glShaderSource(shader->shaderID, 1, (const char**)&shaderData, NULL);
+		glCompileShader(shader->shaderID);
+
+		GLint errorStatus;
+		glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &errorStatus);
+
+		if (errorStatus == GL_FALSE)
 		{
-			glShaderSource(shader->shaderID, 1, (const char**)&shaderData, NULL);
-			glCompileShader(shader->shaderID);
+			free(shader->error);
 
-			GLint errorStatus;
-			glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &errorStatus);
-
-			if (errorStatus == GL_FALSE)
-			{
-				GLint errorLength;
-				glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &errorLength);
-
-				shader->error = calloc(sizeof(char), errorLength + 2);
-				glGetShaderInfoLog(shader->shaderID, errorLength, NULL, shader->error);
-				memmove(&shader->error[1], &shader->error[0], errorLength);
-				shader->error[0] = '\n';
-			}
+			GLint errorLength;
+			glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &errorLength);
+			shader->error = calloc(sizeof(char), errorLength + 1);
+			glGetShaderInfoLog(shader->shaderID, errorLength, NULL, shader->error);
 		}
-
-		free(shaderData);
 	}
+
+	return shader;
+}
+
+Shader *shaderLoad(int shaderType, const char *shaderPath)
+{
+	Shader *shader = NULL;
+	char *shaderData = NULL;
+
+	if (shaderRead(shaderPath, &shaderData) > 0)
+	{
+		shader = shaderNew(shaderType, shaderData);
+	}
+
+	free(shaderData);
 
 	return shader;
 }
@@ -90,13 +98,12 @@ int shaderProgramLink(ShaderProgram *program)
 
 	if (errorStatus == GL_FALSE)
 	{
+		free(program->error);
+
 		GLint errorLength;
 		glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &errorLength);
-
-		program->error = calloc(sizeof(char), errorLength + 2);
+		program->error = calloc(sizeof(char), errorLength + 1);
 		glGetShaderInfoLog(program->programID, errorLength, NULL, program->error);
-		memmove(&program->error[1], &program->error[0], errorLength);
-		program->error[0] = '\n';
 
 		return -1;
 	}
