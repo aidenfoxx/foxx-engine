@@ -2,7 +2,7 @@
 #define OBJECT_H
 
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
 
 #include "context.h"
 #include "model.h"

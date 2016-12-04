@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <math.h>
 
 #include "context.h"
 #include "texture.h"

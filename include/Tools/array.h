@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #define ARRAY_INITIAL_CAPACITY 128
 

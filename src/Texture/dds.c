@@ -16,17 +16,11 @@ Texture *textureDDSNew(uint8_t *data)
 	if (magic == TEXTURE_DDS_MAGIC_VALUE)
 	{
 		int typeError;
-		int mipmapWidth = 0;
-		int mipmapHeight = 0;
-		int bufferSize = 0;
 
 		memcpy(&format, &data[TEXTURE_DDS_FORMAT], sizeof(uint32_t));
 		memcpy(&width, &data[TEXTURE_DDS_WIDTH], sizeof(uint32_t));
 		memcpy(&height, &data[TEXTURE_DDS_HEIGHT], sizeof(uint32_t));
 		memcpy(&mipmaps, &data[TEXTURE_DDS_MIPMAPS], sizeof(uint32_t));
-
-		mipmapWidth = width;
-		mipmapHeight = height;
 
 		switch (format)
 		{
@@ -50,19 +44,17 @@ Texture *textureDDSNew(uint8_t *data)
 				break;
 		}
 
-		for (int i; i < mipmaps; i++)
-		{
-			bufferSize += fmax(4, mipmapWidth) / 4 * fmax(4, mipmapHeight) / 4 * blockBytes;
-
-			mipmapWidth = floor(mipmapWidth / 2);
-			mipmapHeight = floor(mipmapHeight / 2);
-		}
+		int bufferSize = textureCalculateMipmapsSize(width, height, mipmaps, blockBytes);
 
 		if (!typeError && (textureData = malloc(bufferSize * sizeof(uint8_t))))
 		{
-			memcpy(textureData, &data[TEXTURE_DDS_HEADER_SIZE], bufferSize);
+			memcpy(textureData, &data[TEXTURE_DDS_HEADER_SIZE], bufferSize * sizeof(uint8_t));
 		}
 	}
 
-	return textureNew(format, width, height, mipmaps, blockBytes, textureData);
+	Texture *texture = textureNew(format, width, height, mipmaps, blockBytes, textureData);
+
+	free(textureData);
+
+	return texture;
 }

@@ -1,10 +1,6 @@
 #ifndef TOOLS_GLMATH_H
 #define TOOLS_GLMATH_H
 
-#ifndef PI
-#define PI 3.14159265359
-#endif
-
 #include <stdio.h>
 #include <math.h>
 

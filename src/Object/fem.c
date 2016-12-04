@@ -21,38 +21,32 @@ Object *objectFemNew(const char *path)
 		int64_t length = archive_entry_size(entry);
 		const char *filename = archive_entry_pathname(entry);
 
-		if (!strcmp(filename, "model") && 
-			(dataBuffer = malloc((int)length)) != NULL &&
-			archive_read_data(archive, dataBuffer, length) == length)
+		if ((dataBuffer = malloc((int)length)) != NULL)
 		{
-			model = objectFemModel(dataBuffer);
-			free(dataBuffer);
-			dataBuffer = NULL;
-		}
+			if (!strcmp(filename, "model") && 
+				archive_read_data(archive, dataBuffer, length) == length)
+			{
+				model = objectFemModel(dataBuffer);
+			}
 
-		if (!strcmp(filename, "diffuse") &&
-			(dataBuffer = malloc((int)length)) != NULL &&
-			archive_read_data(archive, dataBuffer, length) == length)
-		{
-			diffuse = textureDDSNew(dataBuffer);
-			free(dataBuffer);
-			dataBuffer = NULL;
-		}
+			if (!strcmp(filename, "diffuse") &&
+				archive_read_data(archive, dataBuffer, length) == length)
+			{
+				diffuse = textureDDSNew(dataBuffer);
+			}
 
-		if (!strcmp(filename, "specular") && 
-			(dataBuffer = malloc((int)length)) != NULL &&
-			archive_read_data(archive, dataBuffer, length) == length)
-		{
-			specular = textureDDSNew(dataBuffer);
-			free(dataBuffer);
-			dataBuffer = NULL;
-		}
+			if (!strcmp(filename, "specular") && 
+				archive_read_data(archive, dataBuffer, length) == length)
+			{
+				specular = textureDDSNew(dataBuffer);
+			}
 
-		if (!strcmp(filename, "normal") && 
-			(dataBuffer = malloc((int)length)) != NULL &&
-			archive_read_data(archive, dataBuffer, length) == length)
-		{
-			normal = textureDDSNew(dataBuffer);
+			if (!strcmp(filename, "normal") && 
+				archive_read_data(archive, dataBuffer, length) == length)
+			{
+				normal = textureDDSNew(dataBuffer);
+			}
+
 			free(dataBuffer);
 			dataBuffer = NULL;
 		}
@@ -67,7 +61,6 @@ Object *objectFemNew(const char *path)
 	textureFree(diffuse);
 	textureFree(specular);
 	textureFree(normal);
-	free(dataBuffer);
 
 	return object;
 }
@@ -106,5 +99,12 @@ Model *objectFemModel(uint8_t *data)
 	memcpy(normals, &data[headerSize + verticesSize + uvsSize], normalsSize);
 	memcpy(indices, &data[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
 
-	return modelNew(verticesLength, uvsLength, normalsLength, indicesLength, vertices, uvs, normals, indices);
+	Model *model = modelNew(verticesLength, uvsLength, normalsLength, indicesLength, vertices, uvs, normals, indices);
+
+	free(vertices);
+	free(uvs);
+	free(normals);
+	free(indices);
+
+	return model;
 }

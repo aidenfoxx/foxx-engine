@@ -100,7 +100,6 @@ void objectUpdateTexture(int textureType, Object *object, Texture *texture)
 				break;
 		}
 
-		int dataSize = 0;
 		int dataOffset = 0;
 
 		int mipmapWidth = texture->width;
@@ -108,7 +107,7 @@ void objectUpdateTexture(int textureType, Object *object, Texture *texture)
 
 		for (int i = 0; i < texture->mipmaps; i++)
 		{
-			dataSize = fmax(4, mipmapWidth) / 4 * fmax(4, mipmapHeight) / 4 * texture->blockBytes;
+			int dataSize = textureCalculateMipmapSize(mipmapWidth, mipmapHeight, texture->blockBytes);
 			
 			/**
 			 * TODO: Check format to decide how to bind.
