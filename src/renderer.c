@@ -1,7 +1,5 @@
 #include "renderer.h"
 
-static void rendererBindVariables(Renderer*, ShaderProgram*, Object*);
-
 Renderer *rendererNew(Camera *camera)
 {
 	Renderer *renderer;
@@ -9,13 +7,10 @@ Renderer *rendererNew(Camera *camera)
 	if ((renderer = malloc(sizeof(Renderer))) != NULL)
 	{
 		renderer->shaders = arrayNew();
-		renderer->dynamicVAOs = arrayNew();
-		renderer->objectsStatic = arrayNew();
-		renderer->objectsDynamic = arrayNew();
+		renderer->objects = arrayNew();
+		renderer->objectsVAO = arrayNew();
 		renderer->shaders = arrayNew();
 		renderer->camera = camera;
-
-		glGenVertexArrays(1, &renderer->staticVAO);
 	}
 
 	return renderer;
@@ -25,11 +20,15 @@ void rendererFree(Renderer *renderer)
 {
 	if (renderer)
 	{
-		glDeleteVertexArrays(1, &renderer->staticVAO);
-		arrayFree(renderer->objectsDynamic);
-		arrayFree(renderer->objectsStatic);
-		arrayFree(renderer->dynamicVAOs);
-		arrayFree(renderer->shaders);
+		int objectsLength = arrayLength(renderer->objects);
+
+		for (int i = 0; i < objectsLength; i++)
+		{
+			rendererRemoveObject(renderer, i);
+		}	
+
+		arrayFree(renderer->objects);
+		arrayFree(renderer->objectsVAO);
 		free(renderer);
 	}
 }
@@ -45,128 +44,123 @@ void rendererRemoveShader(Renderer *renderer, int shaderID)
 	arrayRemove(renderer->shaders, shaderID - 1);
 }
 
-int rendererAddObject(int objectType, Renderer *renderer, Object *object)
+int rendererAddObject(Renderer *renderer, Object *object)
 {
-	int objectID = 0;
+	int objectID = -1;
 
-	if (object)
+	GLuint *vao;
+
+	if (object && (vao = malloc(sizeof(GLuint))) != NULL)
 	{
-		switch (objectType)
-		{
-			/**
-			 * Dynamic objects get their own VAO.
-			 */
-			case OBJECT_DYNAMIC: ;
-				GLuint *vao = malloc(sizeof(GLuint));
-				glGenVertexArrays(1, vao);
-				glBindVertexArray(*vao);
-				arrayPush(renderer->dynamicVAOs, vao);
-				arrayPush(renderer->objectsDynamic, object);
-				objectID = arrayLength(renderer->objectsDynamic);
-				break;
+		glGenVertexArrays(1, vao);
+		glBindVertexArray(*vao);
 
-			/**
-			 * Static objects are added to a global VAO.
-			 */
-			case OBJECT_STATIC:
-				glBindVertexArray(renderer->staticVAO);
-				arrayPush(renderer->objectsStatic, object);
-				objectID = arrayLength(renderer->objectsStatic);
-				break;
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[0]);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[1]);
 		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+
+		modelBindProperty(MODEL_VERTICES, objectGetModel(object));
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		modelBindProperty(MODEL_UVS, objectGetModel(object));
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[2]);
-		glEnableVertexAttribArray(2);
+		modelBindProperty(MODEL_NORMALS, objectGetModel(object));
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		modelUnbind();
 		glBindVertexArray(0);
+
+		arrayPush(renderer->objects, object);
+		arrayPush(renderer->objectsVAO, vao);
+
+		objectID = arrayLength(renderer->objects);
 	}
 	
 	return objectID;
 }
 
-void rendererRemoveObject(int objectType, Renderer *renderer, int objectID)
+void rendererRemoveObject(Renderer *renderer, int objectID)
 {
-	switch (objectType)
+	GLuint *vao;
+
+	if ((vao = (GLuint*)arrayGet(renderer->objectsVAO, objectID - 1)) != NULL)
 	{
-		case OBJECT_DYNAMIC: ;
-			GLuint *vao = arrayGet(renderer->dynamicVAOs, objectID - 1);
-			arrayRemove(renderer->objectsDynamic, objectID - 1);
-			arrayRemove(renderer->dynamicVAOs, objectID - 1);
-			glDeleteVertexArrays(1, vao);
-			free(vao);
-			break;
+		arrayRemove(renderer->objectsVAO, objectID - 1);
+		glDeleteVertexArrays(1, vao);
+		free(vao);
 	}
 }
 
 void rendererExecute(Renderer *renderer)
 {
-	ShaderProgram *shader;
+	ShaderProgram *program;
+	
 	int shaderLength = arrayLength(renderer->shaders);
-	int staticLength = arrayLength(renderer->objectsStatic);
-	int dynamicLength = arrayLength(renderer->objectsDynamic);
-
-	glBindVertexArray(renderer->staticVAO);
+	int objectsLength = arrayLength(renderer->objects);
 
 	for (int i = 0; i < shaderLength; i++)
 	{
-		if (!(shader = arrayGet(renderer->shaders, i)))
+		if (!(program = (ShaderProgram*)arrayGet(renderer->shaders, i)))
 		{
 			continue;
 		}
 
-		shaderProgramEnable(shader);
+		shaderProgramBind(program);
 
-		for (int i = 0; i < staticLength; i++)
+		for (int i = 0; i < objectsLength; i++)
 		{
-			Object *objectStatic = arrayGet(renderer->objectsStatic, i);
-
-			rendererBindVariables(renderer, shader, objectStatic);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectStatic->vbo[3]);
-			glBindTexture(GL_TEXTURE_2D, objectStatic->diffuse);
-			glDrawElements(GL_TRIANGLES, objectStatic->indicesLength * 3, GL_UNSIGNED_INT, 0);
-		}
-
-		for (int i = 0; i < dynamicLength; i++)
-		{
-			Object *objectDynamic = arrayGet(renderer->objectsDynamic, i);
-
-			if (objectDynamic)
+			Object *object = (Object*)arrayGet(renderer->objects, i);
+			
+			if (object)
 			{
-				GLuint* objectVAO = (GLuint*)arrayGet(renderer->dynamicVAOs, i);
+				Model *model = objectGetModel(object);
 
-				rendererBindVariables(renderer, shader, objectDynamic);
-				glBindVertexArray(*objectVAO);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objectDynamic->vbo[3]);
-				glBindTexture(GL_TEXTURE_2D, objectDynamic->diffuse);
-				glDrawElements(GL_TRIANGLES, objectDynamic->indicesLength * 3, GL_UNSIGNED_INT, 0);
+				if (model)
+				{
+					GLuint *objectVAO = (GLuint*)arrayGet(renderer->objectsVAO, i);
+
+					glBindVertexArray(*objectVAO);
+
+					Mat4 M = objectGetTransform(object);
+					Mat4 MV = mat4MultiplyMat4(cameraGetView(renderer->camera), M);
+					Mat4 MVP = mat4MultiplyMat4(cameraGetProjection(renderer->camera), MV);
+
+					shaderProgramSetMat4(program, "model", M);
+					shaderProgramSetMat4(program, "modelView", MV);
+					shaderProgramSetMat4(program, "modelViewProjection", MVP);
+					shaderProgramSetMat4(program, "normalMatrix", mat4Transpose(mat4Inverse(MV)));
+
+					Texture *diffuse = objectGetTexture(TEXTURE_DIFFUSE, object);
+					Texture *specular = objectGetTexture(TEXTURE_SPECULAR, object);
+					Texture *normal = objectGetTexture(TEXTURE_NORMAL, object);
+					
+					if (diffuse)
+					{
+						textureBind(TEXTURE_DIFFUSE, diffuse);
+					}
+					
+					if (specular)
+					{
+						textureBind(TEXTURE_SPECULAR, specular);
+					}
+					
+					if (normal)
+					{
+						textureBind(TEXTURE_NORMAL, normal);
+					}
+
+					modelBindProperty(MODEL_INDICES, model);
+					glDrawElements(GL_TRIANGLES, objectGetModel(object)->indicesLength * 3, GL_UNSIGNED_INT, 0);
+				}
 			}
 		}
 	}
 
-	shaderProgramDisable();
+	modelUnbind();
+	textureUnbind();
+	shaderProgramUnbind();
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-}
-
-void rendererBindVariables(Renderer *renderer, ShaderProgram *shader, Object *object)
-{
-	Mat4 model = object->transformMatrix;
-	Mat4 modelView = mat4MultiplyMat4(cameraGetView(renderer->camera), model);
-	Mat4 modelViewPerspective = mat4MultiplyMat4(cameraGetProjection(renderer->camera), modelView);
-
-	shaderProgramSetMat4(shader, "model", model);
-	shaderProgramSetMat4(shader, "modelView", modelView);
-	shaderProgramSetMat4(shader, "modelViewPerspective", modelViewPerspective);
-	shaderProgramSetMat4(shader, "normalMatrix", mat4Transpose(mat4Inverse(modelView)));
 }

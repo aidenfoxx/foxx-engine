@@ -4,8 +4,6 @@ Model *objectFemModel(uint8_t*);
 
 Object *objectFemLoad(const char *path)
 {
-	Object *object = NULL;
-
 	Model *model = NULL;
 	Texture *diffuse = NULL;
 	Texture *specular = NULL;
@@ -59,17 +57,16 @@ Object *objectFemLoad(const char *path)
 	archive_read_close(archive);
 	archive_read_free(archive);
 
-	if (model != NULL || diffuse != NULL || specular != NULL || normal != NULL)
-	{
-		object = objectNew(model, diffuse, specular, normal);
-	}
-	
-	modelFree(model);
-	textureFree(diffuse);
-	textureFree(specular);
-	textureFree(normal);
+	return objectNew(model, diffuse, specular, normal);
+}
 
-	return object;
+void objectFemFree(Object *object)
+{
+	modelFree(objectGetModel(object));
+	textureFree(objectGetTexture(TEXTURE_DIFFUSE, object));
+	textureFree(objectGetTexture(TEXTURE_SPECULAR, object));
+	textureFree(objectGetTexture(TEXTURE_NORMAL, object));
+	objectFree(object);
 }
 
 Model *objectFemModel(uint8_t *data)
@@ -106,7 +103,7 @@ Model *objectFemModel(uint8_t *data)
 	memcpy(normals, &data[headerSize + verticesSize + uvsSize], normalsSize);
 	memcpy(indices, &data[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
 
-	Model *model = modelNew(verticesLength, uvsLength, normalsLength, indicesLength, vertices, uvs, normals, indices);
+	Model *model = modelNew(vertices, uvs, normals, indices, verticesLength, uvsLength, normalsLength, indicesLength);
 
 	free(vertices);
 	free(uvs);

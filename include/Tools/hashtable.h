@@ -11,15 +11,15 @@ typedef struct {
 	int size;
 	int length;
 	int count;
-	unsigned int *hashes;
-	unsigned int *data;
+	unsigned *hashes;
+	unsigned *data;
 } HashTable;
 
 HashTable *hashTableNew(int);
 void hashTableFree(HashTable*);
 int hashTableLength(HashTable*);
-int hashTableKey(unsigned int, int);
-int hashTableSet(HashTable*, unsigned int, int);
-int hashTableGet(HashTable*, unsigned int);
+int hashTableKey(unsigned, int);
+int hashTableSet(HashTable*, unsigned, int);
+int hashTableGet(HashTable*, unsigned);
 
 #endif

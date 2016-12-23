@@ -11,13 +11,13 @@
 #include "Tools/glmath.h"
 
 typedef struct {
-	char *error;
 	GLuint shaderID;
+	char *error;
 } Shader;
 
 typedef struct {
-	char *error;
 	GLuint programID;
+	char *error;
 } ShaderProgram;
 
 Shader *shaderNew(int, char*);
@@ -32,8 +32,8 @@ void shaderProgramDetach(ShaderProgram*, Shader*);
 
 int shaderProgramLink(ShaderProgram*);
 
-void shaderProgramEnable(ShaderProgram*);
-void shaderProgramDisable();
+void shaderProgramBind(ShaderProgram*);
+void shaderProgramUnbind();
 
 void shaderProgramSetInt(ShaderProgram*, const char*, int);
 void shaderProgramSetFloat(ShaderProgram*, const char*, float);

@@ -11,5 +11,6 @@
 #include "Texture/dds.h"
 
 Object *objectFemLoad(const char*);
+void objectFemFree(Object*);
 
 #endif

@@ -9,8 +9,8 @@ HashTable *hashTableNew(int size)
 		table->size = size;
 		table->length = 0;
 		table->count = 0;
-		table->hashes = calloc(size, sizeof(unsigned int));
-		table->data = malloc(size * sizeof(unsigned int));
+		table->hashes = calloc(size, sizeof(unsigned));
+		table->data = malloc(size * sizeof(unsigned));
 	}
 
 	return table;
@@ -31,7 +31,7 @@ int hashTableLength(HashTable *table)
 	return table->length;
 }
 
-int hashTableKey(unsigned int key, int value)
+int hashTableKey(unsigned key, int value)
 {
 	if (key == 0)
 	{
@@ -40,10 +40,10 @@ int hashTableKey(unsigned int key, int value)
 	return HASH_MULTIPLIER * key + value;
 }
 
-int hashTableSet(HashTable *table, unsigned int key, int value)
+int hashTableSet(HashTable *table, unsigned key, int value)
 {
 	int count = 0;
-	unsigned int hashIndex = key % (table->size - 1);
+	unsigned hashIndex = key % (table->size - 1);
 
 	while (table->count < table->size)
 	{
@@ -76,9 +76,9 @@ int hashTableSet(HashTable *table, unsigned int key, int value)
 	return -1;
 }
 
-int hashTableGet(HashTable *table, unsigned int key)
+int hashTableGet(HashTable *table, unsigned key)
 {
-	unsigned int hashIndex = (unsigned int)key % (table->size - 1);
+	unsigned hashIndex = (unsigned)key % (table->size - 1);
 
 	for (int i = 0; i < table->count; i++)
 	{

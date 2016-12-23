@@ -6,7 +6,7 @@ layout (location = 2) in vec3 vertexNormal;
 
 uniform mat4 model;
 uniform mat4 modelView;
-uniform mat4 modelViewPerspective;
+uniform mat4 modelViewProjection;
 uniform mat4 normalMatrix;
 
 out vec2 uv;
@@ -21,5 +21,5 @@ void main()
     vertexPosition = vec3(vertexPosition4) / vertexPosition4.w;
     normalInterp = vec3(normalMatrix * vec4(vertexNormal, 0.0));
 
-    gl_Position = modelViewPerspective * vec4(vertex, 1.0);
+    gl_Position = modelViewProjection * vec4(vertex, 1.0);
 }

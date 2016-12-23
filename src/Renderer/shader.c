@@ -1,6 +1,7 @@
 #include "Renderer/shader.h"
 
 static int shaderRead(const char*, char**);
+static void *shaderGetError(GLuint, GLenum);
 
 Shader *shaderNew(int shaderType, char *shaderData)
 {
@@ -13,19 +14,9 @@ Shader *shaderNew(int shaderType, char *shaderData)
 
 		glShaderSource(shader->shaderID, 1, (const char**)&shaderData, NULL);
 		glCompileShader(shader->shaderID);
-
-		GLint errorStatus;
-		glGetShaderiv(shader->shaderID, GL_COMPILE_STATUS, &errorStatus);
-
-		if (errorStatus == GL_FALSE)
-		{
-			free(shader->error);
-
-			GLint errorLength;
-			glGetShaderiv(shader->shaderID, GL_INFO_LOG_LENGTH, &errorLength);
-			shader->error = calloc(sizeof(char), errorLength + 1);
-			glGetShaderInfoLog(shader->shaderID, errorLength, NULL, shader->error);
-		}
+		free(shader->error);
+		
+		shader->error = shaderGetError(shader->shaderID, GL_COMPILE_STATUS);
 	}
 
 	return shader;
@@ -92,31 +83,22 @@ void shaderProgramDetach(ShaderProgram *program, Shader *shader)
 int shaderProgramLink(ShaderProgram *program)
 {
 	glLinkProgram(program->programID);
+	free(program->error);
 
-	GLint errorStatus;
-	glGetProgramiv(program->programID, GL_LINK_STATUS, &errorStatus);
-
-	if (errorStatus == GL_FALSE)
+	if ((program->error = shaderGetError(program->programID, GL_LINK_STATUS)) != NULL)
 	{
-		free(program->error);
-
-		GLint errorLength;
-		glGetProgramiv(program->programID, GL_INFO_LOG_LENGTH, &errorLength);
-		program->error = calloc(sizeof(char), errorLength + 1);
-		glGetShaderInfoLog(program->programID, errorLength, NULL, program->error);
-
 		return -1;
 	}
 
 	return 0;
 }
 
-void shaderProgramEnable(ShaderProgram *program)
+void shaderProgramBind(ShaderProgram *program)
 {
 	glUseProgram(program->programID);
 }
 
-void shaderProgramDisable()
+void shaderProgramUnbind()
 {
 	glUseProgram(0);
 }
@@ -192,4 +174,23 @@ int shaderRead(const char *shaderPath, char **shaderData)
 	fclose(shader);
 
 	return length;
+}
+
+void *shaderGetError(GLuint shader, GLenum parameter)
+{
+	char *returnError = NULL;
+
+	GLint error;
+	GLint errorLength = 0;
+
+	glGetShaderiv(shader, parameter, &error);
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &errorLength);
+
+	if (error == GL_FALSE && errorLength > 0)
+	{
+		returnError = calloc(sizeof(char), errorLength);
+		glGetShaderInfoLog(shader, errorLength, NULL, returnError);
+	}
+
+	return returnError;
 }

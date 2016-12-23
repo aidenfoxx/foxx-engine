@@ -1,31 +1,23 @@
 #include "object.h"
 
+void objectUpdateTransform(Object*);
+
 Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *normal)
 {
 	Object *object;
 
 	if ((object = malloc(sizeof(Object))) != NULL)
 	{
-		glGenBuffers(4, object->vbo);
-
-		objectUpdateModel(object, model);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenTextures(1, &object->diffuse);
-		glGenTextures(1, &object->specular);
-		glGenTextures(1, &object->normal);
-
-		objectUpdateTexture(TEXTURE_DIFFUSE, object, diffuse);
-		objectUpdateTexture(TEXTURE_SPECULAR, object, specular);
-		objectUpdateTexture(TEXTURE_NORMAL, object, normal);
-
+		object->model = model;
 		object->scale = vec3(1.0f, 1.0f, 1.0f);
 		object->rotation = vec3(0.0f, 0.0f, 0.0f);
 		object->translation = vec3(0.0f, 0.0f, 0.0f);
 
-		objectUpdateMatrix(object);
+		objectSetModel(object, model);
+		objectSetTexture(TEXTURE_DIFFUSE, object, diffuse);
+		objectSetTexture(TEXTURE_SPECULAR, object, specular);
+		objectSetTexture(TEXTURE_NORMAL, object, normal);
+		objectUpdateTransform(object);
 	}
 
 	return object;
@@ -33,131 +25,95 @@ Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *no
 
 Object *objectDuplicate(Object *object)
 {
-	Object *duplicate = NULL;
-
-	if ((duplicate = malloc(sizeof(Object))) != NULL)
-	{
-		memcpy(duplicate, object, sizeof(Object));
-	}
-
-	return duplicate;
+	return objectNew(object->model, object->diffuse, object->specular, object->normal);
 }
 
 void objectFree(Object *object)
 {
 	if (object)
 	{
-		glDeleteBuffers(4, object->vbo);
-		glDeleteTextures(1, &object->diffuse);
-		glDeleteTextures(1, &object->specular);
-		glDeleteTextures(1, &object->normal);
 		free(object);
 	}
 }
 
-void objectUpdateModel(Object *object, Model *model)
+void objectSetModel(Object *object, Model *model)
 {
-	if (model)
+	object->model = model;
+}
+
+void objectSetTexture(int textureType, Object *object, Texture *texture)
+{
+	switch (textureType)
 	{
-		object->verticesLength = model->verticesLength;
-		object->uvsLength = model->uvsLength;
-		object->normalsLength = model->normalsLength;
-		object->indicesLength = model->indicesLength;
+		case TEXTURE_DIFFUSE:
+			object->diffuse = texture;
+			break;
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[0]);
-		glBufferData(GL_ARRAY_BUFFER, object->verticesLength * sizeof(Vec3), (float*)model->vertices, GL_STATIC_DRAW);
+		case TEXTURE_SPECULAR:
+			object->specular = texture;
+			break;
 
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, object->uvsLength * sizeof(Vec2), (float*)model->uvs, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, object->vbo[2]);
-		glBufferData(GL_ARRAY_BUFFER, object->normalsLength * sizeof(Vec3), (float*)model->normals, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->vbo[3]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, object->indicesLength * sizeof(Vec3), (int*)model->indices, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		case TEXTURE_NORMAL:
+			object->normal = texture;
+			break;
 	}
 }
 
-void objectUpdateTexture(int textureType, Object *object, Texture *texture)
+Model *objectGetModel(Object *object)
 {
-	if (texture)
+	return object->model;
+}
+
+Texture *objectGetTexture(int textureType, Object *object)
+{
+	switch (textureType)
 	{
-		switch (textureType)
-		{
-			case TEXTURE_DIFFUSE:
-				glBindTexture(GL_TEXTURE_2D, object->diffuse);
-				break;
+		case TEXTURE_DIFFUSE:
+			return object->diffuse;
 
-			case TEXTURE_SPECULAR:
-				glBindTexture(GL_TEXTURE_2D, object->specular);
-				break;
+		case TEXTURE_SPECULAR:
+			return object->specular;
 
-			case TEXTURE_NORMAL:
-				glBindTexture(GL_TEXTURE_2D, object->normal);
-				break;
-		}
-
-		int dataOffset = 0;
-
-		int mipmapWidth = texture->width;
-		int mipmapHeight = texture->height;
-
-		for (int i = 0; i < texture->mipmaps; i++)
-		{
-			int dataSize = textureCalculateMipmapSize(mipmapWidth, mipmapHeight, texture->blockBytes);
-			
-			/**
-			 * TODO: Check format to decide how to bind.
-			 */
-			glCompressedTexImage2D(GL_TEXTURE_2D, i, texture->format, mipmapWidth, mipmapHeight, 0, dataSize, &texture->data[dataOffset]);
-
-			dataOffset += dataSize;
-
-			mipmapWidth = floor(mipmapWidth / 2);
-			mipmapHeight = floor(mipmapHeight / 2);
-		}
-
-		glBindTexture(GL_TEXTURE_2D, 0);
+		case TEXTURE_NORMAL:
+			return object->normal;
 	}
+	return NULL;
 }
 
 void objectTranslate(Object *object, Vec3 translation)
 {
 	vec3AddVec3(object->translation, translation);
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 void objectRotate(Object *object, Vec3 rotate)
 {
 	vec3AddVec3(object->rotation, rotate);
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 void objectScale(Object *object, Vec3 scale)
 {
 	vec3AddVec3(object->scale, scale);
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 void objectSetTranslation(Object *object, Vec3 translation)
 {
 	object->translation = translation;
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 void objectSetRotation(Object *object, Vec3 rotate)
 {
 	object->rotation = rotate;
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 void objectSetScale(Object *object, Vec3 scale)
 {
 	object->scale = scale;
-	objectUpdateMatrix(object);
+	objectUpdateTransform(object);
 }
 
 Vec3 objectGetTranslation(Object *object)
@@ -175,11 +131,16 @@ Vec3 objectGetScale(Object *object)
 	return object->scale;
 }
 
-void objectUpdateMatrix(Object *object)
+Mat4 objectGetTransform(Object *object)
 {
-	Mat4 scaleMatrix = mat4Scale(object->scale);
-	Mat4 rotationMatrix  = mat4RotationQuat(eulerConvertQuat(object->rotation));
-	Mat4 translateMatrix = mat4Translation(object->translation);
+	return object->transform;
+}
 
-	object->transformMatrix = mat4MultiplyMat4(translateMatrix, mat4MultiplyMat4(scaleMatrix, rotationMatrix));
+void objectUpdateTransform(Object *object)
+{
+	Mat4 scale = mat4Scale(object->scale);
+	Mat4 rotation  = mat4RotationQuat(eulerConvertQuat(object->rotation));
+	Mat4 translation = mat4Translation(object->translation);
+
+	object->transform = mat4MultiplyMat4(translation, mat4MultiplyMat4(scale, rotation));
 }

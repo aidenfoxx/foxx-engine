@@ -3,7 +3,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "obj.h"
+#include "Model/obj.h"
 
 int modelLength;
 uint8_t *model;
@@ -44,6 +44,39 @@ int loadFile(const char *path, uint8_t **buffer)
 	fclose(file);
 
 	return length;
+}
+
+int objToFemData(Model *model, uint8_t **femData)
+{
+	/**
+	 * The total length of all the OBJ
+	 * elements and 4 integers for the
+	 * header.
+	 */
+	int headerSize = 4 * sizeof(int);
+	int verticesSize = model->verticesLength * sizeof(Vec3);
+	int uvsSize = model->uvsLength * sizeof(Vec2);
+	int normalsSize = model->normalsLength * sizeof(Vec3);
+	int indicesSize = model->indicesLength * sizeof(Vec3);
+	int totalSize = headerSize + verticesSize + uvsSize + normalsSize + indicesSize;
+
+	*femData = calloc(1, totalSize);
+
+	/**
+	 * Assemble the binary file.
+	 * 16 byte header:
+	 * (vertices, uvs, normals, indices)
+	 */
+	memcpy(&(*femData)[0], &model->verticesLength, sizeof(int));
+	memcpy(&(*femData)[sizeof(int)], &model->uvsLength, sizeof(int));
+	memcpy(&(*femData)[sizeof(int) * 2], &model->normalsLength, sizeof(int));
+	memcpy(&(*femData)[sizeof(int) * 3], &model->indicesLength, sizeof(int));
+	memcpy(&(*femData)[headerSize], model->vertices, verticesSize);
+	memcpy(&(*femData)[headerSize + verticesSize], model->uvs, uvsSize);
+	memcpy(&(*femData)[headerSize + verticesSize + uvsSize], model->normals, normalsSize);
+	memcpy(&(*femData)[headerSize + verticesSize + uvsSize + normalsSize], model->indices, indicesSize);
+
+	return totalSize;
 }
 
 void showError(const char *message)
@@ -113,24 +146,25 @@ G_MODULE_EXPORT void clearSpecular()
 
 G_MODULE_EXPORT void setModel(GtkFileChooserButton *button)
 {
-	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
-	uint8_t *obj;
+	Model *objModel;
 
-	if (loadFile(file, &obj) == 0)
+	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
+
+	if ((objModel = modelObjLoad(file)) != NULL)
+	{
+		if ((modelLength = objToFemData(objModel, &model)) == 0)
+		{
+			clearModel();
+			showError("There was a problem processing the mesh.");
+		}
+	}
+	else
 	{
 		clearModel();
 		showError("There was a problem loading the mesh.");
 	}
 
-	if ((modelLength = objToFem(obj, &model)) == 0)
-	{
-		clearModel();
-		showError("There was a problem processing the mesh.");
-	}
-
-	// debugModel();
-
-	free(obj);
+	modelFree(objModel);
 }
 
 G_MODULE_EXPORT void setDiffuse(GtkFileChooserButton *button)

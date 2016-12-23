@@ -4,15 +4,15 @@ static int textureDDSRead(const char*, uint8_t**);
 
 Texture *textureDDSNew(uint8_t *data)
 {
-	Texture *texture = NULL;
+	Texture *texture;
 
 	int magic;
 
-	memcpy(&magic, &data[TEXTURE_DDS_MAGIC], sizeof(uint32_t));
+	memcpy(&magic, &data[DDS_MAGIC], sizeof(uint32_t));
 	
-	if (magic == TEXTURE_DDS_MAGIC_VALUE)
+	if (magic == DDS_MAGIC_VALUE)
 	{
-		int typeError;
+		int error;
 
 		GLenum format = 0;
 		int width = 0;
@@ -20,41 +20,40 @@ Texture *textureDDSNew(uint8_t *data)
 		int mipmaps = 0;
 		int blockBytes = 0;
 
-		memcpy(&format, &data[TEXTURE_DDS_FORMAT], sizeof(uint32_t));
-		memcpy(&width, &data[TEXTURE_DDS_WIDTH], sizeof(uint32_t));
-		memcpy(&height, &data[TEXTURE_DDS_HEIGHT], sizeof(uint32_t));
-		memcpy(&mipmaps, &data[TEXTURE_DDS_MIPMAPS], sizeof(uint32_t));
+		memcpy(&format, &data[DDS_FORMAT], sizeof(uint32_t));
+		memcpy(&width, &data[DDS_WIDTH], sizeof(uint32_t));
+		memcpy(&height, &data[DDS_HEIGHT], sizeof(uint32_t));
+		memcpy(&mipmaps, &data[DDS_MIPMAPS], sizeof(uint32_t));
 
 		switch (format)
 		{
-			case TEXTURE_DDS_DXT1_VALUE:
-				format = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+			case DDS_FORMAT_DXT1:
+				format = TEXTURE_FORMAT_DXT1;
 				blockBytes = 8;
 				break;
 
-			case TEXTURE_DDS_DXT3_VALUE:
-				format = GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			case DDS_FORMAT_DXT3:
+				format = TEXTURE_FORMAT_DXT3;
 				blockBytes = 16;
 				break;
 
-			case TEXTURE_DDS_DXT5_VALUE:
-				format = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			case DDS_FORMAT_DXT5:
+				format = TEXTURE_FORMAT_DXT5;
 				blockBytes = 16;
 				break;
 
 			default:
-				typeError = 1;
+				error = -1;
 				break;
 		}
 
 		uint8_t *textureData;
+		int textureSize = textureMipmapsSize(width, height, mipmaps, blockBytes);
 
-		int bufferSize = textureCalculateMipmapsSize(width, height, mipmaps, blockBytes);
-
-		if (!typeError && (textureData = malloc(bufferSize * sizeof(uint8_t))) != NULL)
+		if (!error && (textureData = malloc(textureSize * sizeof(uint8_t))) != NULL)
 		{
-			memcpy(textureData, &data[TEXTURE_DDS_HEADER_SIZE], bufferSize * sizeof(uint8_t));
-			texture = textureNew(format, width, height, mipmaps, blockBytes, textureData);
+			memcpy(textureData, &data[DDS_HEADER_SIZE], textureSize * sizeof(uint8_t));
+			texture = textureNew(format, textureData, textureSize, width, height, mipmaps, blockBytes);
 			free(textureData);
 		}
 	}
@@ -90,7 +89,7 @@ int textureDDSRead(const char *texturePath, uint8_t **textureData)
 	long length = ftell(texture);
 	fseek(texture, 0, SEEK_SET);
 
-	*textureData = calloc(length + 1, 1);
+	*textureData = calloc(length, 1);
 
 	if (length != fread(*textureData, 1, length, texture)) 
 	{ 

@@ -7,19 +7,19 @@
 #include "context.h"
 #include "texture.h"
 
-#define TEXTURE_DDS_HEADER_SIZE 0x80
+#define DDS_HEADER_SIZE 0x80
 
-#define TEXTURE_DDS_MAGIC 0x00
-#define TEXTURE_DDS_FORMAT 0x54
-#define TEXTURE_DDS_HEIGHT 0x10
-#define TEXTURE_DDS_WIDTH 0x0C
-#define TEXTURE_DDS_MIPMAPS 0x1C
+#define DDS_MAGIC 0x00
+#define DDS_FORMAT 0x54
+#define DDS_HEIGHT 0x10
+#define DDS_WIDTH 0x0C
+#define DDS_MIPMAPS 0x1C
 
-#define TEXTURE_DDS_MAGIC_VALUE 0x20534444  
+#define DDS_MAGIC_VALUE 0x20534444  
 
-#define TEXTURE_DDS_DXT1_VALUE 0x31545844
-#define TEXTURE_DDS_DXT3_VALUE 0x33545844
-#define TEXTURE_DDS_DXT5_VALUE 0x35545844
+#define DDS_FORMAT_DXT1 0x31545844
+#define DDS_FORMAT_DXT3 0x33545844
+#define DDS_FORMAT_DXT5 0x35545844
 
 Texture *textureDDSNew(uint8_t*);
 Texture *textureDDSLoad(const char*);

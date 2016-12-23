@@ -1,8 +1,2 @@
-build/*
-!build/.gitkeep
-
-tools/model-editor/build/*
-!tools/model-editor/build/.gitkeep
-
-vendor/*
-!vendor/.gitkeep
+build
+!build/.gitignore

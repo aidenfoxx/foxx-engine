@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 
 #include "context.h"
 #include "input.h"
@@ -16,21 +17,27 @@
 
 ShaderProgram *phongShader;
 
+Array *objects;
 Camera *camera;
 Renderer *renderer;
-Object *crate;
-Object *teapot;
 
 int mouseStartX = -1;
 int mouseStartY = -1;
 
 void renderFree()
 {
+	for (int i = 0; i < arrayLength(objects); i++)
+	{
+		objectFemFree((Object*)arrayGet(objects, i));
+	}
+
+	/**
+	 * TODO: Test overlapping frees.
+	 */
+	arrayFree(objects);
 	rendererFree(renderer);
 	cameraFree(camera);
 	shaderProgramFree(phongShader);
-	objectFree(crate);
-	objectFree(teapot);
 }
 
 int renderInit()
@@ -44,6 +51,9 @@ int renderInit()
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_FRONT);
 	glFrontFace(GL_CW);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	camera = cameraPerspectiveNew(1.0f, (float)RENDER_WIDTH / (float)RENDER_HEIGHT);
 	cameraSetTranslation(camera, vec3(0.0f, 0.0f, -5.0f));
@@ -108,82 +118,112 @@ int renderInit()
 	/**
 	 * Add entities to renderer.
 	 */
-	crate = objectFemLoad("assets/models/crate.fem");
-	teapot = objectFemLoad("assets/models/monkey.fem");
+	Object *crate = objectFemLoad("assets/models/crate.fem");
+	Object *teapot = objectFemLoad("assets/models/monkey.fem");
+
+	objects = arrayNew();
+	arrayPush(objects, crate);
+	arrayPush(objects, teapot);
 
 	objectSetTranslation(crate, vec3(2.0f, 0.0f, 0.0f));
 	objectSetTranslation(teapot, vec3(-2.0f, 0.0f, 0.0f));
 
 	rendererAddShader(renderer, phongShader);
-	rendererAddObject(OBJECT_DYNAMIC, renderer, crate);
-	rendererAddObject(OBJECT_DYNAMIC, renderer, teapot);
-
+	rendererAddObject(renderer, teapot);
+	rendererAddObject(renderer, crate);
+	
 	return 0;
 }
 
+struct timeval previousTime;
+
+float delta = 1000000.0f / 60.0f;
+float accumulator = 0;
+
 void renderFunction()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	rendererExecute(renderer);
+	int frameTime;
+	struct timeval currentTime;
 
-	if (inputGetState(INPUT_KEY_W) == INPUT_PRESS)
-	{
-		cameraTranslate(camera, vec3(0.0f, 0.0f, -0.001f));
-	}
+	gettimeofday(&currentTime, NULL);
 
-	if (inputGetState(INPUT_KEY_A) == INPUT_PRESS)
-	{
-		cameraTranslate(camera, vec3(0.001f, 0.0f, 0.0f));
-	}
+	/**
+	 * gettimeofday can return a decreasing
+	 * time.
+	 */
+	if ((frameTime = currentTime.tv_usec - previousTime.tv_usec) < 0)
+		frameTime = 0;
 
-	if (inputGetState(INPUT_KEY_S) == INPUT_PRESS)
-	{
-		cameraTranslate(camera, vec3(0.0f, 0.0f, 0.001f));
-	}
+	accumulator += frameTime / delta;
+	previousTime = currentTime;
 
-	if (inputGetState(INPUT_KEY_D) == INPUT_PRESS)
+	while (accumulator >= 1.0f)
 	{
-		cameraTranslate(camera, vec3(-0.001f, 0.0f, 0.0f));
-	}
+		accumulator -= 1.0f;
 
-	if (inputGetState(INPUT_KEY_Q) == INPUT_PRESS)
-	{
-		cameraTranslate(camera, vec3(0.0f, 0.001f, 0.0f));
-	}
-
-	if (inputGetState(INPUT_KEY_E) == INPUT_PRESS)
-	{
-		cameraTranslate(camera, vec3(0.0f, -0.001f, 0.0f));
-	}
-
-	if (inputGetState(INPUT_MOUSE_LEFT) == INPUT_PRESS)
-	{
-		if (mouseStartX == -1 && mouseStartY == -1)
+		if (inputGetState(INPUT_KEY_W) == INPUT_PRESS)
 		{
-			mouseStartX = inputGetState(INPUT_MOUSE_X);
-			mouseStartY = inputGetState(INPUT_MOUSE_Y);
+			cameraTranslate(camera, vec3(0.0f, 0.0f, -0.1f));
 		}
 
-		int maxRotation = 1.570795;
+		if (inputGetState(INPUT_KEY_A) == INPUT_PRESS)
+		{
+			cameraTranslate(camera, vec3(0.1f, 0.0f, 0.0f));
+		}
 
-		int mouseX = inputGetState(INPUT_MOUSE_X);
-		int mouseY = inputGetState(INPUT_MOUSE_Y);
+		if (inputGetState(INPUT_KEY_S) == INPUT_PRESS)
+		{
+			cameraTranslate(camera, vec3(0.0f, 0.0f, 0.1f));
+		}
 
-		float rotationX = ((float)(mouseX - mouseStartX) / (float)(RENDER_WIDTH / 2)) * maxRotation;
-		float rotationY = ((float)(mouseY - mouseStartY) / (float)(RENDER_HEIGHT / 2)) * maxRotation;
+		if (inputGetState(INPUT_KEY_D) == INPUT_PRESS)
+		{
+			cameraTranslate(camera, vec3(-0.1f, 0.0f, 0.0f));
+		}
 
-		cameraRotate(camera, vec3(rotationY, rotationX, 0.0f));
+		if (inputGetState(INPUT_KEY_Q) == INPUT_PRESS)
+		{
+			cameraTranslate(camera, vec3(0.0f, 0.1f, 0.0f));
+		}
 
-		mouseStartX = mouseX;
-		mouseStartY = mouseY;
-	}
+		if (inputGetState(INPUT_KEY_E) == INPUT_PRESS)
+		{
+			cameraTranslate(camera, vec3(0.0f, -0.1f, 0.0f));
+		}
 
-	if (inputGetState(INPUT_MOUSE_LEFT) == INPUT_RELEASE && (mouseStartX != -1 || mouseStartY != -1))
-	{
-		mouseStartX = -1;
-		mouseStartY = -1;
-	}
+		if (inputGetState(INPUT_MOUSE_LEFT) == INPUT_PRESS)
+		{
+			if (mouseStartX == -1 && mouseStartY == -1)
+			{
+				mouseStartX = inputGetState(INPUT_MOUSE_X);
+				mouseStartY = inputGetState(INPUT_MOUSE_Y);
+			}
 
+			int maxRotation = 1.570795;
+
+			int mouseX = inputGetState(INPUT_MOUSE_X);
+			int mouseY = inputGetState(INPUT_MOUSE_Y);
+
+			float rotationX = ((float)(mouseX - mouseStartX) / (float)(RENDER_WIDTH / 2)) * maxRotation;
+			float rotationY = ((float)(mouseY - mouseStartY) / (float)(RENDER_HEIGHT / 2)) * maxRotation;
+
+			cameraRotate(camera, vec3(rotationY, rotationX, 0.0f));
+
+			mouseStartX = mouseX;
+			mouseStartY = mouseY;
+		}
+
+		if (inputGetState(INPUT_MOUSE_LEFT) == INPUT_RELEASE && (mouseStartX != -1 || mouseStartY != -1))
+		{
+			mouseStartX = -1;
+			mouseStartY = -1;
+		}
+    }
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	rendererExecute(renderer);
+	
 	glutSwapBuffers();
 	glutPostRedisplay();
 }
@@ -321,6 +361,7 @@ int main(int argc, char *argv[])
 	}
 
 	logMessage(LOG_NOTICE, "Program initialized.");
+	gettimeofday(&previousTime, NULL);
 	glutMainLoop();
 
 	logMessage(LOG_NOTICE, "Program terminated.");

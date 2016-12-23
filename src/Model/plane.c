@@ -2,5 +2,5 @@
 
 Model *modelPlaneNew()
 {
-	return modelNew(0, 0, 0, 0, NULL, NULL, NULL, NULL);
+	return modelNew(NULL, NULL, NULL, NULL, 0, 0, 0, 0);
 }

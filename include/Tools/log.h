@@ -12,7 +12,7 @@
 #define LOG_CRITICAL 16
 #define LOG_ALL 255
 
-void logSetLevel(unsigned int);
-void logMessage(unsigned int, const char*);
+void logSetLevel(int);
+void logMessage(int, const char*);
 
 #endif

@@ -1,13 +1,13 @@
 #include "Tools/log.h"
 
-static unsigned int logLevel = LOG_ALL;
+static int logLevel = LOG_ALL;
 
-void logSetLevel(unsigned int level)
+void logSetLevel(int level)
 {
 	logLevel = level;
 }
 
-void logMessage(unsigned int code, const char *message)
+void logMessage(int code, const char *message)
 {
 	char logLine[256];
 
