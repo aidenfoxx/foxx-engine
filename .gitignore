@@ -1,2 +1,3 @@
-build
+bin/log.txt
+build/*
 !build/.gitignore
