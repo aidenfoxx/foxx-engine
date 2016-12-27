@@ -5,12 +5,15 @@
 #include "context.h"
 #include "input.h"
 #include "renderer.h"
+#include "world.h"
 #include "object.h"
 #include "Tools/log.h"
 #include "Renderer/shader.h"
 #include "Object/fem.h"
 
 #include <GL/freeglut.h>
+
+#define TIMESTEP 1.0f / 60.0f
 
 #define RENDER_WIDTH 1024
 #define RENDER_HEIGHT 768
@@ -20,6 +23,7 @@ ShaderProgram *phongShader;
 Array *objects;
 Camera *camera;
 Renderer *renderer;
+World *world;
 
 int mouseStartX = -1;
 int mouseStartY = -1;
@@ -32,9 +36,10 @@ void renderFree()
 	}
 
 	/**
-	 * TODO: Test overlapping frees.
+	 * TODO: Breaks on wrong folder.
 	 */
 	arrayFree(objects);
+	worldFree(world);
 	rendererFree(renderer);
 	cameraFree(camera);
 	shaderProgramFree(phongShader);
@@ -55,20 +60,21 @@ int renderInit()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	camera = cameraPerspectiveNew(1.0f, (float)RENDER_WIDTH / (float)RENDER_HEIGHT);
-	cameraSetTranslation(camera, vec3(0.0f, 0.0f, -5.0f));
-
-	renderer = rendererNew(camera);
-
 	/**
 	 * Initialize renderer.
 	 */
-	if (camera == NULL || renderer == NULL)
+	camera = cameraPerspectiveNew(1.0f, (float)RENDER_WIDTH / (float)RENDER_HEIGHT);
+	renderer = rendererNew(camera);
+	world = worldNew(world);
+
+	if (camera == NULL || renderer == NULL || world == NULL)
 	{
 		logMessage(LOG_ERROR, "There was a problem initializing the renderer.");
 		renderFree();
 		return -1;
 	}
+
+	cameraSetTranslation(camera, vec3(0.0f, 0.0f, -5.0f));
 
 	/**
 	 * Initialize shaders.
@@ -118,26 +124,33 @@ int renderInit()
 	/**
 	 * Add entities to renderer.
 	 */
-	Object *crate = objectFemLoad("assets/models/crate.fem");
-	Object *teapot = objectFemLoad("assets/models/monkey.fem");
-
 	objects = arrayNew();
-	arrayPush(objects, crate);
-	arrayPush(objects, teapot);
 
-	objectSetTranslation(crate, vec3(2.0f, 0.0f, 0.0f));
-	objectSetTranslation(teapot, vec3(-2.0f, 0.0f, 0.0f));
+	Object *crate = objectFemLoad("assets/models/crate.fem");
+	objectSetTranslation(crate, vec3(0.0f, 1.0f, 0.0f));
+	objectSetParameterFloat(crate, "mass", 1.0f);
+	objectSetParameterInt(crate, "gravity", 1);
+	arrayPush(objects, crate);
+
+	Object *teapot = objectFemLoad("assets/models/monkey.fem");
+	objectSetTranslation(teapot, vec3(0.0f, 4.0f, 0.0f));
+	objectSetParameterFloat(teapot, "mass", 1.0f);
+	objectSetParameterInt(teapot, "gravity", 1);
+	arrayPush(objects, teapot);
 
 	rendererAddShader(renderer, phongShader);
 	rendererAddObject(renderer, teapot);
 	rendererAddObject(renderer, crate);
+
+	worldAddObject(world, crate);
+	worldAddObject(world, teapot);
 	
 	return 0;
 }
 
 struct timeval previousTime;
 
-float delta = 1000000.0f / 60.0f;
+float delta = TIMESTEP * 1000000.0f;
 float accumulator = 0;
 
 void renderFunction()
@@ -152,7 +165,9 @@ void renderFunction()
 	 * time.
 	 */
 	if ((frameTime = currentTime.tv_usec - previousTime.tv_usec) < 0)
+	{
 		frameTime = 0;
+	}
 
 	accumulator += frameTime / delta;
 	previousTime = currentTime;
@@ -160,6 +175,20 @@ void renderFunction()
 	while (accumulator >= 1.0f)
 	{
 		accumulator -= 1.0f;
+
+		if (inputGetState(INPUT_KEY_R) == INPUT_PRESS)
+		{
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+
+		if (inputGetState(INPUT_KEY_R) == INPUT_RELEASE)
+		{
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 
 		if (inputGetState(INPUT_KEY_W) == INPUT_PRESS)
 		{
@@ -218,6 +247,8 @@ void renderFunction()
 			mouseStartX = -1;
 			mouseStartY = -1;
 		}
+
+		worldStep(world, 0.01);
     }
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -263,6 +294,10 @@ void keyDownFunction(unsigned char key, int x, int y)
 		case 'x':
 			inputSetState(INPUT_KEY_X, INPUT_PRESS, INPUT_NULL);
 			break;
+
+		case 'r':
+			inputSetState(INPUT_KEY_R, INPUT_PRESS, INPUT_NULL);
+			break;
 	}
 }
 
@@ -300,6 +335,10 @@ void keyUpFunction(unsigned char key, int x, int y)
 
 		case 'x':
 			inputSetState(INPUT_KEY_X, INPUT_RELEASE, INPUT_NULL);
+			break;
+
+		case 'r':
+			inputSetState(INPUT_KEY_R, INPUT_RELEASE, INPUT_NULL);
 			break;
 	}
 }

@@ -165,6 +165,9 @@ Model *modelObjNew(uint8_t *data)
 					hashKey = hashTableKey(hashKey, (int)indices[i].y);
 					hashKey = hashTableKey(hashKey, (int)indices[i].z);
 
+					/**
+					 * TODO: Hash table set never runs.
+					 */
 					if ((duplicate = hashTableGet(hashTable, hashKey)) == -1)
 					{
 						if (indices[i].x > 0.0f)

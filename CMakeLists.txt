@@ -3,6 +3,7 @@
 #########################################################
 
 cmake_minimum_required(VERSION 3.3.2)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 project(foxx-engine)
 
@@ -10,10 +11,11 @@ set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 
-set(MODEL_EDITOR TRUE CACHE STRING "Compile the model editor.")
-set_property(CACHE MODEL_EDITOR PROPERTY STRINGS TRUE FALSE)
+set(FOXX_BUILD_MODEL_EDITOR TRUE CACHE STRING "Compile the model editor.")
+set_property(CACHE FOXX_BUILD_MODEL_EDITOR PROPERTY STRINGS TRUE FALSE)
 
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin" CACHE PATH "Path to output executables.")
+set(FOXX_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin" CACHE PATH "Path to output executables.")
+set(EXECUTABLE_OUTPUT_PATH ${FOXX_OUTPUT_PATH})
 
 #
 # Set Includes directories.
@@ -33,15 +35,6 @@ foreach(SRC ${SRCS})
 		list(APPEND SRCS_NOT_MAIN ${SRC})
 	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" AND NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
 endforeach(SRC ${SRCS})
-
-#
-# Define application executables.
-#
-add_executable(foxx "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" ${SRCS_NOT_MAIN})
-
-if (MODEL_EDITOR MATCHES TRUE)
-	add_executable(model-editor "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c" ${SRCS_NOT_MAIN})
-endif (MODEL_EDITOR MATCHES TRUE)
 
 #
 # Load LibArchive.
@@ -96,10 +89,24 @@ if(NOT GTK3_FOUND)
 endif(NOT GTK3_FOUND)
 
 #
-# Link Libraries (LibArchive, OpenGL, FreeGLUT, GTK+3).
+# Load ODE.
 #
-target_link_libraries(foxx ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${LibArchive_LIBRARIES})
+find_package(ODE REQUIRED)
 
-if (MODEL_EDITOR MATCHES TRUE)
-	target_link_libraries(model-editor ${OPENGL_LIBRARIES} ${LibArchive_LIBRARIES} ${GTK3_LIBRARIES})
-endif (MODEL_EDITOR MATCHES TRUE)
+include_directories(${ODE_INCLUDE_DIRS})
+add_definitions(${ODE_CFLAGS_OTHER})
+
+if(NOT ODE_FOUND)
+	message(ERROR " COULD NOT FIND ODE!")
+endif(NOT ODE_FOUND)
+
+#
+#  Build executables.
+#
+add_executable(foxx "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" ${SRCS_NOT_MAIN})
+target_link_libraries(foxx ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${LibArchive_LIBRARIES} ${ODE_LIBRARIES})
+
+if (FOXX_BUILD_MODEL_EDITOR MATCHES TRUE)
+	add_executable(model-editor "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c" ${SRCS_NOT_MAIN})
+	target_link_libraries(model-editor ${OPENGL_LIBRARIES} ${LibArchive_LIBRARIES} ${GTK3_LIBRARIES} ${ODE_LIBRARIES})
+endif (FOXX_BUILD_MODEL_EDITOR MATCHES TRUE)
