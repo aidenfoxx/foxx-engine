@@ -25,13 +25,23 @@ The engine is in a constant state of development and the requirements are liable
 - Add PBR shading
 - Add normal texturing
 
+## Bugs:
+- Breaks when run from non-root directory.
+- Loading non-existent file crashes.
+- Make FEM size consistent using uints.
+- Remake GLMath and ensure it's working.
+
 ## Nomenclature
 
-Model - The 3D structure of an object including vertices, uvs and normals. Binds to OpenGL.
+Model - The 3D structure of an object including vertices, uvs and normals.
 
-Texture - Contains 2D texture data. Binds to OpenGL.
+ModelBuffer - Model buffer bound to OpenGL.
 
-Object - A wrapper containing everything required to render an object. Created from a model and/or textues.
+Texture - Contains 2D texture data.
+
+TextureBuffer - Texture buffer bound to OpenGL.
+
+Object - A wrapper containing everything required to render an object. Created from model buffers, texture buffers and parameters.
 
 Shader - GLSL shader loaded into OpenGL.
 

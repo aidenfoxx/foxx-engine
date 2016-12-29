@@ -4,10 +4,10 @@ Model *objectFemModel(uint8_t*);
 
 Object *objectFemLoad(const char *path)
 {
-	Model *model = NULL;
-	Texture *diffuse = NULL;
-	Texture *specular = NULL;
-	Texture *normal = NULL;
+	ModelBuffer *modelBuffer = NULL;
+	TextureBuffer *diffuseBuffer = NULL;
+	TextureBuffer *specularBuffer = NULL;
+	TextureBuffer *normalBuffer = NULL;
 
 	uint8_t *dataBuffer = NULL;
 
@@ -28,25 +28,25 @@ Object *objectFemLoad(const char *path)
 			if (!strcmp(filename, "model") && 
 				archive_read_data(archive, dataBuffer, length) == length)
 			{
-				model = objectFemModel(dataBuffer);
+				modelBuffer = modelBufferNew(objectFemModel(dataBuffer));
 			}
 
 			if (!strcmp(filename, "diffuse") &&
 				archive_read_data(archive, dataBuffer, length) == length)
 			{
-				diffuse = textureDDSNew(dataBuffer);
+				diffuseBuffer = textureBufferNew(textureDDSNew(dataBuffer));
 			}
 
 			if (!strcmp(filename, "specular") && 
 				archive_read_data(archive, dataBuffer, length) == length)
 			{
-				specular = textureDDSNew(dataBuffer);
+				specularBuffer = textureBufferNew(textureDDSNew(dataBuffer));
 			}
 
 			if (!strcmp(filename, "normal") && 
 				archive_read_data(archive, dataBuffer, length) == length)
 			{
-				normal = textureDDSNew(dataBuffer);
+				normalBuffer = textureBufferNew(textureDDSNew(dataBuffer));
 			}
 
 			free(dataBuffer);
@@ -57,20 +57,49 @@ Object *objectFemLoad(const char *path)
 	archive_read_close(archive);
 	archive_read_free(archive);
 
-	return objectNew(model, diffuse, specular, normal);
+	free(dataBuffer);
+
+	return objectNew(modelBuffer, diffuseBuffer, specularBuffer, normalBuffer);
 }
 
 void objectFemFree(Object *object)
 {
-	modelFree(objectGetModel(object));
-	textureFree(objectGetTexture(TEXTURE_DIFFUSE, object));
-	textureFree(objectGetTexture(TEXTURE_SPECULAR, object));
-	textureFree(objectGetTexture(TEXTURE_NORMAL, object));
+	ModelBuffer *modelBuffer;
+	TextureBuffer *diffuseBuffer;
+	TextureBuffer *specularBuffer;
+	TextureBuffer *normalBuffer;
+
+	if (modelBuffer = objectGetModelBuffer(object))
+	{
+		modelFree(modelBufferGetModel(modelBuffer));
+		modelBufferFree(modelBuffer);
+	}
+
+	if (diffuseBuffer = objectGetTextureBuffer(object, TEXTURE_DIFFUSE))
+	{
+		textureFree(textureBufferGetTexture(diffuseBuffer));
+		textureBufferFree(diffuseBuffer);
+	}
+
+	if (specularBuffer = objectGetTextureBuffer(object, TEXTURE_SPECULAR))
+	{
+		textureFree(textureBufferGetTexture(specularBuffer));
+		textureBufferFree(specularBuffer);
+	}
+
+	if (normalBuffer = objectGetTextureBuffer(object, TEXTURE_NORMAL))
+	{
+		textureFree(textureBufferGetTexture(normalBuffer));
+		textureBufferFree(normalBuffer);
+	}
+
 	objectFree(object);
 }
 
 Model *objectFemModel(uint8_t *data)
 {
+	Model *model;
+
 	/**
 	 * Get the size of data.
 	 */
@@ -79,6 +108,9 @@ Model *objectFemModel(uint8_t *data)
 	int normalsLength = 0;
 	int indicesLength = 0;
 
+	/**
+	 * TODO: Convert to uints
+	 */
 	memcpy(&verticesLength, &data[0], sizeof(int));
 	memcpy(&uvsLength, &data[sizeof(int)], sizeof(int));
 	memcpy(&normalsLength, &data[sizeof(int) * 2], sizeof(int));
@@ -87,23 +119,29 @@ Model *objectFemModel(uint8_t *data)
 	/**
 	 * Get the data.
 	 */
+	Vec3 *vertices = NULL;
+	Vec2 *uvs = NULL;
+	Vec3 *normals = NULL;
+	int *indices = NULL;
+
 	int headerSize = sizeof(int) * 4;
 	int verticesSize = verticesLength * sizeof(Vec3);
 	int uvsSize = uvsLength * sizeof(Vec2);
 	int normalsSize = normalsLength * sizeof(Vec3);
-	int indicesSize = indicesLength * sizeof(Vec3);
+	int indicesSize = indicesLength * sizeof(int);
 
-	Vec3 *vertices = malloc(verticesSize);
-	Vec2 *uvs = malloc(uvsSize);
-	Vec3 *normals = malloc(normalsSize);
-	Vec3 *indices = malloc(indicesSize);
+	if ((vertices = malloc(verticesSize)) != NULL &&
+		(uvs = malloc(uvsSize)) != NULL &&
+		(normals = malloc(normalsSize)) != NULL &&
+		(indices = malloc(indicesSize)) != NULL)
+	{
+		memcpy(vertices, &data[headerSize], verticesSize);
+		memcpy(uvs, &data[headerSize + verticesSize], uvsSize);
+		memcpy(normals, &data[headerSize + verticesSize + uvsSize], normalsSize);
+		memcpy(indices, &data[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
 
-	memcpy(vertices, &data[headerSize], verticesSize);
-	memcpy(uvs, &data[headerSize + verticesSize], uvsSize);
-	memcpy(normals, &data[headerSize + verticesSize + uvsSize], normalsSize);
-	memcpy(indices, &data[headerSize + verticesSize + uvsSize + normalsSize], indicesSize);
-
-	Model *model = modelNew(vertices, uvs, normals, indices, verticesLength, uvsLength, normalsLength, indicesLength);
+		model = modelNew(vertices, uvs, normals, indices, verticesLength, uvsLength, normalsLength, indicesLength);
+	}
 
 	free(vertices);
 	free(uvs);

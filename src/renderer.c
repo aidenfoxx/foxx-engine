@@ -9,7 +9,6 @@ Renderer *rendererNew(Camera *camera)
 		renderer->shaders = arrayNew();
 		renderer->objects = arrayNew();
 		renderer->objectsVAO = arrayNew();
-		renderer->shaders = arrayNew();
 		renderer->camera = camera;
 	}
 
@@ -27,6 +26,7 @@ void rendererFree(Renderer *renderer)
 			rendererRemoveObject(renderer, i);
 		}	
 
+		arrayFree(renderer->shaders);
 		arrayFree(renderer->objects);
 		arrayFree(renderer->objectsVAO);
 		free(renderer);
@@ -39,18 +39,12 @@ int rendererAddShader(Renderer *renderer, ShaderProgram *program)
 	return arrayLength(renderer->shaders);
 }
 
-void rendererRemoveShader(Renderer *renderer, int shaderID)
-{
-	arrayRemove(renderer->shaders, shaderID - 1);
-}
-
 int rendererAddObject(Renderer *renderer, Object *object)
 {
-	int objectID = -1;
-
-	GLuint *vao;
-
-	if (object && (vao = malloc(sizeof(GLuint))) != NULL)
+	GLuint *vao = NULL;
+	ModelBuffer *modelBuffer;
+	
+	if ((vao = malloc(sizeof(GLuint))) != NULL && (modelBuffer = objectGetModelBuffer(object)))
 	{
 		glGenVertexArrays(1, vao);
 		glBindVertexArray(*vao);
@@ -59,25 +53,33 @@ int rendererAddObject(Renderer *renderer, Object *object)
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
 
-		modelBindProperty(MODEL_VERTICES, objectGetModel(object));
+		modelBufferBind(modelBuffer, MODEL_VERTICES);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-		modelBindProperty(MODEL_UVS, objectGetModel(object));
+		modelBufferBind(modelBuffer, MODEL_UVS);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		modelBindProperty(MODEL_NORMALS, objectGetModel(object));
+		modelBufferBind(modelBuffer, MODEL_NORMALS);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		
-		modelUnbind();
+
+		modelBufferUnbind();
 		glBindVertexArray(0);
 
 		arrayPush(renderer->objects, object);
 		arrayPush(renderer->objectsVAO, vao);
 
-		objectID = arrayLength(renderer->objects);
+		return arrayLength(renderer->objects);
 	}
-	
-	return objectID;
+
+	free(vao);
+
+	return -1;
+}
+
+
+void rendererRemoveShader(Renderer *renderer, int shaderID)
+{
+	arrayRemove(renderer->shaders, shaderID - 1);
 }
 
 void rendererRemoveObject(Renderer *renderer, int objectID)
@@ -86,22 +88,23 @@ void rendererRemoveObject(Renderer *renderer, int objectID)
 
 	if ((vao = (GLuint*)arrayGet(renderer->objectsVAO, objectID - 1)) != NULL)
 	{
-		arrayRemove(renderer->objectsVAO, objectID - 1);
 		glDeleteVertexArrays(1, vao);
+		arrayRemove(renderer->objectsVAO, objectID - 1);
+		arrayRemove(renderer->objects, objectID - 1);
 		free(vao);
 	}
 }
 
-void rendererExecute(Renderer *renderer)
+void rendererStep(Renderer *renderer)
 {
-	ShaderProgram *program;
-	
 	int shaderLength = arrayLength(renderer->shaders);
 	int objectsLength = arrayLength(renderer->objects);
 
 	for (int i = 0; i < shaderLength; i++)
 	{
-		if (!(program = (ShaderProgram*)arrayGet(renderer->shaders, i)))
+		ShaderProgram *program;
+
+		if ((program = (ShaderProgram*)arrayGet(renderer->shaders, i)) == NULL)
 		{
 			continue;
 		}
@@ -110,55 +113,61 @@ void rendererExecute(Renderer *renderer)
 
 		for (int i = 0; i < objectsLength; i++)
 		{
-			Object *object = (Object*)arrayGet(renderer->objects, i);
-			
-			if (object)
+			Object *object;
+			ModelBuffer *modelBuffer;
+
+			if ((object = (Object*)arrayGet(renderer->objects, i)) != NULL && (modelBuffer = objectGetModelBuffer(object)))
 			{
-				Model *model = objectGetModel(object);
+				Mat4 M = objectGetTransform(object);
+				Mat4 MV = mat4MultiplyMat4(cameraGetView(renderer->camera), M);
+				Mat4 MVP = mat4MultiplyMat4(cameraGetProjection(renderer->camera), MV);
 
-				if (model)
+				shaderProgramSetMat4(program, "model", M);
+				shaderProgramSetMat4(program, "modelView", MV);
+				shaderProgramSetMat4(program, "modelViewProjection", MVP);
+				shaderProgramSetMat4(program, "normalMatrix", mat4Transpose(mat4Inverse(MV)));
+
+				TextureBuffer *diffuse;
+				TextureBuffer *specular;
+				TextureBuffer *normal;
+
+				if (diffuse = objectGetTextureBuffer(object, TEXTURE_DIFFUSE))
 				{
-					GLuint *objectVAO = (GLuint*)arrayGet(renderer->objectsVAO, i);
-
-					glBindVertexArray(*objectVAO);
-
-					Mat4 M = objectGetTransform(object);
-					Mat4 MV = mat4MultiplyMat4(cameraGetView(renderer->camera), M);
-					Mat4 MVP = mat4MultiplyMat4(cameraGetProjection(renderer->camera), MV);
-
-					shaderProgramSetMat4(program, "model", M);
-					shaderProgramSetMat4(program, "modelView", MV);
-					shaderProgramSetMat4(program, "modelViewProjection", MVP);
-					shaderProgramSetMat4(program, "normalMatrix", mat4Transpose(mat4Inverse(MV)));
-
-					Texture *diffuse = objectGetTexture(TEXTURE_DIFFUSE, object);
-					Texture *specular = objectGetTexture(TEXTURE_SPECULAR, object);
-					Texture *normal = objectGetTexture(TEXTURE_NORMAL, object);
-					
-					if (diffuse)
-					{
-						textureBind(TEXTURE_DIFFUSE, diffuse);
-					}
-					
-					if (specular)
-					{
-						textureBind(TEXTURE_SPECULAR, specular);
-					}
-					
-					if (normal)
-					{
-						textureBind(TEXTURE_NORMAL, normal);
-					}
-
-					modelBindProperty(MODEL_INDICES, model);
-					glDrawElements(GL_TRIANGLES, objectGetModel(object)->indicesLength * 3, GL_UNSIGNED_INT, 0);
+					glActiveTexture(GL_TEXTURE0);
+					textureBufferBind(diffuse);
 				}
+				
+				if (specular = objectGetTextureBuffer(object, TEXTURE_SPECULAR))
+				{
+					glActiveTexture(GL_TEXTURE1);
+					textureBufferBind(specular);
+				}
+
+				if (normal = objectGetTextureBuffer(object, TEXTURE_NORMAL))
+				{
+					glActiveTexture(GL_TEXTURE2);
+					textureBufferBind(normal);
+				}
+
+				GLuint *vao = (GLuint*)arrayGet(renderer->objectsVAO, i);
+
+				glBindVertexArray(*vao);
+				modelBufferBind(modelBuffer, MODEL_INDICES);
+				glDrawElements(GL_TRIANGLES, modelBufferGetModel(modelBuffer)->indicesLength * 3, GL_UNSIGNED_INT, 0);
 			}
 		}
 	}
 
-	modelUnbind();
-	textureUnbind();
+	glActiveTexture(GL_TEXTURE0);
+	modelBufferUnbind();
+
+	glActiveTexture(GL_TEXTURE1);
+	modelBufferUnbind();
+
+	glActiveTexture(GL_TEXTURE2);
+	modelBufferUnbind();
+
+	textureBufferUnbind();
 	shaderProgramUnbind();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

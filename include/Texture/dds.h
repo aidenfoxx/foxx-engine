@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "context.h"
 #include "texture.h"
 
 #define DDS_HEADER_SIZE 0x80

@@ -91,16 +91,15 @@ Vec2 vec2DivideMat4(Vec2, Mat4);
 Vec3 vec3DivideMat4(Vec3, Mat4);
 Vec4 vec4DivideMat4(Vec4, Mat4);
 
-Vec3 quatConvertEuler(Vec4);
-Vec4 eulerConvertQuat(Vec3);
+Vec3 quaternionConvertEuler(Vec4);
+Vec4 eulerConvertQuaternion(Vec3);
 
 Mat4 mat4Empty();
 Mat4 mat4Identity();
 
 Mat4 mat4Translation(Vec3);
-Mat4 mat4RotationAxis(Vec3, float);
 Mat4 mat4RotationEuler(Vec3);
-Mat4 mat4RotationQuat(Vec4);
+Mat4 mat4RotationQuaternion(Vec4);
 Mat4 mat4Scale(Vec3);
 
 float mat4Determinant(Mat4);

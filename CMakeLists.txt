@@ -31,9 +31,11 @@ file(GLOB_RECURSE SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 set(SRCS_NOT_MAIN)
 
 foreach(SRC ${SRCS})
-	if (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" AND NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
+	if (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
+	if (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
 		list(APPEND SRCS_NOT_MAIN ${SRC})
-	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" AND NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
+	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
+	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
 endforeach(SRC ${SRCS})
 
 #

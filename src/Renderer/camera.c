@@ -1,6 +1,5 @@
 #include "Renderer/camera.h"
 
-static Camera *cameraNew(Mat4);
 static void cameraUpdateView(Camera*);
 
 Camera *cameraNew(Mat4 projection)

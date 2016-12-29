@@ -1,27 +1,28 @@
 #include "object.h"
 
 static void objectUpdateTransform(Object*);
+static int objectParameterKey(const char*);
 static int objectSetParameter(Object*, const char*, void *);
 static void *objectGetParameter(Object*, const char*);
-static int objectParameterKey(const char*);
 
-Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *normal)
+Object *objectNew(ModelBuffer *modelBuffer, TextureBuffer *diffuseBuffer, TextureBuffer *specularBuffer, TextureBuffer *normalBuffer)
 {
 	Object *object;
 
 	if ((object = malloc(sizeof(Object))) != NULL)
 	{
-		object->model = model;
 		object->scale = vec3(1.0f, 1.0f, 1.0f);
-		object->rotation = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		object->rotation = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		object->translation = vec3(0.0f, 0.0f, 0.0f);
 		object->parameters = arrayNew();
-		object->parametersIndex = hashTableNew(OBJECT_PARAMETER_MAX);
+		object->parametersIndex = hashTableNew(OBJECT_PARAMETER_MAX);		
 
-		objectSetModel(object, model);
-		objectSetTexture(TEXTURE_DIFFUSE, object, diffuse);
-		objectSetTexture(TEXTURE_SPECULAR, object, specular);
-		objectSetTexture(TEXTURE_NORMAL, object, normal);
+		objectSetModelBuffer(object, modelBuffer);
+
+		objectSetTextureBuffer(object, TEXTURE_DIFFUSE, diffuseBuffer);
+		objectSetTextureBuffer(object, TEXTURE_SPECULAR, specularBuffer);
+		objectSetTextureBuffer(object, TEXTURE_NORMAL, normalBuffer);
+
 		objectUpdateTransform(object);
 	}
 
@@ -30,14 +31,23 @@ Object *objectNew(Model *model, Texture *diffuse, Texture *specular, Texture *no
 
 Object *objectDuplicate(Object *object)
 {
-	return objectNew(object->model, object->diffuse, object->specular, object->normal);
+	Object *duplicate;
+
+	if ((duplicate = malloc(sizeof(Object))) != NULL)
+	{
+		memcpy(duplicate, object, sizeof(Object));
+	}
+
+	return duplicate;
 }
 
 void objectFree(Object *object)
 {
 	if (object)
 	{
-		for (int i = 0; i < arrayLength(object->parameters); i++)
+		int parametersLength = arrayLength(object->parameters);
+
+		for (int i = 0; i < parametersLength; i++)
 		{
 			free(arrayGet(object->parameters, i));
 		}
@@ -48,33 +58,49 @@ void objectFree(Object *object)
 	}
 }
 
-/**
- * Object data functions.
- */
-void objectSetModel(Object *object, Model *model)
+void objectSetModelBuffer(Object *object, ModelBuffer *modelBuffer)
 {
-	object->model = model;
+	object->modelBuffer = modelBuffer;
 }
 
-/**
- * TODO: Clean up consts
- */
-void objectSetTexture(int textureType, Object *object, Texture *texture)
+void objectSetTextureBuffer(Object *object, int type, TextureBuffer *textureBuffer)
 {
-	switch (textureType)
+	switch (type)
 	{
 		case TEXTURE_DIFFUSE:
-			object->diffuse = texture;
+			object->diffuseBuffer = textureBuffer;
 			break;
 
 		case TEXTURE_SPECULAR:
-			object->specular = texture;
+			object->specularBuffer = textureBuffer;
 			break;
 
 		case TEXTURE_NORMAL:
-			object->normal = texture;
+			object->normalBuffer = textureBuffer;
 			break;
 	}
+}
+
+ModelBuffer *objectGetModelBuffer(Object *object)
+{
+	return object->modelBuffer;
+}
+
+TextureBuffer *objectGetTextureBuffer(Object *object, int type)
+{
+	switch (type)
+	{
+		case TEXTURE_DIFFUSE:
+			return object->diffuseBuffer;
+
+		case TEXTURE_SPECULAR:
+			return object->specularBuffer;
+
+		case TEXTURE_NORMAL:
+			return object->normalBuffer;
+	}
+
+	return NULL;
 }
 
 int objectSetParameterInt(Object *object, const char *parameter, int data)
@@ -126,26 +152,6 @@ int objectSetParameterVec4(Object *object, const char *parameter, Vec4 data)
 	return objectSetParameter(object, parameter, parameterData);
 }
 
-Model *objectGetModel(Object *object)
-{
-	return object->model;
-}
-
-Texture *objectGetTexture(int textureType, Object *object)
-{
-	switch (textureType)
-	{
-		case TEXTURE_DIFFUSE:
-			return object->diffuse;
-
-		case TEXTURE_SPECULAR:
-			return object->specular;
-
-		case TEXTURE_NORMAL:
-			return object->normal;
-	}
-	return NULL;
-}
 
 int objectGetParameterInt(Object *object, const char *parameter)
 {
@@ -189,9 +195,6 @@ Vec4 objectGetParameterVec4(Object *object, const char *parameter)
 	return data != NULL ? *data : vec4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-/**
- * Transformation functions.
- */
 void objectTranslate(Object *object, Vec3 translation)
 {
 	vec3AddVec3(object->translation, translation);
@@ -248,64 +251,94 @@ Mat4 objectGetTransform(Object *object)
 	return object->transform;
 }
 
-/**
- * Math functions.
- */
 Vec3 objectGetMinEdge(Object *object)
 {
-	Vec3 minEdge = vec3(0.0f, 0.0f, 0.0f);
+	ModelBuffer *model;
 
-	for (int i = 0; i < object->model->verticesLength; i++)
+	if (model = objectGetModelBuffer(object))
 	{
-		Vec3 vertex = object->model->vertices[i];
+		Vec3 minEdge = vec3(0.0f, 0.0f, 0.0f);
+		
+		for (int i = 0; i < modelBufferGetModel(model)->verticesLength; i++)
+		{
+			Vec3 vertex = modelBufferGetModel(model)->vertices[i];
 
-		minEdge.x = vertex.x < minEdge.x ? vertex.x : minEdge.x;
-		minEdge.y = vertex.y < minEdge.y ? vertex.y : minEdge.y;
-		minEdge.z = vertex.z < minEdge.z ? vertex.z : minEdge.z;
+			minEdge.x = vertex.x < minEdge.x ? vertex.x : minEdge.x;
+			minEdge.y = vertex.y < minEdge.y ? vertex.y : minEdge.y;
+			minEdge.z = vertex.z < minEdge.z ? vertex.z : minEdge.z;
+		}
+
+		return minEdge;
 	}
 
-	return minEdge;
+	return vec3(0.0f, 0.0f, 0.0f);
 }
 
 Vec3 objectGetMaxEdge(Object *object)
 {
-	Vec3 maxEdge = vec3(0.0f, 0.0f, 0.0f);
+	ModelBuffer *model;
 
-	for (int i = 0; i < object->model->verticesLength; i++)
+	if (model = objectGetModelBuffer(object))
 	{
-		Vec3 vertex = object->model->vertices[i];
+		Vec3 maxEdge = vec3(0.0f, 0.0f, 0.0f);
 
-		maxEdge.x = vertex.x > maxEdge.x ? vertex.x : maxEdge.x;
-		maxEdge.y = vertex.y > maxEdge.y ? vertex.y : maxEdge.y;
-		maxEdge.z = vertex.z > maxEdge.z ? vertex.z : maxEdge.z;
+		for (int i = 0; i < modelBufferGetModel(model)->verticesLength; i++)
+		{
+			Vec3 vertex = modelBufferGetModel(model)->vertices[i];
+
+			maxEdge.x = vertex.x > maxEdge.x ? vertex.x : maxEdge.x;
+			maxEdge.y = vertex.y > maxEdge.y ? vertex.y : maxEdge.y;
+			maxEdge.z = vertex.z > maxEdge.z ? vertex.z : maxEdge.z;
+		}
+
+		return maxEdge;
 	}
 
-	return maxEdge;
+	return vec3(0.0f, 0.0f, 0.0f);
 }
 
-Vec3 objectGetCenter(Object *object)
-{
-	Vec3 minEdge = objectGetMinEdge(object);
-	Vec3 maxEdge = objectGetMaxEdge(object);
-
-	return vec3DivideVec3(vec3AddVec3(minEdge, maxEdge), vec3(2.0f, 2.0f, 2.0f));
-}
 
 Vec3 objectGetBoundingBox(Object *object)
 {
 	Vec3 minEdge = objectGetMinEdge(object);
 	Vec3 maxEdge = objectGetMaxEdge(object);
 
-	return vec3AddVec3(minEdge, vec3Negative(maxEdge));
+	return vec3AddVec3(maxEdge, vec3Negative(minEdge));
+}
+
+Vec3 objectGetCenter(Object *object)
+{
+	Vec3 boundingBox = objectGetBoundingBox(object);
+
+	if (boundingBox.x != 0.0f && boundingBox.y != 0.0f && boundingBox.z != 0.0f)
+	{
+		return vec3DivideVec3(boundingBox, vec3(2.0f, 2.0f, 2.0f));
+	}
+	
+	return vec3(0.0f, 0.0f, 0.0f);
 }
 
 void objectUpdateTransform(Object *object)
 {
 	Mat4 scale = mat4Scale(object->scale);
-	Mat4 rotation  = mat4RotationQuat(object->rotation);
+	Mat4 rotation  = mat4RotationQuaternion(object->rotation);
 	Mat4 translation = mat4Translation(object->translation);
 
 	object->transform = mat4MultiplyMat4(translation, mat4MultiplyMat4(scale, rotation));
+}
+
+int objectParameterKey(const char *parameter)
+{
+	int i = 0;
+	int key = 0;
+
+	while (parameter[i])
+	{
+		key = hashTableKey(key, parameter[i]);
+		i++;
+	}
+
+	return key;
 }
 
 int objectSetParameter(Object *object, const char *parameter, void *data)
@@ -330,18 +363,4 @@ void *objectGetParameter(Object *object, const char *parameter)
 	}
 
 	return NULL;
-}
-
-int objectParameterKey(const char *parameter)
-{
-	int i = 0;
-	int key = 0;
-
-	while (parameter[i])
-	{
-		key = hashTableKey(key, parameter[i]);
-		i++;
-	}
-
-	return key;
 }

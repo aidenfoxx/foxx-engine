@@ -5,6 +5,8 @@
 
 #include "context.h"
 #include "object.h"
+#include "Model/buffer.h"
+#include "Texture/buffer.h"
 #include "Renderer/shader.h"
 #include "Renderer/camera.h"
 #include "Tools/array.h"
@@ -23,11 +25,11 @@ Renderer *rendererNew(Camera*);
 void rendererFree(Renderer*);
 
 int rendererAddShader(Renderer*, ShaderProgram*);
-void rendererRemoveShader(Renderer*, int);
-
 int rendererAddObject(Renderer*, Object*);
+
+void rendererRemoveShader(Renderer*, int);
 void rendererRemoveObject(Renderer*, int);
 
-void rendererExecute(Renderer*);
+void rendererStep(Renderer*);
 
 #endif

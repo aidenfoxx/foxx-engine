@@ -25,6 +25,9 @@ Camera *camera;
 Renderer *renderer;
 World *world;
 
+int pause = 1;
+int pauseToggle = 0;
+
 int mouseStartX = -1;
 int mouseStartY = -1;
 
@@ -35,9 +38,6 @@ void renderFree()
 		objectFemFree((Object*)arrayGet(objects, i));
 	}
 
-	/**
-	 * TODO: Breaks on wrong folder.
-	 */
 	arrayFree(objects);
 	worldFree(world);
 	rendererFree(renderer);
@@ -67,14 +67,14 @@ int renderInit()
 	renderer = rendererNew(camera);
 	world = worldNew(world);
 
-	if (camera == NULL || renderer == NULL || world == NULL)
+	if (!camera || !renderer || !world)
 	{
 		logMessage(LOG_ERROR, "There was a problem initializing the renderer.");
 		renderFree();
 		return -1;
 	}
 
-	cameraSetTranslation(camera, vec3(0.0f, 0.0f, -5.0f));
+	cameraSetTranslation(camera, vec3(-2.0f, -2.0f, -10.0f));
 
 	/**
 	 * Initialize shaders.
@@ -84,7 +84,7 @@ int renderInit()
 
 	phongShader = shaderProgramNew();
 
-	if (phongVertex == NULL || phongFragment == NULL || phongShader == NULL)
+	if (!phongVertex || !phongFragment || !phongShader)
 	{
 		logMessage(LOG_ERROR, "Failed to load shader(s)."); 
 		renderFree();
@@ -124,27 +124,32 @@ int renderInit()
 	/**
 	 * Add entities to renderer.
 	 */
+	rendererAddShader(renderer, phongShader);
+	
 	objects = arrayNew();
 
 	Object *crate = objectFemLoad("assets/models/crate.fem");
-	objectSetTranslation(crate, vec3(0.0f, 1.0f, 0.0f));
-	objectSetParameterFloat(crate, "mass", 1.0f);
-	objectSetParameterInt(crate, "gravity", 1);
+
 	arrayPush(objects, crate);
 
-	Object *teapot = objectFemLoad("assets/models/monkey.fem");
-	objectSetTranslation(teapot, vec3(0.0f, 4.0f, 0.0f));
-	objectSetParameterFloat(teapot, "mass", 1.0f);
-	objectSetParameterInt(teapot, "gravity", 1);
-	arrayPush(objects, teapot);
+	for (int x = 0; x < 3; ++x)
+	{
+		for (int z = 0; z < 3; ++z)
+		{
+			for (int y = 0; y < 50; ++y)
+			{
+				crate = objectDuplicate(crate);
+				objectSetTranslation(crate, vec3(0.0f + (3.0f * x), 1.0f + (3.0f * y), 0.0f + (3.0f * z)));
+				objectSetParameterFloat(crate, "mass", 1.0f);
+				objectSetParameterInt(crate, "gravity", 1);
 
-	rendererAddShader(renderer, phongShader);
-	rendererAddObject(renderer, teapot);
-	rendererAddObject(renderer, crate);
+				arrayPush(objects, crate);
+				worldAddObject(world, crate);
+				rendererAddObject(renderer, crate);
+			}
+		}
+	}
 
-	worldAddObject(world, crate);
-	worldAddObject(world, teapot);
-	
 	return 0;
 }
 
@@ -176,6 +181,17 @@ void renderFunction()
 	{
 		accumulator -= 1.0f;
 
+		if (!pauseToggle && inputGetState(INPUT_KEY_P) == INPUT_PRESS)
+		{
+			pauseToggle = 1;
+		}
+
+		if (pauseToggle && inputGetState(INPUT_KEY_P) == INPUT_RELEASE)
+		{
+			pause = pause ? 0 : 1;
+			pauseToggle = 0;
+		}
+
 		if (inputGetState(INPUT_KEY_R) == INPUT_PRESS)
 		{
 			glDisable(GL_DEPTH_TEST);
@@ -192,32 +208,32 @@ void renderFunction()
 
 		if (inputGetState(INPUT_KEY_W) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(0.0f, 0.0f, -0.1f));
+			cameraTranslate(camera, vec3(0.0f, 0.0f, -0.2f));
 		}
 
 		if (inputGetState(INPUT_KEY_A) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(0.1f, 0.0f, 0.0f));
+			cameraTranslate(camera, vec3(0.2f, 0.0f, 0.0f));
 		}
 
 		if (inputGetState(INPUT_KEY_S) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(0.0f, 0.0f, 0.1f));
+			cameraTranslate(camera, vec3(0.0f, 0.0f, 0.2f));
 		}
 
 		if (inputGetState(INPUT_KEY_D) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(-0.1f, 0.0f, 0.0f));
+			cameraTranslate(camera, vec3(-0.2f, 0.0f, 0.0f));
 		}
 
 		if (inputGetState(INPUT_KEY_Q) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(0.0f, 0.1f, 0.0f));
+			cameraTranslate(camera, vec3(0.0f, 0.2f, 0.0f));
 		}
 
 		if (inputGetState(INPUT_KEY_E) == INPUT_PRESS)
 		{
-			cameraTranslate(camera, vec3(0.0f, -0.1f, 0.0f));
+			cameraTranslate(camera, vec3(0.0f, -0.2f, 0.0f));
 		}
 
 		if (inputGetState(INPUT_MOUSE_LEFT) == INPUT_PRESS)
@@ -248,12 +264,15 @@ void renderFunction()
 			mouseStartY = -1;
 		}
 
-		worldStep(world, 0.01);
-    }
+		if (!pause)
+		{
+			worldStep(world, TIMESTEP);
+		}
+	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	rendererExecute(renderer);
+	rendererStep(renderer);
 	
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -298,6 +317,10 @@ void keyDownFunction(unsigned char key, int x, int y)
 		case 'r':
 			inputSetState(INPUT_KEY_R, INPUT_PRESS, INPUT_NULL);
 			break;
+
+		case 'p':
+			inputSetState(INPUT_KEY_P, INPUT_PRESS, INPUT_NULL);
+			break;
 	}
 }
 
@@ -339,6 +362,10 @@ void keyUpFunction(unsigned char key, int x, int y)
 
 		case 'r':
 			inputSetState(INPUT_KEY_R, INPUT_RELEASE, INPUT_NULL);
+			break;
+
+		case 'p':
+			inputSetState(INPUT_KEY_P, INPUT_RELEASE, INPUT_NULL);
 			break;
 	}
 }

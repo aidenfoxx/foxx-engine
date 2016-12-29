@@ -305,7 +305,7 @@ Vec4 vec4DivideMat4(Vec4 v, Mat4 m)
 	return vector;
 }
 
-Vec3 quatConvertEuler(Vec4 q)
+Vec3 quaternionConvertEuler(Vec4 q)
 {
 	Vec3 euler;
 
@@ -321,9 +321,9 @@ Vec3 quatConvertEuler(Vec4 q)
 	return euler;
 }
 
-Vec4 eulerConvertQuat(Vec3 e)
+Vec4 eulerConvertQuaternion(Vec3 e)
 {
-	Vec4 quat;
+	Vec4 quaternion;
 
 	float cosX = cosf(e.x / 2.0f); 
 	float cosY = cosf(e.y / 2.0f); 
@@ -333,12 +333,12 @@ Vec4 eulerConvertQuat(Vec3 e)
 	float sinY = sinf(e.y / 2.0f); 
 	float sinZ = sinf(e.z / 2.0f); 
 	 
-	quat.x = cosX * sinY * cosZ - sinX * cosY * sinZ;
-	quat.y = sinX * cosY * cosZ + cosX * sinY * sinZ;
-	quat.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
-	quat.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+	quaternion.x = cosX * sinY * cosZ - sinX * cosY * sinZ;
+	quaternion.y = sinX * cosY * cosZ + cosX * sinY * sinZ;
+	quaternion.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
+	quaternion.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
 
-	return quat;
+	return quaternion;
 }
 
 Mat4 mat4Empty()
@@ -376,29 +376,6 @@ Mat4 mat4Translation(Vec3 t)
 	return matrix;
 }
 
-Mat4 mat4RotationAxis(Vec3 v, float angle)
-{
-  Mat4 matrix = mat4Identity();
-
-  float cosA = cos(angle);
-  float sinA = sin(angle);
-  float cosN = 1.0f - cosA;
-  
-  matrix.xx = v.x * v.x * cosN + cosA;
-  matrix.xy = v.x * v.y * cosN - v.z * sinA;
-  matrix.xz = v.x * v.z * cosN + v.y * sinA;
-  
-  matrix.yx = v.y * v.x * cosN + v.z * sinA;
-  matrix.yy = v.y * v.y * cosN + cosA;
-  matrix.yz = v.y * v.z * cosN - v.x * sinA;
-  
-  matrix.zx = v.z * v.x * cosN - v.y * sinA;
-  matrix.zy = v.z * v.y * cosN + v.x * sinA;
-  matrix.zz = v.z * v.z * cosN + cosA;
-  
-  return matrix;
-
-}
 
 Mat4 mat4RotationEuler(Vec3 e)
 {
@@ -427,7 +404,7 @@ Mat4 mat4RotationEuler(Vec3 e)
 	return matrix;
 }
 
-Mat4 mat4RotationQuat(Vec4 q)
+Mat4 mat4RotationQuaternion(Vec4 q)
 {
 	Mat4 matrix = mat4Identity();
 
@@ -444,15 +421,15 @@ Mat4 mat4RotationQuat(Vec4 q)
     float zw = q.z * q.w;
 
 	matrix.xx = 1.0f - 2.0f * (yy + zz);
-	matrix.xy = 2.0f * (xy - zw);
-	matrix.xz = 2.0f * (xz + yw);
+	matrix.xy = 2.0f * (xy + zw);
+	matrix.xz = 2.0f * (xz - yw);
 
-	matrix.yx = 2.0f * (xy + zw);
+	matrix.yx = 2.0f * (xy - zw);
 	matrix.yy = 1.0f - 2.0f * (xx + zz);
-	matrix.yz = 2.0f * (yz - xw);
+	matrix.yz = 2.0f * (yz + xw);
 
-	matrix.zx = 2.0f * (xz - yw);
-	matrix.zy = 2.0f * (yz + xw);
+	matrix.zx = 2.0f * (xz + yw);
+	matrix.zy = 2.0f * (yz - xw);
 	matrix.zz = 1.0f - 2.0f * (xx + yy);
 
 	return matrix;

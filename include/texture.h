@@ -23,7 +23,6 @@
 #define TEXTURE_SPECULAR GL_TEXTURE2
 
 typedef struct {
-	GLuint tbo;
 	GLenum format;
 	uint8_t *data;
 	int dataSize;
@@ -34,11 +33,7 @@ typedef struct {
 } Texture;
 
 Texture *textureNew(GLenum, uint8_t*, int, int, int, int, int);
-Texture *textureDuplicate(Texture*);
 void textureFree(Texture*);
-
-void textureBind(int, Texture*);
-void textureUnbind();
 
 int textureMipmapsSize(int, int, int, int);
 int textureMipmapSize(int, int, int);

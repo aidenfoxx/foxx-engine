@@ -9,14 +9,10 @@ Shader *shaderNew(int shaderType, char *shaderData)
 
 	if ((shader = malloc(sizeof(Shader))) != NULL)
 	{
-		shader->error = NULL;
-		shader->shaderID = glCreateShader(shaderType);
-
-		glShaderSource(shader->shaderID, 1, (const char**)&shaderData, NULL);
-		glCompileShader(shader->shaderID);
-		free(shader->error);
-		
-		shader->error = shaderGetError(shader->shaderID, GL_COMPILE_STATUS);
+		shader->shader = glCreateShader(shaderType);
+		glShaderSource(shader->shader, 1, (const char**)&shaderData, NULL);
+		glCompileShader(shader->shader);
+		shader->error = shaderGetError(shader->shader, GL_COMPILE_STATUS);
 	}
 
 	return shader;
@@ -41,7 +37,7 @@ void shaderFree(Shader *shader)
 {
 	if (shader)
 	{
-		glDeleteShader(shader->shaderID);
+		glDeleteShader(shader->shader);
 		free(shader->error);
 		free(shader);
 	}
@@ -54,7 +50,7 @@ ShaderProgram *shaderProgramNew()
 	if ((program = malloc(sizeof(ShaderProgram))) != NULL)
 	{
 		program->error = NULL;
-		program->programID = glCreateProgram();
+		program->program = glCreateProgram();
 	}
 
 	return program;
@@ -64,7 +60,7 @@ void shaderProgramFree(ShaderProgram *program)
 {
 	if (program)
 	{
-		glDeleteProgram(program->programID);
+		glDeleteProgram(program->program);
 		free(program->error);
 		free(program);
 	}
@@ -72,30 +68,25 @@ void shaderProgramFree(ShaderProgram *program)
 
 void shaderProgramAttach(ShaderProgram *program, Shader *shader)
 {
-	glAttachShader(program->programID, shader->shaderID);
+	glAttachShader(program->program, shader->shader);
 }
 
 void shaderProgramDetach(ShaderProgram *program, Shader *shader)
 {
-	glDetachShader(program->programID, shader->shaderID);
+	glDetachShader(program->program, shader->shader);
 }
 
 int shaderProgramLink(ShaderProgram *program)
 {
-	glLinkProgram(program->programID);
+	glLinkProgram(program->program);
 	free(program->error);
-
-	if ((program->error = shaderGetError(program->programID, GL_LINK_STATUS)) != NULL)
-	{
-		return -1;
-	}
-
+	program->error = shaderGetError(program->program, GL_LINK_STATUS);
 	return 0;
 }
 
 void shaderProgramBind(ShaderProgram *program)
 {
-	glUseProgram(program->programID);
+	glUseProgram(program->program);
 }
 
 void shaderProgramUnbind()
@@ -105,40 +96,39 @@ void shaderProgramUnbind()
 
 void shaderProgramSetInt(ShaderProgram *program, const char *name, int data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniform1i(location, data);
 }
 
 void shaderProgramSetFloat(ShaderProgram *program, const char *name, float data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniform1f(location, data);
 }
 
 void shaderProgramSetVec2(ShaderProgram *program, const char *name, Vec2 data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniform2f(location, data.x, data.y);
 }
 
 void shaderProgramSetVec3(ShaderProgram *program, const char *name, Vec3 data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniform3f(location, data.x, data.y, data.z);
 }
 
 void shaderProgramSetVec4(ShaderProgram *program, const char *name, Vec4 data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniform4f(location, data.x, data.y, data.z, data.w);
 }
 
 void shaderProgramSetMat4(ShaderProgram *program, const char *name, Mat4 data)
 {
-	GLuint location = glGetUniformLocation(program->programID, name);
+	GLuint location = glGetUniformLocation(program->program, name);
 	glUniformMatrix4fv(location, 1, GL_FALSE, (float*)&data);
 }
-
 
 char *shaderError(Shader *shader)
 {

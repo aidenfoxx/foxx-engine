@@ -11,12 +11,12 @@
 #include "Tools/glmath.h"
 
 typedef struct {
-	GLuint shaderID;
+	GLuint shader;
 	char *error;
 } Shader;
 
 typedef struct {
-	GLuint programID;
+	GLuint program;
 	char *error;
 } ShaderProgram;
 

@@ -2,15 +2,17 @@
 
 static int modelObjProcessVec3(char*, Vec3*);
 static int modelObjProcessVec2(char*, Vec2*);
-static int modelObjProcessFace(char*, Vec3*, Vec3*, Vec3*);
+static int modelObjProcessFace(char*, int*);
 static int modelObjRead(const char*, uint8_t**);
 
 Model *modelObjNew(uint8_t *data)
 {
+	Model *model;
+
 	Vec3 *vertices = NULL;
 	Vec2 *uvs = NULL;
 	Vec3 *normals = NULL;
-	Vec3 *indices = NULL;
+	int *indices = NULL;
 
 	int error = 0;
 	int verticesLength = 0;
@@ -56,7 +58,7 @@ Model *modelObjNew(uint8_t *data)
 	if ((vertices = malloc(verticesLength * sizeof(Vec3))) != NULL &&	
 		(uvs = malloc(uvsLength * sizeof(Vec2))) != NULL &&
 		(normals = malloc(normalsLength * sizeof(Vec3))) != NULL &&
-		(indices = malloc((indicesLength * 3) * sizeof(Vec3))) != NULL)
+		(indices = malloc((indicesLength * 9) * sizeof(int))) != NULL)
 	{
 		verticesLength = 0;
 		uvsLength = 0;
@@ -112,7 +114,7 @@ Model *modelObjNew(uint8_t *data)
 			}
 			else if (currentLine[0] == 'f' && currentLine[1] == ' ')
 			{
-				if (!modelObjProcessFace(currentLine, &indices[indicesLength], &indices[indicesLength + 1], &indices[indicesLength + 2]))
+				if (!modelObjProcessFace(currentLine, &indices[indicesLength * 3]))
 				{
 					indicesLength += 3;
 				}
@@ -138,12 +140,12 @@ Model *modelObjNew(uint8_t *data)
 			Vec3 *indexedVertices = NULL;
 			Vec2 *indexedUVs = NULL;
 			Vec3 *indexedNormals = NULL;
-			Vec3 *indexedIndices = NULL;
+			int *indexedIndices = NULL;
 
 			int indexedVerticesLength = 0;
 			int indexedUVsLength = 0;
 			int indexedNormalsLength = 0;
-			int indexedIndicesLength = 0;
+			int indexedIndicesLength = indicesLength;
 			
 			HashTable *hashTable = NULL;
 
@@ -151,33 +153,31 @@ Model *modelObjNew(uint8_t *data)
 				(indexedVertices = malloc(indicesLength * sizeof(Vec3))) != NULL &&
 				(indexedUVs = malloc(indicesLength * sizeof(Vec2))) != NULL &&
 				(indexedNormals = malloc(indicesLength * sizeof(Vec3))) != NULL &&
-				(indexedIndices = malloc((indicesLength / 3) * sizeof(Vec3))) != NULL)
+				(indexedIndices = malloc(indicesLength * sizeof(int))) != NULL)
 			{
 				int indexCount = 0;
-				int *indexArray = (int*)indexedIndices;
 
 				for (int i = 0; i < indicesLength; i++)
 				{
-					int duplicate;
+					int x = i * 3;
 					int hashKey = 0;
+					
+					int duplicate;
 
-					hashKey = hashTableKey(hashKey, (int)indices[i].x);
-					hashKey = hashTableKey(hashKey, (int)indices[i].y);
-					hashKey = hashTableKey(hashKey, (int)indices[i].z);
+					hashKey = hashTableKey(hashKey, (int)indices[x]);
+					hashKey = hashTableKey(hashKey, (int)indices[x + 1]);
+					hashKey = hashTableKey(hashKey, (int)indices[x + 2]);
 
-					/**
-					 * TODO: Hash table set never runs.
-					 */
 					if ((duplicate = hashTableGet(hashTable, hashKey)) == -1)
 					{
-						if (indices[i].x > 0.0f)
+						if (indices[x] > 0.0f)
 						{
-							indexedVertices[indexCount] = vertices[(int)indices[i].x - 1];
+							indexedVertices[indexCount] = vertices[indices[x] - 1];
 							indexedVerticesLength++;
 						}
-						else if (indices[i].x < 0.0f)
+						else if (indices[x] < 0.0f)
 						{
-							indexedVertices[indexCount] = vertices[verticesLength + (int)indices[i].x];
+							indexedVertices[indexCount] = vertices[verticesLength + indices[x]];
 							indexedVerticesLength++;
 						}
 						else
@@ -185,72 +185,56 @@ Model *modelObjNew(uint8_t *data)
 							error = -2;
 						}
 
-						if (indices[i].y > 0.0f)
+						if (indices[x + 1] > 0.0f)
 						{
-							indexedUVs[indexCount] = uvs[(int)indices[i].y - 1];
+							indexedUVs[indexCount] = uvs[indices[x + 1] - 1];
 							indexedUVsLength++;
 						}
-						else if (indices[i].y < 0.0f)
+						else if (indices[x + 1] < 0.0f)
 						{
-							indexedUVs[indexCount] = uvs[uvsLength + (int)indices[i].y];
+							indexedUVs[indexCount] = uvs[uvsLength + indices[x + 1]];
 							indexedUVsLength++;
 						}
 
-						if (indices[i].z > 0.0f)
+						if (indices[x + 2] > 0.0f)
 						{
-							indexedNormals[indexCount] = normals[(int)indices[i].z - 1];
+							indexedNormals[indexCount] = normals[indices[x + 2] - 1];
 							indexedNormalsLength++;
 						}
-						else if (indices[i].z < 0.0f)
+						else if (indices[x + 2] < 0.0f)
 						{
-							indexedNormals[indexCount] = normals[normalsLength + (int)indices[i].z];
+							indexedNormals[indexCount] = normals[normalsLength + indices[x + 2]];
 							indexedNormalsLength++;
 						}
 
-						indexArray[i] = indexCount;
+						hashTableSet(hashTable, hashKey, indexCount);
+
+						indexedIndices[i] = indexCount;
 						indexCount++;
 					}
 					else
 					{
-						indexArray[i] = duplicate;
+						indexedIndices[i] = duplicate;
 					}
 				}
 
 				if (!error)
 				{
-					free(vertices);
-					free(uvs);
-					free(normals);
-					free(indices);
-					
-					vertices = indexedVertices;
-					uvs = indexedUVs;
-					normals = indexedNormals;
-					indices = indexedIndices;
-
-					indexedVertices = NULL;
-					indexedUVs = NULL;
-					indexedNormals = NULL;
-					indexedIndices = NULL;
-
-					verticesLength = indexedVerticesLength;
-					uvsLength = indexedUVsLength;
-					normalsLength = indexedNormalsLength;
-					indicesLength = indexedIndicesLength;
-
-					if (uvsLength != verticesLength)
+					if (indexedUVsLength != indexedVerticesLength)
 					{
-						uvsLength = 0;
+						indexedUVsLength = 0;
 					}
 					
-					if (normalsLength != verticesLength)
+					if (indexedNormalsLength != indexedVerticesLength)
 					{
-						normalsLength = 0;
+						indexedNormalsLength = 0;
 					}
 
-					vertices = realloc(vertices, verticesLength * sizeof(Vec3));
-					uvs = realloc(uvs, uvsLength * sizeof(Vec2));
-					normals = realloc(normals, normalsLength * sizeof(Vec3));
+					indexedVertices = realloc(indexedVertices, indexedVerticesLength * sizeof(Vec3));
+					indexedUVs = realloc(indexedUVs, indexedUVsLength * sizeof(Vec2));
+					indexedNormals = realloc(indexedNormals, indexedNormalsLength * sizeof(Vec3));
+
+					model = modelNew(indexedVertices, indexedUVs, indexedNormals, indexedIndices, indexedVerticesLength, indexedUVsLength, indexedNormalsLength, indexedIndicesLength);
 				}
 			}
 
@@ -262,30 +246,6 @@ Model *modelObjNew(uint8_t *data)
 			free(indexedIndices);
 		}
 	}
-
-	/**
-	 * If there was an error, send
-	 * an empty model.
-	 */
-	if (error)
-	{
-		free(vertices);
-		free(uvs);
-		free(normals);
-		free(indices);
-
-		vertices = NULL;
-		uvs = NULL;
-		normals = NULL;
-		indices = NULL;
-
-		verticesLength = 0;
-		uvsLength = 0;
-		normalsLength = 0;
-		indicesLength = 0;
-	}
-
-	Model *model = modelNew(vertices, uvs, normals, indices, verticesLength, uvsLength, normalsLength, indicesLength);
 
 	free(vertices);
 	free(uvs);
@@ -310,9 +270,9 @@ Model *modelObjLoad(const char *path)
 	return model;
 }
 
-int modelObjProcessVec3(char *line, Vec3 *vector3)
+int modelObjProcessVec3(char *line, Vec3 *vec3)
 {
-	if (sscanf(line, "%*s%f %f %f", &vector3->x, &vector3->y, &vector3->z) == 3)
+	if (sscanf(line, "%*s%f %f %f", &vec3->x, &vec3->y, &vec3->z) == 3)
 	{
 		return 0;
 	}
@@ -320,9 +280,9 @@ int modelObjProcessVec3(char *line, Vec3 *vector3)
 	return -1;
 }
 
-int modelObjProcessVec2(char *line, Vec2 *vector2)
+int modelObjProcessVec2(char *line, Vec2 *vec2)
 {
-	if (sscanf(line, "%*s%f %f", &vector2->x, &vector2->y) == 2)
+	if (sscanf(line, "%*s%f %f", &vec2->x, &vec2->y) == 2)
 	{
 		return 0;
 	}
@@ -330,37 +290,37 @@ int modelObjProcessVec2(char *line, Vec2 *vector2)
 	return -1;
 }
 
-int modelObjProcessFace(char *line, Vec3 *face1, Vec3 *face2, Vec3 *face3)
+int modelObjProcessFace(char *line, int *face)
 {
-	if (sscanf(line, "%*s%f/%f/%f %f/%f/%f %f/%f/%f", &face1->x, &face1->y, &face1->z, &face2->x, &face2->y, &face2->z, &face3->x, &face3->y, &face3->z) == 9)
+	if (sscanf(line, "%*s%i/%i/%i %i/%i/%i %i/%i/%i", &face[0], &face[1], &face[2], &face[3], &face[4], &face[5], &face[6], &face[7], &face[8]) == 9)
 	{
 		return 0;
 	}
-	else if (sscanf(line, "%*s%f//%f %f//%f %f//%f", &face1->x, &face1->z, &face2->x, &face2->z, &face3->x, &face3->z) == 6)
+	else if (sscanf(line, "%*s%i//%i %i//%i %i//%i", &face[0], &face[2], &face[3], &face[5], &face[6], &face[8]) == 6)
 	{
-		face1->y = 0;
-		face2->y = 0;
-		face3->y = 0;
+		face[1] = 0;
+		face[4] = 0;
+		face[7] = 0;
 
 		return 0;
 	}
-	else if (sscanf(line, "%*s%f/%f %f/%f %f/%f", &face1->x, &face1->y, &face2->x, &face2->y, &face3->x, &face3->y) == 6)
+	else if (sscanf(line, "%*s%i/%i %i/%i %i/%i", &face[0], &face[1], &face[3], &face[4], &face[6], &face[7]) == 6)
 	{
-		face1->z = 0;
-		face2->z = 0;
-		face3->z = 0;
+		face[2] = 0;
+		face[5] = 0;
+		face[8] = 0;
 
 		return 0;
 	}
-	else if (sscanf(line, "%*s%f %f %f", &face1->x, &face2->x, &face3->x) == 3)
+	else if (sscanf(line, "%*s%i %i %i", &face[0], &face[3], &face[6]) == 3)
 	{
-		face1->y = 0;
-		face2->y = 0;
-		face3->y = 0;
+		face[1] = 0;
+		face[4] = 0;
+		face[7] = 0;
 
-		face1->z = 0;
-		face2->z = 0;
-		face3->z = 0;
+		face[2] = 0;
+		face[5] = 0;
+		face[8] = 0;
 
 		return 0;
 	}

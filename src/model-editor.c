@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdint.h>
 #include <gtk/gtk.h>
 #include <archive.h>
@@ -46,7 +47,7 @@ int loadFile(const char *path, uint8_t **buffer)
 	return length;
 }
 
-int objToFemData(Model *model, uint8_t **femData)
+int objToFem(Model *model, uint8_t **femData)
 {
 	/**
 	 * The total length of all the OBJ
@@ -57,7 +58,7 @@ int objToFemData(Model *model, uint8_t **femData)
 	int verticesSize = model->verticesLength * sizeof(Vec3);
 	int uvsSize = model->uvsLength * sizeof(Vec2);
 	int normalsSize = model->normalsLength * sizeof(Vec3);
-	int indicesSize = model->indicesLength * sizeof(Vec3);
+	int indicesSize = model->indicesLength * sizeof(int);
 	int totalSize = headerSize + verticesSize + uvsSize + normalsSize + indicesSize;
 
 	*femData = calloc(1, totalSize);
@@ -115,7 +116,7 @@ G_MODULE_EXPORT void destroyWindow()
 G_MODULE_EXPORT void clearModel()
 {
 	GtkFileChooser *button = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "filechooserbutton_model"));
-	gtk_file_chooser_set_filename(button, NULL);
+	gtk_file_chooser_unselect_all(button);
 	free(model);
 	model = NULL;
 }
@@ -123,7 +124,7 @@ G_MODULE_EXPORT void clearModel()
 G_MODULE_EXPORT void clearDiffuse()
 {
 	GtkFileChooser *button = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "filechooserbutton_diffuse"));
-	gtk_file_chooser_set_filename(button, NULL);
+	gtk_file_chooser_unselect_all(button);
 	free(diffuse);
 	diffuse = NULL;
 }
@@ -131,7 +132,7 @@ G_MODULE_EXPORT void clearDiffuse()
 G_MODULE_EXPORT void clearNormal()
 {
 	GtkFileChooser *button = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "filechooserbutton_normal"));
-	gtk_file_chooser_set_filename(button, NULL);
+	gtk_file_chooser_unselect_all(button);
 	free(normal);
 	normal = NULL;
 }
@@ -139,20 +140,20 @@ G_MODULE_EXPORT void clearNormal()
 G_MODULE_EXPORT void clearSpecular()
 {
 	GtkFileChooser *button = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "filechooserbutton_specular"));
-	gtk_file_chooser_set_filename(button, NULL);
+	gtk_file_chooser_unselect_all(button);
 	free(specular);
 	specular = NULL;
 }
 
 G_MODULE_EXPORT void setModel(GtkFileChooserButton *button)
 {
-	Model *objModel;
+	Model *obj;
 
 	char *file = gtk_file_chooser_get_filename((GtkFileChooser*)button);
 
-	if ((objModel = modelObjLoad(file)) != NULL)
+	if (obj = modelObjLoad(file))
 	{
-		if ((modelLength = objToFemData(objModel, &model)) == 0)
+		if ((modelLength = objToFem(obj, &model)) == 0)
 		{
 			clearModel();
 			showError("There was a problem processing the mesh.");
@@ -164,7 +165,7 @@ G_MODULE_EXPORT void setModel(GtkFileChooserButton *button)
 		showError("There was a problem loading the mesh.");
 	}
 
-	modelFree(objModel);
+	modelFree(obj);
 }
 
 G_MODULE_EXPORT void setDiffuse(GtkFileChooserButton *button)
@@ -237,7 +238,7 @@ G_MODULE_EXPORT void openFile()
 
 				if (archive_read_data(archive, model, length) == 0)
 				{
-					showError("There was a problem loading the mode.");
+					showError("There was a problem loading the model.");
 				}
 			}
 
@@ -248,7 +249,7 @@ G_MODULE_EXPORT void openFile()
 
 				if (archive_read_data(archive, diffuse, length) == 0)
 				{
-					showError("There was a problem loading the mode.");
+					showError("There was a problem loading the diffuse texture.");
 				}
 			}
 
@@ -259,7 +260,7 @@ G_MODULE_EXPORT void openFile()
 
 				if (archive_read_data(archive, normal, length) == 0)
 				{
-					showError("There was a problem loading the mode.");
+					showError("There was a problem loading the normal texture.");
 				}
 			}
 
@@ -270,7 +271,7 @@ G_MODULE_EXPORT void openFile()
 
 				if (archive_read_data(archive, specular, length) == 0)
 				{
-					showError("There was a problem loading the mode.");
+					showError("There was a problem loading the specular texture.");
 				}
 			}
 		}

@@ -1,9 +1,9 @@
 #version 330 core
 
 const vec3 lightPosition = vec3(4.0, 4.0, 4.0);
-const vec3 diffuseColor = vec3(0.9, 0.5, 1);
+const vec3 diffuseColor = vec3(0.9, 0.5, 1.0);
 const vec3 ambientColor = vec3(0.1, 0.1, 0.1);
-const vec3 specularColor = vec3(1.0, 1.0, 1.0);
+const vec3 specularColor = vec3(0.2, 0.2, 0.2);
 
 uniform sampler2D diffuseTexture;
 

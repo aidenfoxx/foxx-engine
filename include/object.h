@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #include "context.h"
-#include "model.h"
-#include "texture.h"
+#include "Model/buffer.h"
+#include "Texture/buffer.h"
 #include "Tools/array.h"
 #include "Tools/hashtable.h"
 #include "Tools/glmath.h"
@@ -14,10 +14,10 @@
 #define OBJECT_PARAMETER_MAX 512
  
 typedef struct {
-	Model *model;
-	Texture *diffuse;
-	Texture *normal;
-	Texture *specular;
+	ModelBuffer *modelBuffer;
+	TextureBuffer *diffuseBuffer;
+	TextureBuffer *normalBuffer;
+	TextureBuffer *specularBuffer;
 	Vec3 scale;
 	Vec4 rotation;
 	Vec3 translation;
@@ -26,12 +26,16 @@ typedef struct {
 	HashTable *parametersIndex;
 } Object;
 
-Object *objectNew(Model*, Texture*, Texture*, Texture*);
+Object *objectNew(ModelBuffer*, TextureBuffer*, TextureBuffer*, TextureBuffer*);
 Object *objectDuplicate(Object*);
 void objectFree(Object*);
 
-void objectSetModel(Object*, Model*);
-void objectSetTexture(int, Object*, Texture*);
+void objectSetModelBuffer(Object*, ModelBuffer*);
+void objectSetTextureBuffer(Object*, int, TextureBuffer*);
+
+ModelBuffer *objectGetModelBuffer(Object*);
+TextureBuffer *objectGetTextureBuffer(Object*, int);
+
 int objectSetParameterInt(Object*, const char*, int);
 int objectSetParameterLong(Object*, const char*, long);
 int objectSetParameterFloat(Object*, const char*, float);
@@ -40,8 +44,6 @@ int objectSetParameterVec2(Object*, const char*, Vec2);
 int objectSetParameterVec3(Object*, const char*, Vec3);
 int objectSetParameterVec4(Object*, const char*, Vec4);
 
-Model *objectGetModel(Object*);
-Texture *objectGetTexture(int, Object*);
 int objectGetParameterInt(Object*, const char*);
 long objectGetParameterLong(Object*, const char*);
 float objectGetParameterFloat(Object*, const char*);
@@ -65,7 +67,7 @@ Mat4 objectGetTransform(Object*);
 
 Vec3 objectGetMinEdge(Object*);
 Vec3 objectGetMaxEdge(Object*);
-Vec3 objectGetCenter(Object*);
 Vec3 objectGetBoundingBox(Object*);
+Vec3 objectGetCenter(Object*);
 
 #endif

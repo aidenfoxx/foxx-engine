@@ -12,9 +12,13 @@
 #define WORLD_GRAVITY_X 0.0f
 #define WORLD_GRAVITY_Y -9.81f
 #define WORLD_GRAVITY_Z 0.0f
-#define WORLD_SURFACE_LAYER 0.001
-#define WORLD_ERROR_CORRECTION 0.2f
-#define WORLD_CONSTRAINT_FORCE 1e-5
+
+#define WORLD_AUTO_DISABLE 0
+#define WORLD_SURFACE_LAYER 0.001f
+#define WORLD_ERP 0.2f
+#define WORLD_CFM 1e-5
+
+#define WORLD_MAX_CONTACTS 8
 
 typedef struct {
 	dWorldID world;
@@ -27,10 +31,20 @@ typedef struct {
 World *worldNew();
 void worldFree(World*);
 
-void worldSetGravity(World*, Vec3);
-
 int worldAddObject(World*, Object*);
 void worldRemoveObject(World*, int);
+
+void worldSetAutoDisable(World*, int);
+void worldSetGravity(World*, Vec3);
+void worldSetSurfaceLayer(World*, float);
+void worldSetERP(World*, float);
+void worldSetCFM(World*, float);
+
+int worldGetAutoDisable(World*);
+Vec3 worldGetGravity(World*);
+float worldGetSurfaceLayer(World*);
+float worldGetERP(World*);
+float worldGetCFM(World*);
 
 void worldStep(World*, float);
 

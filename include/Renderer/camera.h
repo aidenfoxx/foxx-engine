@@ -16,6 +16,7 @@ typedef struct {
 	Mat4 view;
 } Camera;
 
+Camera *cameraNew(Mat4);
 Camera *cameraPerspectiveNew(float, float);
 Camera *cameraOrthographic(float, float, float, float);
 void cameraFree(Camera*);
