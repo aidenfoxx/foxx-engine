@@ -5,20 +5,64 @@
 cmake_minimum_required(VERSION 3.3.2)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-project(foxx-engine)
+project(foxx.engine)
 
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 1)
-set(VERSION_PATCH 0)
+set(FOXX_VERSION_MAJOR 0)
+set(FOXX_VERSION_MINOR 1)
+set(FOXX_VERSION_PATCH 0)
 
-set(FOXX_BUILD_MODEL_EDITOR TRUE CACHE STRING "Compile the model editor.")
-set_property(CACHE FOXX_BUILD_MODEL_EDITOR PROPERTY STRINGS TRUE FALSE)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
-set(FOXX_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin" CACHE PATH "Path to output executables.")
-set(EXECUTABLE_OUTPUT_PATH ${FOXX_OUTPUT_PATH})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3")
+
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release RelWithDebInfo MinSizeRel)
+
+set(FOXX_RENDER_METHOD GL CACHE STRING "Render method.")
+set_property(CACHE FOXX_RENDER_METHOD PROPERTY STRINGS GL D3D GLES)
+
+set(FOXX_PACKAGE_LUA FALSE CACHE STRING "Include LUA bindings package.")
+set_property(CACHE FOXX_PACKAGE_LUA PROPERTY STRINGS TRUE FALSE)
+
+set(FOXX_PACKAGE_MANAGER FALSE CACHE STRING "Include manager package.")
+set_property(CACHE FOXX_PACKAGE_MANAGER PROPERTY STRINGS TRUE FALSE)
+
+set(FOXX_PACKAGE_PHYSICS TRUE CACHE STRING "Inlcude physics package.")
+set_property(CACHE FOXX_PACKAGE_PHYSICS PROPERTY STRINGS TRUE FALSE)
+
+set(FOXX_PACKAGE_RENDERER TRUE CACHE STRING "Include renderer package.")
+set_property(CACHE FOXX_PACKAGE_RENDERER PROPERTY STRINGS TRUE FALSE)
 
 #
-# Set Includes directories.
+# Add packages.
+#
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.core")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.core/include")
+
+if(FOXX_PACKAGE_LUA)
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.lua")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.lua/include")
+endif(FOXX_PACKAGE_LUA)
+
+if(FOXX_PACKAGE_MANAGER)
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.manager")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.manager/include")
+endif(FOXX_PACKAGE_MANAGER)
+
+if(FOXX_PACKAGE_PHYSICS)
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.physics")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.physics/include")
+endif(FOXX_PACKAGE_PHYSICS)
+
+if(FOXX_PACKAGE_RENDERER)
+	add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.renderer")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/packages/foxx.renderer/include")
+endif(FOXX_PACKAGE_RENDERER)
+
+#
+# Set include directory.
 #
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
@@ -28,48 +72,13 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 #
 file(GLOB_RECURSE SRCS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 
-set(SRCS_NOT_MAIN)
+set(SRCS_NOT_BINARIES)
 
 foreach(SRC ${SRCS})
 	if (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
-	if (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
-		list(APPEND SRCS_NOT_MAIN ${SRC})
-	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c")
+		list(APPEND SRCS_NOT_BINARIES ${SRC})
 	endif (NOT ${SRC} MATCHES "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")
 endforeach(SRC ${SRCS})
-
-#
-# Load LibArchive.
-#
-find_package(LibArchive)
-
-include_directories(${LibArchive_INCLUDE_DIRS})
-
-if(NOT LibArchive_FOUND)
-	message(ERROR " COULD NOT FIND LibArchive!")
-endif(NOT LibArchive_FOUND)
-
-#
-# Load OpenGL.
-#
-find_package(OPENGL REQUIRED)
-
-include_directories(${OPENGL_INCLUDE_DIRS})
-
-if(NOT OPENGL_FOUND)
-	message(ERROR " COULD NOT FIND OPENGL!")
-endif(NOT OPENGL_FOUND)
-
-#
-# Load FreeGLUT.
-#
-find_package(GLUT REQUIRED)
-
-include_directories(${GLUT_INCLUDE_DIRS})
-
-if(NOT GLUT_FOUND)
-	message(ERROR " COULD NOT FIND FREEGLUT!")
-endif(NOT GLUT_FOUND)
 
 #
 # Load PkgConfig.
@@ -77,38 +86,32 @@ endif(NOT GLUT_FOUND)
 find_package(PkgConfig REQUIRED)
 
 if(NOT PkgConfig_FOUND)
-	message(ERROR " COULD NOT FIND PKGCONFIG!")
+	message(ERROR " Could not find PkgConfig!")
 endif(NOT PkgConfig_FOUND)
 
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-
-include_directories(${GTK3_INCLUDE_DIRS})
-link_directories(${GTK3_LIBRARY_DIRS})
-add_definitions(${GTK3_CFLAGS_OTHER})
-
-if(NOT GTK3_FOUND)
-	message(ERROR " COULD NOT FIND GTK3!")
-endif(NOT GTK3_FOUND)
+#
+#  Build engine.
+#
+add_executable(foxx.engine "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" ${SRCS_NOT_BINARIES})
+target_link_libraries(foxx.engine foxx.core)
 
 #
-# Load ODE.
+#  Link packages.
 #
-find_package(ODE REQUIRED)
+add_dependencies(foxx.engine foxx.core)
+target_link_libraries(foxx.engine foxx.core)
 
-include_directories(${ODE_INCLUDE_DIRS})
-add_definitions(${ODE_CFLAGS_OTHER})
+if(FOXX_PACKAGE_LUA)
+	add_dependencies(foxx.engine foxx.lua)
+	target_link_libraries(foxx.engine foxx.lua)
+endif(FOXX_PACKAGE_LUA)
 
-if(NOT ODE_FOUND)
-	message(ERROR " COULD NOT FIND ODE!")
-endif(NOT ODE_FOUND)
+if(FOXX_PACKAGE_PHYSICS)
+	add_dependencies(foxx.engine foxx.physics)
+	target_link_libraries(foxx.engine foxx.physics)
+endif(FOXX_PACKAGE_PHYSICS)
 
-#
-#  Build executables.
-#
-add_executable(foxx "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c" ${SRCS_NOT_MAIN})
-target_link_libraries(foxx ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES} ${LibArchive_LIBRARIES} ${ODE_LIBRARIES})
-
-if (FOXX_BUILD_MODEL_EDITOR MATCHES TRUE)
-	add_executable(model-editor "${CMAKE_CURRENT_SOURCE_DIR}/src/model-editor.c" ${SRCS_NOT_MAIN})
-	target_link_libraries(model-editor ${OPENGL_LIBRARIES} ${LibArchive_LIBRARIES} ${GTK3_LIBRARIES} ${ODE_LIBRARIES})
-endif (FOXX_BUILD_MODEL_EDITOR MATCHES TRUE)
+if(FOXX_PACKAGE_RENDERER)
+	add_dependencies(foxx.engine foxx.renderer)
+	target_link_libraries(foxx.engine foxx.renderer)
+endif(FOXX_PACKAGE_RENDERER)

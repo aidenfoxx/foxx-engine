@@ -1,3 +1,8 @@
-bin/log.txt
+bin/*
 build/*
+lib/*
+
+!bin/.gitkeep
 !build/.gitkeep
+!lib/.gitkeep
+!cmake/.gitkeep

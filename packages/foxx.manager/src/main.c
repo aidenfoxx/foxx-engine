@@ -5,8 +5,6 @@
 
 int main(int argc, char *argv[])
 {
-	Array *test = arrayNew();
-	Database *database = databaseOpen("test.db");
-
+	printf("Foxx Manager.\n");
 	return 0;
 }
